@@ -401,3 +401,6 @@ body{padding-bottom:76px}
 .ztable tbody th{inset-inline-start:auto;left:0;box-shadow:2px 0 0 rgba(0,0,0,.12)}
 .ztable tr.grp td,.ztable tr.grp th{border-top:2px solid #1b1f3b}
 .ztable tr.mid td,.ztable tr.mid th{border-top:4px solid #000}
+.ztable-wrap{direction:ltr;overflow-x:auto}
+.ztable td{padding-inline:8px}
+.ztable tbody th{position:sticky;left:0;z-index:2}
