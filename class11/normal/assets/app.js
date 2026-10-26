@@ -67,6 +67,49 @@
     $('#mistakes-count').textContent = bad.length;
   }
 
+  /* ---------- typed answers ---------- */
+  function parseTyped(v) {
+    v = String(v).replace(/\u2212/g, '-').replace(/%/g, ' ').replace(/(\d),(\d{3})(?!\d)/g, '$1$2').replace(/(\d),(\d)/g, '$1.$2').replace(/[;,·،]/g, ' ');
+    var m = v.match(/(?<![\d.])-?\d+(\.\d+)?|(?<![\d])-?\.\d+/g);
+    return m ? m.map(parseFloat) : [];
+  }
+  function matches(a, k) {
+    var pct = /%$/.test(k), ks = k.replace('%', ''), b = parseFloat(ks), d = (ks.split('.')[1] || '').length;
+    var tol = Math.max(Math.abs(b) * 0.005, Math.pow(10, -d) / 2 * 1.01);
+    if (Math.abs(a - b) <= tol) return true;
+    if (pct && Math.abs(a * 100 - b) <= tol) return true;
+    return false;
+  }
+  function checkTyped(input) {
+    var key = JSON.parse(input.getAttribute('data-key')), got = parseTyped(input.value);
+    var fb = input.closest('.typed').querySelector('.fb');
+    input.classList.remove('right', 'wrong'); fb.className = 'fb';
+    if (!got.length) { fb.textContent = 'הקלידו תשובה ואז לחצו בדיקה.'; return null; }
+    var ok = 0; key.forEach(function (k, i) { if (i < got.length && matches(got[i], k)) ok++; });
+    var all = ok === key.length && got.length === key.length;
+    if (all) { input.classList.add('right'); fb.classList.add('ok'); fb.textContent = 'נכון! ✓'; }
+    else {
+      input.classList.add('wrong'); fb.classList.add('no');
+      fb.textContent = key.length > 1 ? (got.length !== key.length ? 'יש להקליד ' + key.length + ' תשובות לפי הסדר. ' : '') + ok + ' מתוך ' + key.length + ' נכונות. נסו שוב.' : 'עדיין לא. נסו שוב או פתחו רמז.';
+    }
+    return all;
+  }
+  function initTyped() {
+    $$('input[data-typed]').forEach(function (inp) {
+      var id = inp.getAttribute('data-typed'), btn = inp.closest('.typed').querySelector('.chk');
+      if (state.myAnswers[id]) inp.value = state.myAnswers[id];
+      inp.addEventListener('input', function () { if (inp.value) state.myAnswers[id] = inp.value; else delete state.myAnswers[id]; save(); inp.classList.remove('right', 'wrong'); });
+      var run = function () {
+        var r = checkTyped(inp); if (r === null) return;
+        var card = inp.closest('.ex');
+        if (card.classList.contains('diag-item')) { card.setAttribute('data-ok', r ? '1' : '0'); return; }
+        if (r) setDone(id, 'ok');
+      };
+      btn.addEventListener('click', run);
+      inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); run(); } });
+    });
+  }
+
   /* ---------- card state ---------- */
   function paintCard(card) {
     var id = card.getAttribute('data-id'), v = state.done[id], st = $('.ex-state', card);
@@ -121,17 +164,24 @@
     var box = $('.diag-ans');
     b.addEventListener('click', function () { var o = box.hidden; box.hidden = !o; b.setAttribute('aria-expanded', o ? 'true' : 'false'); b.textContent = o ? 'הסתר תשובות' : 'הצג תשובות'; });
     if (TEACHER) box.hidden = false;
-    $$('.score').forEach(function (s) {
-      s.addEventListener('click', function () {
-        var n = +s.getAttribute('data-score'), r = $('#route'), msg;
-        $$('.score').forEach(function (x) { x.classList.toggle('sel', x === s); x.setAttribute('aria-pressed', x === s ? 'true' : 'false'); });
-        var has0 = !!$('#ch0');
-        if (n >= 8) msg = 'מצוין. אפשר להתחיל ישר מ<a href="#ch1">פרק 1</a>.';
-        else if (n >= 5) msg = has0 ? 'כדאי לעבור קודם על <a href="#ch0">פרק 0 (חזרה קצרה)</a>, ואז להמשיך לפרק 1.' : 'כדאי לחזור על הנושאים שטעיתם בהם, ואז להמשיך ל<a href="#ch1">פרק 1</a>.';
-        else msg = has0 ? 'מומלץ להתחיל מ<a href="#ch0">פרק 0</a> ולעבור עליו במלואו, צעד אחר צעד.' : 'מומלץ לחזור על החומר הבסיסי עם המורה לפני שממשיכים ל<a href="#ch1">פרק 1</a>.';
-        r.innerHTML = msg;
-        state.diag = n; save();
+    var fin = $('.finish-diag');
+    if (fin) fin.addEventListener('click', function () {
+      var items = $$('.diag-item'), n = 0, blank = 0, r = $('#route'), msg;
+      items.forEach(function (it) {
+        var inp = $('input[data-typed]', it);
+        if (inp && inp.value.trim() && !it.hasAttribute('data-ok')) checkTyped(inp) && it.setAttribute('data-ok', '1');
+        if (inp && inp.value.trim() && it.getAttribute('data-ok') !== '1' && !it.hasAttribute('data-ok')) it.setAttribute('data-ok', '0');
+        var st = $('.ex-state', it);
+        if (!inp || !inp.value.trim()) { blank++; if (st) st.textContent = 'לא נענתה'; return; }
+        var ok = checkTyped(inp); if (ok) n++;
+        if (st) { st.className = 'ex-state ' + (ok ? 'st-ok' : 'st-retry'); st.textContent = ok ? 'נכון ✓' : 'לא נכון'; }
       });
+      var has0 = !!$('#ch0');
+      if (n >= 8) msg = 'מצוין. אפשר להתחיל ישר מ<a href="#ch1">פרק 1</a>.';
+      else if (n >= 5) msg = has0 ? 'כדאי לעבור קודם על <a href="#ch0">פרק 0 (חזרה קצרה)</a>, ואז להמשיך לפרק 1.' : 'כדאי לחזור על הנושאים שטעיתם בהם, ואז להמשיך ל<a href="#ch1">פרק 1</a>.';
+      else msg = has0 ? 'מומלץ להתחיל מ<a href="#ch0">פרק 0</a> ולעבור עליו במלואו, צעד אחר צעד.' : 'מומלץ לחזור על החומר הבסיסי עם המורה לפני שממשיכים ל<a href="#ch1">פרק 1</a>.';
+      r.innerHTML = '<strong>' + n + ' מתוך ' + items.length + ' נכונות.</strong> ' + (blank ? '(' + blank + ' שאלות לא נענו) ' : '') + msg;
+      state.diag = n; save();
     });
   }
 
@@ -256,7 +306,7 @@
     load();
     buildToc(); buildNavs();
     if (window.Figs) window.Figs.renderAll(document);
-    initCards(); initSelfCheck(); initDiag(); initTheme(); initPrint(); initDialogs();
+    initCards(); initTyped(); initSelfCheck(); initDiag(); initTheme(); initPrint(); initDialogs();
     if (window.Tools) window.Tools.init();
     $('#btn-menu').addEventListener('click', function () {
       var t = $('#toc'), o = !t.classList.contains('open'); t.classList.toggle('open', o); this.setAttribute('aria-expanded', o ? 'true' : 'false');
