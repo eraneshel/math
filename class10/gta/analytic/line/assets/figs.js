@@ -278,7 +278,7 @@
         vsegEl.setAttribute('x1', sx(t.x)); vsegEl.setAttribute('x2', sx(t.x)); vsegEl.setAttribute('y1', sy(t.ya)); vsegEl.setAttribute('y2', sy(t.yb));
         vdotA.setAttribute('cx', sx(t.x)); vdotA.setAttribute('cy', sy(t.ya)); vdotB.setAttribute('cx', sx(t.x)); vdotB.setAttribute('cy', sy(t.yb));
       }
-      if (riseEls) {
+      if (riseEls) { var qd = dragDef[spec.rise.id]; if (qd) qd.pos = val(spec.rise.dx) >= 0 ? 'tl' : 'tr';
         var rq = lineOf(spec.lines[spec.rise.line || 0]), rp = D[spec.rise.id], rdx = val(spec.rise.dx), rdy = rq.m * rdx, rx2 = rp.x + rdx, ry2 = rp.y + rdy;
         riseEls.run.setAttribute('x1', sx(rp.x)); riseEls.run.setAttribute('y1', sy(rp.y)); riseEls.run.setAttribute('x2', sx(rx2)); riseEls.run.setAttribute('y2', sy(rp.y));
         riseEls.up.setAttribute('x1', sx(rx2)); riseEls.up.setAttribute('y1', sy(rp.y)); riseEls.up.setAttribute('x2', sx(rx2)); riseEls.up.setAttribute('y2', sy(ry2));
