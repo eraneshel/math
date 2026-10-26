@@ -80,33 +80,53 @@
     if (pct && Math.abs(a * 100 - b) <= tol) return true;
     return false;
   }
-  function checkTyped(input) {
-    var key = JSON.parse(input.getAttribute('data-key')), got = parseTyped(input.value);
-    var fb = input.closest('.typed').querySelector('.fb');
-    input.classList.remove('right', 'wrong'); fb.className = 'fb';
-    if (!got.length) { fb.textContent = 'הקלידו תשובה ואז לחצו בדיקה.'; return null; }
-    var ok = 0; key.forEach(function (k, i) { if (i < got.length && matches(got[i], k)) ok++; });
+  function typedInputs(box) { return $$('input', box); }
+  function typedValues(box) {
+    var ins = typedInputs(box);
+    if (ins.length > 1) return ins.map(function (i) { var g = parseTyped(i.value); return g.length ? g[0] : null; });
+    return parseTyped(ins[0].value);
+  }
+  function typedFilled(box) { return typedInputs(box).some(function (i) { return i.value.trim() !== ''; }); }
+  function checkTyped(box) {
+    var key = JSON.parse(box.getAttribute('data-key')), got = typedValues(box), ins = typedInputs(box), multi = ins.length > 1;
+    var fb = $('.fb', box); fb.className = 'fb';
+    ins.forEach(function (i) { i.classList.remove('right', 'wrong'); });
+    if (!typedFilled(box)) { fb.textContent = 'הקלידו תשובה ואז לחצו בדיקה.'; return null; }
+    var ok = 0;
+    key.forEach(function (k, i) {
+      var good = got[i] !== null && got[i] !== undefined && matches(got[i], k);
+      if (good) ok++;
+      if (multi) { if (ins[i].value.trim()) ins[i].classList.add(good ? 'right' : 'wrong'); }
+    });
     var all = ok === key.length && got.length === key.length;
-    if (all) { input.classList.add('right'); fb.classList.add('ok'); fb.textContent = 'נכון! ✓'; }
-    else {
-      input.classList.add('wrong'); fb.classList.add('no');
-      fb.textContent = key.length > 1 ? (got.length !== key.length ? 'יש להקליד ' + key.length + ' תשובות לפי הסדר. ' : '') + ok + ' מתוך ' + key.length + ' נכונות. נסו שוב.' : 'עדיין לא. נסו שוב או פתחו רמז.';
-    }
+    if (!multi) ins[0].classList.add(all ? 'right' : 'wrong');
+    fb.classList.add(all ? 'ok' : 'no');
+    fb.textContent = all ? 'נכון! ✓' : (key.length > 1 ? ok + ' מתוך ' + key.length + ' נכונות. תקנו את המסומנות באדום.' : 'עדיין לא. נסו שוב או פתחו רמז.');
     return all;
   }
   function initTyped() {
-    $$('input[data-typed]').forEach(function (inp) {
-      var id = inp.getAttribute('data-typed'), btn = inp.closest('.typed').querySelector('.chk');
-      if (state.myAnswers[id]) inp.value = state.myAnswers[id];
-      inp.addEventListener('input', function () { if (inp.value) state.myAnswers[id] = inp.value; else delete state.myAnswers[id]; save(); inp.classList.remove('right', 'wrong'); });
+    $$('.typed').forEach(function (box) {
+      var id = box.getAttribute('data-typed'), btn = $('.chk', box), ins = typedInputs(box), multi = ins.length > 1;
+      var saved = state.myAnswers[id];
+      if (saved) { if (multi) { try { JSON.parse(saved).forEach(function (v, i) { if (ins[i]) ins[i].value = v; }); } catch (e) { } } else ins[0].value = saved; }
+      var persist = function () {
+        var v = multi ? JSON.stringify(ins.map(function (i) { return i.value; })) : ins[0].value;
+        if (ins.some(function (i) { return i.value; })) state.myAnswers[id] = v; else delete state.myAnswers[id]; save();
+      };
+      ins.forEach(function (inp, idx) {
+        inp.addEventListener('input', function () { persist(); inp.classList.remove('right', 'wrong'); });
+        inp.addEventListener('keydown', function (e) {
+          if (e.key !== 'Enter') return; e.preventDefault();
+          if (multi && idx < ins.length - 1) ins[idx + 1].focus(); else run();
+        });
+      });
       var run = function () {
-        var r = checkTyped(inp); if (r === null) return;
-        var card = inp.closest('.ex');
-        if (card.classList.contains('diag-item')) { card.setAttribute('data-ok', r ? '1' : '0'); return; }
+        var r = checkTyped(box); if (r === null) return;
+        var card = box.closest('.ex');
+        if (card.classList.contains('diag-item')) return;
         if (r) setDone(id, 'ok');
       };
       btn.addEventListener('click', run);
-      inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); run(); } });
     });
   }
 
@@ -160,16 +180,17 @@
 
   /* ---------- diagnostic ---------- */
   function initDiag() {
-    var b = $('.show-diag-ans'); if (!b) return;
-    var box = $('.diag-ans');
-    b.addEventListener('click', function () { var o = box.hidden; box.hidden = !o; b.setAttribute('aria-expanded', o ? 'true' : 'false'); b.textContent = o ? 'הסתר תשובות' : 'הצג תשובות'; });
-    if (TEACHER) box.hidden = false;
+    $$('.diag-item').forEach(function (it) {
+      var b = $('.show-d', it), box = $('.d-ans', it); if (!b) return;
+      b.addEventListener('click', function () { var o = box.hidden; box.hidden = !o; b.setAttribute('aria-expanded', o ? 'true' : 'false'); b.textContent = o ? 'הסתר תשובה' : 'הצג תשובה'; });
+      if (TEACHER) box.hidden = false;
+    });
     var fin = $('.finish-diag');
     if (fin) fin.addEventListener('click', function () {
       var items = $$('.diag-item'), n = 0, blank = 0, r = $('#route'), msg, wrong = [];
       items.forEach(function (it) {
-        var inp = $('input[data-typed]', it), st = $('.ex-state', it);
-        if (!inp || !inp.value.trim()) { blank++; wrong.push(it); if (st) { st.className = 'ex-state'; st.textContent = 'לא נענתה'; } return; }
+        var inp = $('.typed', it), st = $('.ex-state', it);
+        if (!inp || !typedFilled(inp)) { blank++; wrong.push(it); if (st) { st.className = 'ex-state'; st.textContent = 'לא נענתה'; } return; }
         var ok = checkTyped(inp);
         if (ok) n++; else wrong.push(it);
         if (st) { st.className = 'ex-state ' + (ok ? 'st-ok' : 'st-retry'); st.textContent = ok ? 'נכון ✓' : 'לא נכון'; }
