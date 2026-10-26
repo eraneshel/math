@@ -166,20 +166,19 @@
     if (TEACHER) box.hidden = false;
     var fin = $('.finish-diag');
     if (fin) fin.addEventListener('click', function () {
-      var items = $$('.diag-item'), n = 0, blank = 0, r = $('#route'), msg;
+      var items = $$('.diag-item'), n = 0, blank = 0, r = $('#route'), msg, wrong = [];
       items.forEach(function (it) {
-        var inp = $('input[data-typed]', it);
-        if (inp && inp.value.trim() && !it.hasAttribute('data-ok')) checkTyped(inp) && it.setAttribute('data-ok', '1');
-        if (inp && inp.value.trim() && it.getAttribute('data-ok') !== '1' && !it.hasAttribute('data-ok')) it.setAttribute('data-ok', '0');
-        var st = $('.ex-state', it);
-        if (!inp || !inp.value.trim()) { blank++; if (st) st.textContent = 'לא נענתה'; return; }
-        var ok = checkTyped(inp); if (ok) n++;
+        var inp = $('input[data-typed]', it), st = $('.ex-state', it);
+        if (!inp || !inp.value.trim()) { blank++; wrong.push(it); if (st) { st.className = 'ex-state'; st.textContent = 'לא נענתה'; } return; }
+        var ok = checkTyped(inp);
+        if (ok) n++; else wrong.push(it);
         if (st) { st.className = 'ex-state ' + (ok ? 'st-ok' : 'st-retry'); st.textContent = ok ? 'נכון ✓' : 'לא נכון'; }
       });
-      var has0 = !!$('#ch0');
-      if (n >= 8) msg = 'מצוין. אפשר להתחיל ישר מ<a href="#ch1">פרק 1</a>.';
-      else if (n >= 5) msg = has0 ? 'כדאי לעבור קודם על <a href="#ch0">פרק 0 (חזרה קצרה)</a>, ואז להמשיך לפרק 1.' : 'כדאי לחזור על הנושאים שטעיתם בהם, ואז להמשיך ל<a href="#ch1">פרק 1</a>.';
-      else msg = has0 ? 'מומלץ להתחיל מ<a href="#ch0">פרק 0</a> ולעבור עליו במלואו, צעד אחר צעד.' : 'מומלץ לחזור על החומר הבסיסי עם המורה לפני שממשיכים ל<a href="#ch1">פרק 1</a>.';
+      var links = wrong.map(function (it) { return '<a href="#ch0/' + it.getAttribute('data-sec') + '">סעיף ' + it.getAttribute('data-secn') + '</a>'; });
+      var uniq = links.filter(function (x, i) { return links.indexOf(x) === i; });
+      if (n >= 8) msg = 'מצוין. אתם מוכנים לעבור ל<a href="#ch1">פרק 1</a>.';
+      else if (n >= 6) msg = 'כמעט. חזרו על: ' + uniq.join(', ') + ', ואז עברו ל<a href="#ch1">פרק 1</a>.';
+      else msg = 'כדאי לחזור על פרק 0 מהסעיפים הבאים: ' + uniq.join(', ') + ', ואז לפתור את המבחן שוב.';
       r.innerHTML = '<strong>' + n + ' מתוך ' + items.length + ' נכונות.</strong> ' + (blank ? '(' + blank + ' שאלות לא נענו) ' : '') + msg;
       state.diag = n; save();
     });
