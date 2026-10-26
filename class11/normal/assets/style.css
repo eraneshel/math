@@ -330,3 +330,18 @@ fieldset.tl{border:2px solid var(--line);border-radius:12px;margin:0 0 12px;padd
 .hero .hero-fig svg{width:100%;max-width:260px;height:auto;display:block;margin-inline:auto}
 .hero .deco{max-height:140px}
 @media(max-width:700px){.hero{min-height:0;height:auto}.hero .hero-fig{flex:none;width:200px}}
+/* compact banner + toolbar on phones */
+@media(max-width:700px){
+  .hero{padding:18px 18px 20px;gap:0;border-radius:22px;min-height:0}
+  .hero .hero-fig,.hero .deco{display:none}
+  .hero .crumb{font-size:12.5px;margin-bottom:8px}
+  .hero .k{font-size:12px;padding:2px 12px;margin-bottom:8px}
+  .hero h1{font-size:28px;margin-bottom:6px}
+  .hero p{font-size:14px;line-height:1.45;margin:0}
+  .top{margin:10px 0;border-bottom-width:4px}
+  .top-row{flex-wrap:nowrap;gap:6px;padding:6px 8px}
+  .top-actions{flex-wrap:nowrap;overflow-x:auto;gap:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .top-actions::-webkit-scrollbar{display:none}
+  .top-actions .btn,.top .menu-btn{flex:none;white-space:nowrap;min-height:36px;padding:4px 10px}
+  .prog{height:20px}.prog-txt{line-height:20px;font-size:12px}
+}
