@@ -367,3 +367,4 @@ fieldset.tl{border:2px solid var(--line);border-radius:12px;margin:0 0 12px;padd
 .mc-o.wrong{border-color:#d64545;background:rgba(214,69,69,.12)}
 .mc-row{display:flex;gap:12px;align-items:center;margin-top:10px}
 .mc-exp{margin-top:8px;padding:8px 12px;border-radius:10px;background:rgba(47,91,216,.08);font-size:.95rem;line-height:1.7}
+@media (max-width:480px){.tbl th,.tbl td{padding:6px 6px}}
