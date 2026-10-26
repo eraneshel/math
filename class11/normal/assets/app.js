@@ -218,7 +218,7 @@
       qs.forEach(function (q, i) {
         var radios = $$('input', q), fb = $('.fb', q), ex = $('.mc-exp', q), c = +q.getAttribute('data-c');
         if (sel[i] !== null && sel[i] !== undefined && radios[sel[i]]) radios[sel[i]].checked = true;
-        radios.forEach(function (r, k) { r.addEventListener('change', function () { sel[i] = k; persist(); ok[i] = false; fb.className = 'fb'; fb.textContent = ''; ex.hidden = true; $$('.mc-o', q).forEach(function (l) { l.classList.remove('right', 'wrong'); }); }); });
+        radios.forEach(function (r, k) { r.addEventListener('change', function () { sel[i] = k; persist(); ok[i] = false; if (state.done[id] === 'ok') setDone(id, null); fb.className = 'fb'; fb.textContent = ''; ex.hidden = true; $$('.mc-o', q).forEach(function (l) { l.classList.remove('right', 'wrong'); }); }); });
         $('.mc-chk', q).addEventListener('click', function () {
           var k = radios.findIndex(function (r) { return r.checked; });
           $$('.mc-o', q).forEach(function (l) { l.classList.remove('right', 'wrong'); });
@@ -264,8 +264,8 @@
         var open = sol.hidden; sol.hidden = !open; bSol.setAttribute('aria-expanded', open ? 'true' : 'false'); bSol.textContent = open ? 'הסתר פתרון' : 'הצג פתרון מלא';
       });
       var good = $('.ex-mark .good', card), bad = $('.ex-mark .bad', card), okEx = $('.ok-ex', card);
-      if (good) good.addEventListener('click', function () { setDone(id, 'ok'); });
-      if (bad) bad.addEventListener('click', function () { setDone(id, 'retry'); });
+      if (good) good.addEventListener('click', function () { setDone(id, state.done[id] === 'ok' ? null : 'ok'); });
+      if (bad) bad.addEventListener('click', function () { setDone(id, state.done[id] === 'retry' ? null : 'retry'); });
       if (okEx) okEx.addEventListener('click', function () { setDone(id, state.done[id] === 'ok' ? null : 'ok'); });
       if (TEACHER && ans) { ans.hidden = false; if (sol) sol.hidden = false; }
       paintCard(card);
