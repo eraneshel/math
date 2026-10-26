@@ -80,7 +80,8 @@
     if (pct && Math.abs(a * 100 - b) <= tol) return true;
     return false;
   }
-  function typedInputs(box) { return $$('input', box); }
+  function partsOf(box) { return box._parts || $$('.part', box); }
+  function typedInputs(box) { return box._parts ? box._parts.map(function (p) { return $('input', p); }) : $$('input', box); }
   function typedValues(box) {
     var ins = typedInputs(box);
     if (ins.length > 1) return ins.map(function (i) { var g = parseTyped(i.value); return g.length ? g[0] : null; });
@@ -105,7 +106,7 @@
     return all;
   }
   function checkPart(box, idx) {
-    var key = JSON.parse(box.getAttribute('data-key')), part = $$('.part', box)[idx], inp = $('input', part), fb = $('.fb', part);
+    var key = JSON.parse(box.getAttribute('data-key')), part = partsOf(box)[idx], inp = $('input', part), fb = $('.fb', part);
     inp.classList.remove('right', 'wrong'); fb.className = 'fb';
     var g = parseTyped(inp.value);
     if (!g.length) { fb.textContent = 'הקלידו תשובה.'; return null; }
@@ -113,7 +114,19 @@
     inp.classList.add(ok ? 'right' : 'wrong'); fb.classList.add(ok ? 'ok' : 'no'); fb.textContent = ok ? 'נכון ✓' : 'לא נכון, נסו שוב';
     return ok;
   }
+  function inlineParts() {
+    $$('.typed.multi').forEach(function (box) {
+      var card = box.closest('.ex'); if (!card) return;
+      var ul = $('.ex-body > ul', card), parts = $$('.part', box);
+      if (!ul) return;
+      var lis = Array.prototype.slice.call(ul.children).filter(function (n) { return n.tagName === 'LI'; });
+      if (!lis.length || lis.length !== parts.length) return;
+      box._parts = parts; parts.forEach(function (p, i) { p.classList.add('inline'); lis[i].appendChild(p); });
+      box.hidden = true;
+    });
+  }
   function initTyped() {
+    inlineParts();
     $$('.typed').forEach(function (box) {
       var id = box.getAttribute('data-typed'), multi = box.classList.contains('multi'), ins = typedInputs(box);
       var saved = state.myAnswers[id];
@@ -124,7 +137,7 @@
       };
       if (multi) {
         var okParts = {};
-        $$('.part', box).forEach(function (part, idx) {
+        partsOf(box).forEach(function (part, idx) {
           var inp = $('input', part);
           var run = function () {
             var r = checkPart(box, idx); if (r === null) return;
