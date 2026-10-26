@@ -146,6 +146,10 @@
       var id = box.getAttribute('data-typed'), multi = box.classList.contains('multi'), ins = typedInputs(box);
       var saved = state.myAnswers[id];
       if (saved) { if (multi) { try { JSON.parse(saved).forEach(function (v, i) { if (ins[i]) ins[i].value = v; }); } catch (e) { } } else ins[0].value = saved; }
+      var unsolve = function () {
+        if (state.done[id] === 'ok') setDone(id, null);
+        var w = box.closest('.ex') && $('.chkall', box.closest('.ex')); if (w) { var sm = $('.chkall-s', w), nx = $('.chkall-n', w); if (sm) { sm.className = 'chkall-s'; sm.textContent = ''; } if (nx) nx.hidden = true; }
+      };
       var persist = function () {
         var v = multi ? JSON.stringify(ins.map(function (i) { return i.value; })) : ins[0].value;
         if (ins.some(function (i) { return i.value; })) state.myAnswers[id] = v; else delete state.myAnswers[id]; save();
@@ -160,7 +164,7 @@
             var all = ins.length && ins.every(function (x, k) { return okParts[k]; });
             if (all) setDone(id, 'ok');
           };
-          inp.addEventListener('input', function () { persist(); okParts[idx] = false; inp.classList.remove('right', 'wrong'); $('.fb', part).textContent = ''; });
+          inp.addEventListener('input', function () { persist(); unsolve(); okParts[idx] = false; inp.classList.remove('right', 'wrong'); $('.fb', part).textContent = ''; });
           inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); run(); } });
           $('.chk', part).addEventListener('click', run);
         });
@@ -191,7 +195,7 @@
         return;
       }
       var btn = $('.chk', box);
-      ins[0].addEventListener('input', function () { persist(); ins[0].classList.remove('right', 'wrong'); });
+      ins[0].addEventListener('input', function () { persist(); unsolve(); ins[0].classList.remove('right', 'wrong'); $('.fb', box).className = 'fb'; $('.fb', box).textContent = ''; });
       var run1 = function () {
         var r = checkTyped(box); if (r === null) return;
         if (box.closest('.ex').classList.contains('diag-item')) return;
@@ -214,7 +218,7 @@
       qs.forEach(function (q, i) {
         var radios = $$('input', q), fb = $('.fb', q), ex = $('.mc-exp', q), c = +q.getAttribute('data-c');
         if (sel[i] !== null && sel[i] !== undefined && radios[sel[i]]) radios[sel[i]].checked = true;
-        radios.forEach(function (r, k) { r.addEventListener('change', function () { sel[i] = k; persist(); ok[i] = false; fb.className = 'fb'; fb.textContent = ''; ex.hidden = true; $$('.mc-o', q).forEach(function (l) { l.classList.remove('right', 'wrong'); }); }); });
+        radios.forEach(function (r, k) { r.addEventListener('change', function () { sel[i] = k; persist(); ok[i] = false; if (state.done[id] === 'ok') setDone(id, null); fb.className = 'fb'; fb.textContent = ''; ex.hidden = true; $$('.mc-o', q).forEach(function (l) { l.classList.remove('right', 'wrong'); }); }); });
         $('.mc-chk', q).addEventListener('click', function () {
           var k = radios.findIndex(function (r) { return r.checked; });
           $$('.mc-o', q).forEach(function (l) { l.classList.remove('right', 'wrong'); });
@@ -260,8 +264,8 @@
         var open = sol.hidden; sol.hidden = !open; bSol.setAttribute('aria-expanded', open ? 'true' : 'false'); bSol.textContent = open ? 'הסתר פתרון' : 'הצג פתרון מלא';
       });
       var good = $('.ex-mark .good', card), bad = $('.ex-mark .bad', card), okEx = $('.ok-ex', card);
-      if (good) good.addEventListener('click', function () { setDone(id, 'ok'); });
-      if (bad) bad.addEventListener('click', function () { setDone(id, 'retry'); });
+      if (good) good.addEventListener('click', function () { setDone(id, state.done[id] === 'ok' ? null : 'ok'); });
+      if (bad) bad.addEventListener('click', function () { setDone(id, state.done[id] === 'retry' ? null : 'retry'); });
       if (okEx) okEx.addEventListener('click', function () { setDone(id, state.done[id] === 'ok' ? null : 'ok'); });
       if (TEACHER && ans) { ans.hidden = false; if (sol) sol.hidden = false; }
       paintCard(card);
