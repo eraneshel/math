@@ -1,0 +1,274 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><title>תרגול</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&display=swap');
+:root{--ink:#10181f;--mut:#5b6872;--line:#e3e8ec;--bg:#f6f8f5;--g:#3fae2a;--gd:#2f8a1e;--navy:#0e1a24;--y:#ffc83d;--p:#7a5af8;--o:#ff8a3d;--c:#19b5c9;--pk:#ff5c8a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Rubik,Heebo,Arial,sans-serif;color:var(--ink);background:var(--bg);direction:rtl;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding:18px 16px 36px}
+.btn{display:inline-block;background:var(--g);color:#fff;text-decoration:none;font-weight:700;font-size:17px;padding:12px 26px;border-radius:14px;border-bottom:4px solid var(--gd);transition:transform .08s}
+.btn:hover{transform:translateY(-1px)}.btn:active{transform:translateY(2px);border-bottom-width:2px}
+.btn.off{background:#e8ecef;color:#8a969f;border-bottom-color:#d3dade;pointer-events:none}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--line);border-bottom-width:4px}
+h2.sec{font-size:26px;font-weight:800;margin:30px 0 14px}
+h2.sec small{font-size:15px;font-weight:500;color:var(--mut);margin-right:8px}
+.grid{display:grid;gap:16px}
+.card{background:#fff;border:2px solid var(--line);border-bottom-width:5px;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:inherit;transition:transform .12s,border-color .12s}
+a.card:hover{transform:translateY(-3px);border-color:var(--cc,var(--g))}
+.card .ic{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;background:var(--cc,var(--g))}
+.card h3{font-size:21px;font-weight:800;line-height:1.25}.card p{color:var(--mut);font-size:15px}
+.tag{align-self:flex-start;font-size:13px;font-weight:700;border-radius:99px;padding:3px 12px;background:#eaf7e6;color:var(--gd)}
+.tag.soon{background:#eef1f3;color:#7d8a93}
+@media(max-width:700px){.wrap{padding:12px 12px 28px}h2.sec{font-size:22px}}
+
+.hero{background:var(--navy);border-radius:28px;color:#fff;padding:44px 40px;position:relative;overflow:hidden;display:flex;gap:30px;align-items:center}
+.hero:before{content:"π  ∠  √  Σ  ∞  ∥  △";position:absolute;inset:auto 0 -20px 0;font:800 90px Rubik;color:#ffffff0d;white-space:nowrap;letter-spacing:18px;text-align:center}
+.hero .t{flex:1;position:relative;z-index:1}
+.hero .k{display:inline-block;background:#ffffff1a;border-radius:99px;padding:4px 16px;font-size:14px;font-weight:500;margin-bottom:14px}
+.hero h1{font-size:46px;font-weight:800;line-height:1.15;margin-bottom:12px}
+.hero h1 em{font-style:normal;color:var(--y)}
+.hero p{font-size:18px;color:#c4d0d8;max-width:520px;margin-bottom:22px}
+.hero .fig{flex:0 0 250px;position:relative;z-index:1}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.step{background:#fff;border:2px solid var(--line);border-bottom-width:5px;border-radius:20px;padding:18px;text-align:center}
+.step b{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--y);font-weight:800;font-size:20px;margin:0 auto 8px}
+.step h4{font-size:18px;font-weight:800}.step p{color:var(--mut);font-size:15px}
+@media(max-width:700px){.hero{flex-direction:column;padding:28px 22px;text-align:center}.hero h1{font-size:32px}.hero p{font-size:16px}.hero .fig{flex:none;width:200px}.steps{grid-template-columns:1fr}}
+
+.q{background:#fff;border:2px solid var(--line);border-bottom-width:5px;border-radius:22px;padding:20px;margin-bottom:18px}
+.qh{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.qn{width:46px;height:46px;border-radius:14px;background:var(--navy);color:var(--y);font-weight:800;font-size:22px;display:grid;place-items:center}
+.qh h2{font-size:24px;font-weight:800}
+.row{display:flex;gap:22px;align-items:flex-start}
+.q .fig{flex:0 0 330px;background:#f6f8f5;border:2px solid var(--line);border-radius:16px;padding:10px}
+.q .fig svg{width:100%;height:auto}
+.txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;font-size:17px;line-height:1.65}
+.question-box{background:#fff8e1;border:2px solid #ffe29a;border-radius:14px;padding:12px 14px}
+.parts{background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px 14px}
+.parts p{margin-bottom:8px}.parts p:last-child{margin:0}
+.math-expr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 3px;line-height:1.25}.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 4px}.frac>span:last-child{padding:0 4px}
+.geo-line-base{stroke:#2b3b49;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}.geo-line-med{stroke:#6b7c8b;stroke-width:1.5}.geo-line-dashed{stroke:#8a9ba8;stroke-width:1.5;stroke-dasharray:4,4}.geo-point{fill:#1b2733}
+.geo-text{font-family:'Frank Ruhl Libre',Georgia,serif;font-style:italic;font-size:14px;fill:#1b2733;font-weight:bold;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
+text{text-anchor:middle}
+.act{display:flex;align-items:center;gap:12px;margin-top:4px}
+@media(max-width:700px){.row{flex-direction:column}.q .fig{flex:none;width:100%}.qh h2{font-size:20px}}
+
+
+.hero .deco{position:absolute;left:0;right:0;bottom:0;width:100%;height:46%;pointer-events:none;opacity:.55}
+.hero .deco .wv,.hero .deco .wv2{stroke-dasharray:1 .02;stroke-dashoffset:0;animation:wvmove 9s ease-in-out infinite alternate}
+.hero .deco .wv2{animation-duration:12s;animation-direction:alternate-reverse}
+@keyframes wvmove{from{transform:translateX(-14px)}to{transform:translateX(14px)}}
+.hero .t,.hero .fig{position:relative;z-index:1}
+.hero .fig svg{animation:hfloat 7s ease-in-out infinite;filter:drop-shadow(0 0 12px rgba(94,234,212,.32)) drop-shadow(0 10px 18px rgba(10,10,60,.35))}
+@keyframes hfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.hero .fig .dr{stroke-dasharray:1;stroke-dashoffset:1;animation:hdraw 1.5s cubic-bezier(.6,0,.2,1) forwards;animation-delay:calc(var(--i,0)*70ms)}
+@keyframes hdraw{to{stroke-dashoffset:0}}
+.hero .fig .pop{transform-box:fill-box;transform-origin:center;animation:hpop .5s cubic-bezier(.3,1.6,.5,1) backwards;animation-delay:calc(.5s + var(--i,0)*60ms)}
+@keyframes hpop{from{transform:scale(0);opacity:0}}
+.hero .fig .fl{animation:hflow 1.8s linear infinite}@keyframes hflow{to{stroke-dashoffset:-26}}
+.hero .fig text{animation:hfade .8s ease 1s backwards}@keyframes hfade{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.hero .fig svg,.hero .fig .dr,.hero .fig .pop,.hero .fig .fl,.hero .deco .wv,.hero .deco .wv2,.hero .fig text{animation:none!important}.hero .fig .dr{stroke-dasharray:none;stroke-dashoffset:0}}
+.hero .figp svg{animation:none;filter:none}
+
+.q .parts{border:0!important;background:none!important;box-shadow:none!important;padding:8px 4px 0!important}.q .tag{background:#e0e8ff!important;color:#1d3a8f!important}
+
+.qn{display:none!important}.qh{margin-bottom:12px}.qh h2{font-size:24px;color:#1d3a8f;padding-right:14px;border-right:5px solid #3a5bdc;line-height:1.2}
+
+.question-box{background:linear-gradient(135deg,#eef2ff,#e3f4fd)!important;border:2px solid #c7d4fb!important}
+
+:root{--g:#2f5bd8;--gd:#1d3a8f}
+
+.hero .figp{background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(6px)}
+.hero .figp .geo-line-base{stroke:#fff;stroke-width:2.6}.hero .figp .geo-line-med{stroke:#5eead4;stroke-width:2.6}
+.hero .figp .geo-point{fill:#fff}.hero .figp .geo-text{fill:#fff;font-family:'Frank Ruhl Libre',serif;font-weight:700;font-size:15px}
+
+.hero{background:linear-gradient(135deg,#1d3a8f 0%,#2a52bd 100%)!important}.hero .k{background:#ffffff26}.hero p{color:#dbe5ff}.hero .crumb,.hero .crumb a{color:#c9d7fb!important}.hero:before{color:#ffffff12} 
+.hero{background:radial-gradient(760px 360px at 12% -10%,rgba(34,211,238,.38),transparent 62%),radial-gradient(640px 380px at 100% 110%,rgba(167,139,250,.5),transparent 62%),linear-gradient(135deg,#1a1768 0%,#2a39b4 55%,#3a5bdc 100%)!important;box-shadow:0 18px 40px -18px rgba(42,57,180,.55)}
+.hero:after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.16) 1px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(135deg,#000 0%,transparent 70%);mask-image:linear-gradient(135deg,#000 0%,transparent 70%);pointer-events:none}
+.hero .t,.hero .fig{z-index:2}
+.hero .k{background:rgba(255,255,255,.12)!important;border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(6px);letter-spacing:.3px}
+.hero h1 em,.hero p em{font-style:normal;background:linear-gradient(90deg,#67e8f9,#a7f3d0);-webkit-background-clip:text;background-clip:text;color:transparent!important}
+.hero p{color:#dbe4ff!important}
+.hero svg [stroke="#ffc83d"]{stroke:#5eead4}.hero svg [fill="#ffc83d"]{fill:#5eead4}
+.hero svg [stroke="#3fae2a"]{stroke:#38bdf8}.hero svg [stroke="#19b5c9"]{stroke:#a5b4fc}.hero svg [fill="#19b5c9"]{fill:#a5b4fc}.hero svg [stroke="#ff5c8a"]{stroke:#f0abfc}.hero svg [fill="#ff5c8a"]{fill:#f0abfc}.hero svg [stroke="#ff8a3d"]{stroke:#fcd34d}.hero svg [fill="#3fae2a"]{fill:#38bdf8}
+.hero svg text[fill="#ffc83d"]{fill:#5eead4}
+
+.hero .crumb{font-size:14px;color:#9fb0bc;margin-bottom:12px}.hero .crumb a{color:#c4d0d8;text-decoration:none}
+.hero .figp{background:#fff;border-radius:18px;padding:10px}.hero .figp svg{width:100%;height:auto;display:block}
+.pick{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:12px}
+.nums a,.nums span{display:flex;flex-direction:column;align-items:center;gap:2px;padding:14px 6px;border-radius:16px;font-weight:800;font-size:26px;text-decoration:none;border:2px solid var(--line);border-bottom-width:5px;background:#fff;color:var(--ink)}
+.nums a.on{background:var(--g);border-color:var(--gd);color:#fff}.nums small{font-size:12px;font-weight:700}
+.nums span{color:#9aa6ae;background:#f0f3f5}.nums a:hover{transform:translateY(-2px)}
+.q{scroll-margin-top:14px}
+
+.hero{background:radial-gradient(700px 380px at 10% -10%,rgba(34,211,238,.5),transparent 62%),radial-gradient(640px 400px at 100% 110%,rgba(167,139,250,.62),transparent 62%),radial-gradient(500px 300px at 55% 50%,rgba(94,234,212,.16),transparent 70%),linear-gradient(120deg,#14115a,#2a39b4,#3a5bdc,#2a39b4,#14115a)!important;background-size:100% 100%,100% 100%,100% 100%,300% 300%!important;animation:aurora 14s ease-in-out infinite}
+@keyframes aurora{0%,100%{background-position:0 0,0 0,0 0,0% 50%}50%{background-position:0 0,0 0,0 0,100% 50%}}
+.hero .hfx{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.hero:before{animation:shimmer 6s linear infinite}
+.hero .shock{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px;border-radius:50%;border:2px solid rgba(94,234,212,.8);box-shadow:0 0 18px 2px rgba(94,234,212,.4);z-index:1;pointer-events:none;animation:shock 1.5s cubic-bezier(.1,.7,.3,1) forwards}
+.hero .shock.s2{border-color:rgba(167,139,250,.9);animation-delay:.18s;animation-duration:1.8s}
+@keyframes shock{from{transform:scale(.2);opacity:.9}60%{opacity:.35}to{transform:scale(45);opacity:0}}
+.hero h1{animation:hboom 1s cubic-bezier(.2,1.5,.4,1) backwards;text-shadow:0 0 28px rgba(103,232,249,.45),0 4px 18px rgba(10,10,60,.4)}
+@keyframes hboom{from{transform:scale(.3) rotate(-3deg);opacity:0;filter:blur(14px)}}
+.hero h1 em{background-size:250% 100%!important;background:linear-gradient(90deg,#67e8f9,#a7f3d0,#c4b5fd,#67e8f9)!important;-webkit-background-clip:text!important;background-clip:text!important;animation:hue 5s linear infinite}
+@keyframes hue{to{background-position:250% 0}}
+.hero .k{animation:kpulse 2.6s ease-in-out infinite}@keyframes kpulse{50%{box-shadow:0 0 0 7px rgba(103,232,249,.14),0 0 22px rgba(103,232,249,.4)}}
+.hero .fig svg{filter:drop-shadow(0 0 18px rgba(94,234,212,.7)) drop-shadow(0 0 40px rgba(167,139,250,.45)) drop-shadow(0 10px 18px rgba(10,10,60,.35))!important}
+.hero{cursor:pointer}
+@media (prefers-reduced-motion:reduce){.hero,.hero h1,.hero h1 em,.hero .k,.hero .shock{animation:none!important}.hero .hfx{display:none}}
+.hero .fig svg[data-live]{width:520px!important;max-width:100%;height:auto!important;animation:none}.hero .fig:has(svg[data-live]){flex:0 0 auto}@media(max-width:800px){.hero .fig svg[data-live]{width:100%!important}}
+
+.pr-wrap{max-width:900px;margin:0 auto}
+.pr-top{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.pr-lv{flex:1;min-width:120px;border:2px solid #d5dcf5;background:#fff;border-radius:16px;padding:10px 12px;font:inherit;font-weight:800;color:#1d3a8f;cursor:pointer;text-align:center;display:flex;flex-direction:column;gap:2px}
+.pr-lv small{font-weight:600;color:#6b7bb0;font-size:13px}
+.pr-lv.on{background:linear-gradient(135deg,#2a39b4,#3a5bdc);color:#fff;border-color:#1a1768}.pr-lv.on small{color:#cdd9ff}
+.pr-lv.lock{opacity:.5;cursor:not-allowed}
+.pr-mute{border:2px solid #d5dcf5;background:#fff;border-radius:14px;padding:10px 14px;font-size:20px;cursor:pointer}
+.pr-bar{height:12px;background:#e3e8fb;border-radius:8px;overflow:hidden;margin-bottom:6px}.pr-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#22d3ee,#5eead4);border-radius:8px;transition:width .5s cubic-bezier(.3,1.4,.5,1)}
+.pr-meta{display:flex;justify-content:space-between;color:#51608f;font-weight:700;font-size:15px;margin-bottom:14px}
+.pr-card{margin-top:6px;background:#fff;border:2px solid #dfe5fa;border-radius:22px;padding:22px;box-shadow:0 14px 30px -20px rgba(42,57,180,.5);display:grid;grid-template-columns:minmax(0,300px) 1fr;gap:22px;align-items:start}
+.pr-fig svg{width:100%;height:auto;background:#f3f6ff;border-radius:16px;direction:ltr}
+.pr-q{font-size:21px;font-weight:700;line-height:1.55;color:#14204f;margin:0 0 14px}
+.pr-opts{display:grid;gap:10px}
+.pr-opt{border:2px solid #d5dcf5;background:#fff;border-radius:14px;padding:13px 16px;font:inherit;font-size:19px;font-weight:600;color:#1b2a66;text-align:right;cursor:pointer;transition:transform .12s,background .2s,border-color .2s}
+.pr-opt:hover{transform:translateX(-3px);border-color:#3a5bdc;background:#f1f5ff}
+.pr-opt.ok{background:#d9fbf2;border-color:#14b8a6;animation:prpop .5s}.pr-opt.bad{background:#fde7f1;border-color:#ec4899;animation:prshake .4s}
+.pr-opt:disabled{cursor:default}
+@keyframes prpop{40%{transform:scale(1.05)}}@keyframes prshake{25%{transform:translateX(8px)}75%{transform:translateX(-8px)}}
+.pr-in{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pr-in input{width:150px;font:inherit;font-size:24px;font-weight:700;direction:ltr;text-align:center;border:2px solid #b9c5f2;border-radius:14px;padding:10px;color:#1d3a8f}
+.pr-btn{border:0;background:linear-gradient(135deg,#2a39b4,#3a5bdc);color:#fff;font:inherit;font-weight:800;font-size:18px;padding:12px 22px;border-radius:14px;cursor:pointer;border-bottom:4px solid #1a1768}
+.pr-btn.sec{background:#fff;color:#1d3a8f;border:2px solid #b9c5f2;border-bottom-width:4px}
+.pr-fb{min-height:30px;margin-top:14px;font-size:18px;font-weight:700}.pr-fb.ok{color:#0f766e}.pr-fb.bad{color:#be185d}.pr-fb.hint{color:#51608f;font-weight:600}
+.pr-ord{display:grid;gap:8px}.pr-ord button{border:2px solid #d5dcf5;background:#fff;border-radius:12px;padding:10px 14px;font:inherit;font-size:18px;text-align:right;cursor:pointer;display:flex;gap:10px;align-items:center}
+.pr-ord button b{min-width:30px;height:30px;border-radius:50%;background:#e3e8fb;color:#1d3a8f;display:inline-flex;align-items:center;justify-content:center}
+.pr-ord button.picked{background:#eef2ff;border-color:#3a5bdc}.pr-ord button.picked b{background:#3a5bdc;color:#fff}
+.pr-ord button.wrong{background:#fde7f1;border-color:#ec4899}.pr-ord button.right{background:#d9fbf2;border-color:#14b8a6}
+.pr-end{text-align:center;padding:26px 10px}.pr-end h2{font-size:30px;color:#1d3a8f;margin:6px 0}.pr-stars{font-size:46px;letter-spacing:6px}
+.me{direction:ltr;unicode-bidi:isolate;display:inline-block;font-family:"STIX Two Text","Frank Ruhl Libre",serif;font-weight:600}
+.pr-conf{position:fixed;inset:0;pointer-events:none;z-index:50}
+@media(max-width:760px){.pr-card{grid-template-columns:1fr;padding:16px}.pr-q{font-size:19px}}
+.deck{display:block;width:100%;aspect-ratio:16/9;height:auto;border:0;border-radius:20px;background:#f6f8f5}@media(max-width:700px){.deck{height:92vh;min-height:560px}}</style></head><body><div class="wrap"><section class="hero"><svg class="deco" viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="dg"><stop offset="0" stop-color="#67e8f9" stop-opacity="0"/><stop offset=".5" stop-color="#a7f3d0"/><stop offset="1" stop-color="#c4b5fd" stop-opacity="0"/></linearGradient></defs><path class="wv" d="M40 118Q300 -90 560 118" fill="none" stroke="url(#dg)" stroke-width="2.5"/><path class="wv2" d="M120 118Q300 -30 480 118" fill="none" stroke="url(#dg)" stroke-width="1.5" opacity=".6"/></svg><div class="t"><div class="crumb"><a href="../../../../../" target="_top">בית</a> › <a href="../../../../" target="_top">כיתה י׳</a> › <a href="../../../" target="_top">גאומטריה, טריגונומטריה ואנליטית</a> › <a href="../../" target="_top">גאומטריה</a> › <a href="../" target="_top">משפטי תאלס</a> › תרגול</div><span class="k">משפטי תאלס</span><h1><em>תרגול</em> אינטראקטיבי</h1><p>ארבע רמות: זיהוי, חישוב, שאלות בגרות ואתגר.</p></div><div class="fig"><svg viewBox="-14 -6 280 228" width="100%"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path class="fl" d="M40 18L250 88.0" stroke="#ffc83d" stroke-width="2" stroke-dasharray="6 6"/><path class="fl" d="M40 58L250 128.0" stroke="#ffc83d" stroke-width="2" stroke-dasharray="6 6"/><path class="fl" d="M40 98L250 168.0" stroke="#ffc83d" stroke-width="2" stroke-dasharray="6 6"/><path class="dr" pathLength="1" style="--i:4" d="M130 18L35 155L165 155L130 18M165 155L225 118L130 18" stroke="#fff" stroke-width="4"/><path class="dr" pathLength="1" style="--i:5" d="M35 155L165 155L225 118" stroke="#3fae2a" stroke-width="6"/><path class="fl" d="M35 155L95 118L225 118M95 118L130 18" stroke="#fff" stroke-width="3" stroke-dasharray="7 7"/><path class="dr" pathLength="1" style="--i:7" d="M87.25 79.65L145.75 79.65L172.75 63.0L114.25 63.0Z" stroke="#ffc83d" stroke-width="5"/><g fill="#fff"><circle class="pop" style="--i:8" cx="130" cy="18" r="6"/><circle class="pop" style="--i:9" cx="87.25" cy="79.65" r="6"/><circle class="pop" style="--i:10" cx="145.75" cy="79.65" r="6"/></g><circle class="pop" style="--i:11" cx="14" cy="12" r="11" fill="#ffc83d"/><path class="dr" pathLength="1" style="--i:12" d="M30.0 12.0L36.0 12.0" stroke="#ffc83d" stroke-width="3"/><path class="dr" pathLength="1" style="--i:13" d="M25.3 23.3L29.6 27.6" stroke="#ffc83d" stroke-width="3"/><path class="dr" pathLength="1" style="--i:14" d="M14.0 28.0L14.0 34.0" stroke="#ffc83d" stroke-width="3"/><path class="dr" pathLength="1" style="--i:15" d="M2.7 23.3L-1.6 27.6" stroke="#ffc83d" stroke-width="3"/><path class="dr" pathLength="1" style="--i:16" d="M-2.0 12.0L-8.0 12.0" stroke="#ffc83d" stroke-width="3"/><path class="dr" pathLength="1" style="--i:17" d="M2.7 0.7L-1.6 -3.6" stroke="#ffc83d" stroke-width="3"/><path class="dr" pathLength="1" style="--i:18" d="M14.0 -4.0L14.0 -10.0" stroke="#ffc83d" stroke-width="3"/><path class="dr" pathLength="1" style="--i:19" d="M25.3 0.7L29.6 -3.6" stroke="#ffc83d" stroke-width="3"/><text x="125" y="216" fill="#ffc83d" font-family="Rubik" font-weight="700" font-size="21" direction="ltr" style="direction:ltr;unicode-bidi:bidi-override">a : b = c : d</text></g></svg></div></section><div class="pr-wrap" id="pr">
+<div class="pr-top" id="prlv"></div>
+<div class="pr-bar"><i id="prbar"></i></div>
+<div class="pr-meta"><span id="prcnt"></span><span id="prstars"></span></div>
+<div id="prmain"></div></div>
+<canvas class="pr-conf" id="prconf"></canvas>
+<script>
+(function(){
+
+var PT={A:[160,18],B:[30,165],C:[290,165],D:[108,77],E:[212,77]};
+var SEG={AD:['A','D'],DB:['D','B'],AE:['A','E'],EC:['E','C'],DE:['D','E'],BC:['B','C'],AB:['A','B'],AC:['A','C'],BE:['B','E'],CD:['C','D']};
+function fig(hl,show){hl=hl||[];show=show||'';
+var s='<svg viewBox="0 0 320 195" xmlns="http://www.w3.org/2000/svg"><polygon points="160,18 30,165 290,165" fill="#e8eeff" stroke="#1d3a8f" stroke-width="3" stroke-linejoin="round"/><line x1="108" y1="77" x2="212" y2="77" stroke="#7a5af8" stroke-width="3"/>';
+if(show.indexOf('trap')>=0)s+='<line x1="30" y1="165" x2="212" y2="77" stroke="#8b9bd6" stroke-width="2.4" stroke-dasharray="5 4"/><line x1="290" y1="165" x2="108" y2="77" stroke="#8b9bd6" stroke-width="2.4" stroke-dasharray="5 4"/><circle cx="160" cy="102" r="5" fill="#ec4899"/><text x="168" y="120" font-family="STIX Two Text,serif" font-size="17" font-weight="700" fill="#be185d">O</text>';
+hl.forEach(function(k){var g=SEG[k];if(!g)return;var a=PT[g[0]],b=PT[g[1]];s+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" stroke="#0d9488" stroke-width="5" stroke-linecap="round"/>'});
+s+='<circle cx="108" cy="77" r="4.5" fill="#1d3a8f"/><circle cx="212" cy="77" r="4.5" fill="#1d3a8f"/>';
+var L={A:[153,12],B:[12,181],C:[292,181],D:[86,81],E:[218,81]};
+for(var n in L)s+='<text x="'+L[n][0]+'" y="'+L[n][1]+'" font-family="STIX Two Text,serif" font-size="17" font-weight="700" fill="#14204f">'+n+'</text>';
+return s+'</svg>'}
+function me(t){return '<span class="me">'+t+'</span>'}
+var LV=[
+{name:'רמה 1',sub:'זיהוי והבנה',qs:[
+{t:me('DE ∥ BC')+', כאשר '+me('D')+' על '+me('AB')+' ו־'+me('E')+' על '+me('AC')+'. איזה שוויון נכון לפי משפט תאלס?',h:['AD','DB','AE','EC'],o:[me('AD : DB = AE : EC'),me('AD : DB = AE : AC'),me('AD : AB = AE : EC'),me('AD : DB = DE : BC')],c:0,hint:'הקטעים על שתי הצלעות נחלקים ביחס שווה: החלק העליון מול החלק התחתון.'},
+{t:'נתון '+me('AD : DB = AE : EC')+'. איזה משפט מאפשר להסיק ש־'+me('DE ∥ BC')+' ?',h:['AD','DB','AE','EC'],o:['משפט תאלס ההפוך','משפט תאלס','משפט קטע האמצעים','משפט התיכונים'],c:0,hint:'כאן הנתון הוא יחס שווה, והמסקנה היא מקביליות.'},
+{t:me('DE ∥ BC')+'. איזה יחס שווה ל־'+me('DE : BC')+' ?',h:['DE','BC','AD','AB'],o:[me('AD : AB'),me('AD : DB'),me('DB : AB'),me('AE : EC')],c:0,hint:'משפט תאלס המורחב: היחס מתחיל מהקדקוד A.'},
+{t:me('DE ∥ BC')+', והאלכסונים '+me('BE')+' ו־'+me('CD')+' נחתכים ב־'+me('O')+'. איזה יחס שווה ל־'+me('OD : OC')+' ?',h:['DE','BC'],f:'trap',o:[me('DE : BC'),me('DE : DB'),me('OD : DC'),me('OB : OC')],c:0,hint:'שעון חול: המשולשים ODE ו־OCB דומים.'},
+{t:me('DE ∥ BC')+' ו־'+me('AD : AB = 2 : 5')+'. מהו יחס הדמיון בין המשולשים '+me('ADE')+' ו־'+me('ABC')+' ?',h:['AD','AB'],o:[me('2 : 5'),me('2 : 3'),me('4 : 25'),me('5 : 2')],c:0,hint:'יחס הדמיון הוא יחס הצלעות המתאימות.'}]},
+{name:'רמה 2',sub:'חישוב רב־שלבי',qs:[
+{t:'נתון '+me('DE ∥ BC')+', '+me('AD = 4')+', '+me('DB = 6')+', '+me('AE = 5')+'. חשבו את '+me('EC')+'.',h:['AD','DB','AE','EC'],a:7.5,hint:'AD : DB = AE : EC.'},
+{t:'נתון '+me('DE ∥ BC')+', '+me('AD = x')+', '+me('DB = x + 2')+', '+me('AE = 6')+', '+me('EC = 9')+'. מצאו את '+me('x')+'.',h:['AD','DB','AE','EC'],a:4,hint:'x : (x+2) = 6 : 9 = 2 : 3, פותרים משוואה.'},
+{t:'נתון '+me('DE ∥ BC')+', '+me('AB = 15')+' ו־'+me('AD : DB = 2 : 3')+'. חשבו את '+me('AD')+'.',h:['AD','DB'],a:6,hint:'AD : AB = 2 : 5.'},
+{t:'נתון '+me('DE ∥ BC')+', '+me('AD = 6')+', '+me('AB = 15')+', '+me('BC = 20')+'. חשבו את '+me('DE')+'.',h:['DE','BC'],a:8,hint:'DE : BC = AD : AB.'},
+{t:'נתון '+me('DE ∥ BC')+', '+me('DE = 5')+', '+me('BC = 15')+' ו־'+me('OC = 18')+'. חשבו את '+me('OD')+'.',h:['DE','BC'],f:'trap',a:6,hint:'OD : OC = DE : BC.'}]},
+{name:'רמה 3',sub:'שאלות בגרות',qs:[
+{t:'<b>שאלה משולבת א׳.</b> '+me('DE ∥ BC')+', '+me('AD = 8')+', '+me('DB = 4')+', '+me('AE = 10')+', '+me('BC = 24')+'. <b>(א)</b> חשבו את '+me('EC')+'.',h:['AD','DB','AE','EC'],a:5,hint:'AD : DB = AE : EC.'},
+{t:'<b>(ב)</b> (המשך): חשבו את '+me('DE')+'. (רמז: '+me('AB = 12')+'.)',h:['DE','BC'],a:16,hint:'DE : BC = AD : AB = 8 : 12.'},
+{t:'<b>(ג)</b> (המשך): חשבו את היקף הטרפז '+me('DBCE')+'. (בסעיפים הקודמים: '+me('EC = 5')+', '+me('DE = 16')+'.)',h:['DB','BC','EC','DE'],a:49,hint:'DB + BC + CE + ED.'},
+{t:'<b>שאלה משולבת ב׳.</b> '+me('DE ∥ BC')+', '+me('AD = 2x')+', '+me('DB = x + 4')+', '+me('AE = 6')+', '+me('EC = 5')+'. <b>(א)</b> מצאו את '+me('x')+'.',h:['AD','DB','AE','EC'],a:6,hint:'2x : (x+4) = 6 : 5, מכפלה בהצלבה.'},
+{t:'<b>(ב)</b> (המשך): חשבו את '+me('AB')+'. (בסעיף א: '+me('x = 6')+'.)',h:['AD','DB'],a:22,hint:'AD = 12, DB = 10.'},
+{t:'<b>(ג)</b> (המשך): נתון '+me('BC = 33')+'. חשבו את '+me('DE')+'. (בסעיף ב: '+me('AB = 22')+'.)',h:['DE','BC'],a:18,hint:'DE : BC = AD : AB = 12 : 22.'},
+{t:'<b>שאלה משולבת ג׳.</b> '+me('DE ∥ BC')+', '+me('AD : DB = 1 : 2')+' ו־'+me('S(ABC) = 135')+'. <b>(א)</b> חשבו את שטח המשולש '+me('ADE')+'.',h:['AD','AB'],a:15,hint:'יחס הדמיון 1 : 3, ויחס השטחים 1 : 9.'},
+{t:'<b>(ב)</b> (המשך): חשבו את שטח הטרפז '+me('DBCE')+'. (בסעיף א: '+me('S(ADE) = 15')+'.)',h:['DB','BC'],a:120,hint:'135 פחות 15.'}]},
+{name:'רמה 4',sub:'אתגר: הוכחות ושעון חול',qs:[
+{t:'הוכחת משפט תאלס בעזרת שטחים: לחצו על השורות <b>לפי הסדר הנכון</b>.',h:['AD','DB','AE','EC'],ord:['נעביר את '+me('DC')+' ואת '+me('BE')+'.','בגלל '+me('DE ∥ BC')+', למשולשים '+me('DBE')+' ו־'+me('DEC')+' אותו בסיס '+me('DE')+' וגובה שווה, ולכן '+me('S(DBE) = S(DEC)')+'.','בגובה משותף: '+me('S(ADE) : S(DBE) = AD : DB')+' וגם '+me('S(ADE) : S(DEC) = AE : EC')+'.','המכנים שווים, ולכן '+me('AD : DB = AE : EC')+' ∎'],hint:'קודם בונים, אחר כך משווים שטחים, ובסוף מסיקים.'},
+{t:'בהוכחה יש <b>שורה אחת שגויה</b>. מצאו אותה.',h:[],bad:2,rows:['נתון '+me('DE ∥ BC')+', ולכן '+me('AD : DB = AE : EC')+'.','בחיבור קטעים: '+me('AD : AB = AE : AC')+'.','לכן '+me('DE : BC = AD : DB')+'.','לכן אם '+me('AD : AB = 2 : 5')+', אז '+me('DE = ⅖·BC')+'.'],hint:'ביחס ההדמיון, המכנה הוא הצלע השלמה AB ולא DB.'},
+{t:'<b>שאלה משולבת ד׳.</b> '+me('DE ∥ BC')+', '+me('AD : DB = 1 : 2')+', '+me('S(ABC) = 135')+', והאלכסונים '+me('BE')+' ו־'+me('CD')+' נחתכים ב־'+me('O')+'. <b>(א)</b> חשבו את '+me('S(DBCE)')+'.',h:['DB','BC'],f:'trap',a:120,hint:'135 פחות S(ADE) = 15.'},
+{t:'<b>(ב)</b> (המשך): חשבו את '+me('S(OBC)')+'. (נתון בטרפז: '+me('S(DOE) = k²·S(OBC)')+', '+me('S(DOB) = S(EOC) = k·S(OBC)')+', כאשר '+me('k = DE : BC = 1 : 3')+'; ובסעיף א: '+me('S(DBCE) = 120')+'.)',h:['DE','BC'],f:'trap',a:67.5,hint:'S(DBCE) = S(OBC)·(1 + 2k + k²) = S(OBC)·16/9.'},
+{t:'<b>(ג)</b> (המשך): חשבו את '+me('S(DOE)')+'. (בסעיף ב: '+me('S(OBC) = 67.5')+'.)',h:['DE'],f:'trap',a:7.5,hint:'S(DOE) = (1/9)·S(OBC).'},
+{t:'<b>שאלה משולבת ה׳ (תאלס הפוך).</b> '+me('AD = 6')+', '+me('DB = 9')+', '+me('AE = 8')+', '+me('EC = 12')+', '+me('BC = 25')+'. הוכיחו ש־'+me('DE ∥ BC')+' (שני היחסים שווים '+me('2 : 3')+') וחשבו את '+me('DE')+'.',h:['AD','DB','AE','EC'],a:10,hint:'אחרי שמוכיחים מקביליות: DE : BC = AD : AB = 6 : 15.'}]}];
+
+var st={lv:0,i:0,ok:0,done:[0,0,0,0],best:[0,0,0,0],mute:false,pick:[],hint:0,ans:0};
+try{var sv=JSON.parse(localStorage.getItem('prt')||'null');if(sv){for(var z=0;z<4;z++){st.best[z]=(sv.best||[])[z]||0;st.done[z]=(sv.done||[])[z]||0}}}catch(e){}
+function save(){try{localStorage.setItem('prt',JSON.stringify({best:st.best,done:st.done}))}catch(e){}}
+var AC=null;function tone(f,t,d,ty,v){if(st.mute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();var o=AC.createOscillator(),g=AC.createGain();o.type=ty||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,AC.currentTime+t);g.gain.linearRampToValueAtTime(v||.18,AC.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+t+d);o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+d+.05)}catch(e){}}
+function sOK(){[523,659,784,1047].forEach(function(f,i){tone(f,i*.09,.28,'triangle')})}
+function sBAD(){tone(220,0,.25,'sine',.14);tone(180,.12,.3,'sine',.12)}
+function sWIN(){[523,659,784,1047,1319,1568].forEach(function(f,i){tone(f,i*.11,.45,'triangle')})}
+var cv=document.getElementById('prconf'),cx=cv.getContext('2d'),P=[],run=0;
+function conf(n,ox,oy){cv.width=innerWidth;cv.height=innerHeight;var cl=['#22d3ee','#5eead4','#a78bfa','#3a5bdc','#f0abfc','#fff'],sy=['∑','π','√','∞','θ','½','Δ'];for(var i=0;i<n;i++){var a=Math.random()*6.28,v=3+Math.random()*9;P.push({x:ox,y:oy,vx:Math.cos(a)*v,vy:Math.sin(a)*v-3,c:cl[i%6],s:Math.random()<.5?sy[i%7]:'',z:10+Math.random()*14,l:1,r:Math.random()*6})}if(!run){run=1;fr()}}
+function fr(){cx.clearRect(0,0,cv.width,cv.height);P=P.filter(function(p){return p.l>0});P.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.25;p.vx*=.985;p.l-=.014;p.r+=.2;cx.globalAlpha=Math.max(0,p.l);cx.fillStyle=p.c;cx.font='700 '+p.z+'px serif';if(p.s)cx.fillText(p.s,p.x,p.y);else{cx.fillRect(p.x,p.y,7,7)}});if(P.length)requestAnimationFrame(fr);else{run=0;cx.clearRect(0,0,cv.width,cv.height)}}
+function rect(el){var r=el.getBoundingClientRect();return[r.left+r.width/2,r.top+r.height/2]}
+function norm(s){s=String(s).trim().replace(/,/g,'.').replace(/[\u200e\u200f]/g,'');if(s.indexOf('/')>0){var p=s.split('/');return parseFloat(p[0])/parseFloat(p[1])}return parseFloat(s)}
+function head(){var h='';LV.forEach(function(l,i){var lock=i>0&&!st.done[i-1];h+='<button class="pr-lv'+(i==st.lv?' on':'')+(lock?' lock':'')+'" data-i="'+i+'">'+(lock?'🔒 ':'')+l.name+'<small>'+l.sub+' · '+('★'.repeat(st.best[i])+'☆'.repeat(3-st.best[i]))+'</small></button>'});h+='<button class="pr-mute" id="prmute" title="צליל">'+(st.mute?'🔇':'🔊')+'</button>';document.getElementById('prlv').innerHTML=h;
+document.querySelectorAll('.pr-lv').forEach(function(b){b.onclick=function(){var i=+b.dataset.i;if(i>0&&!st.done[i-1])return;st.lv=i;st.i=0;st.ok=0;render()}});document.getElementById('prmute').onclick=function(){st.mute=!st.mute;head()};
+var n=LV[st.lv].qs.length;document.getElementById('prbar').style.width=(st.i/n*100)+'%';document.getElementById('prcnt').textContent='שאלה '+Math.min(st.i+1,n)+' מתוך '+n;document.getElementById('prstars').textContent='נכון: '+st.ok}
+function fb(t,c){var f=document.getElementById('prfb');f.className='pr-fb '+c;f.innerHTML=t}
+function next(){var b=document.getElementById('prnx');b.style.display='inline-block'}
+function right(el){st.ok+=st.ans?0:1;st.ans=1;sOK();var r=el?rect(el):[innerWidth/2,innerHeight/2];conf(60,r[0],r[1]);fb('כל הכבוד! ✓','ok');next();head()}
+function wrong(){sBAD();st.hint=1}
+function render(){head();st.ans=0;st.pick=[];var L=LV[st.lv],n=L.qs.length,m=document.getElementById('prmain');
+if(st.i>=n){var pct=st.ok/n,stars=pct>=.99?3:pct>=.7?2:pct>=.4?1:0;if(stars>st.best[st.lv])st.best[st.lv]=stars;if(pct>=.6)st.done[st.lv]=1;save();sWIN();conf(160,innerWidth/2,innerHeight/3);head();
+m.innerHTML='<div class="pr-card" style="display:block"><div class="pr-end"><div class="pr-stars">'+'★'.repeat(stars)+'☆'.repeat(3-stars)+'</div><h2>'+(pct>=.6?'סיימת את '+L.name+'!':'כמעט! נסו שוב')+'</h2><p style="font-size:19px">ענית נכון על '+st.ok+' מתוך '+n+'.</p><button class="pr-btn" id="prre">נסו שוב</button> '+(st.lv<3&&st.done[st.lv]?'<button class="pr-btn" id="prgo">לרמה הבאה ←</button>':'')+'</div></div>';
+document.getElementById('prre').onclick=function(){st.i=0;st.ok=0;render()};var g=document.getElementById('prgo');if(g)g.onclick=function(){st.lv++;st.i=0;st.ok=0;render()};return}
+var q=L.qs[st.i],h='<div class="pr-card"><div class="pr-fig">'+fig(q.h,q.f)+'</div><div><p class="pr-q">'+q.t+'</p>';
+if(q.o){h+='<div class="pr-opts">';q.o.map(function(t,i){return[t,i]}).sort(function(){return Math.random()-.5}).forEach(function(p){h+='<button class="pr-opt" data-i="'+p[1]+'">'+p[0]+'</button>'});h+='</div>'}
+else if(q.ord){h+='<div class="pr-ord" id="prord">';q.ord.map(function(t,i){return[t,i]}).sort(function(){return Math.random()-.5}).forEach(function(p){h+='<button data-i="'+p[1]+'"><b></b><span>'+p[0]+'</span></button>'});h+='</div>'}
+else if(q.rows){h+='<div class="pr-ord" id="prrow">';q.rows.forEach(function(t,i){h+='<button data-i="'+i+'"><b>'+(i+1)+'</b><span>'+t+'</span></button>'});h+='</div>'}
+else h+='<div class="pr-in"><input id="prin" inputmode="decimal" autocomplete="off" placeholder="?"><button class="pr-btn" id="prchk">בדיקה</button></div>';
+h+='<div class="pr-fb" id="prfb"></div><div style="display:flex;gap:10px;margin-top:8px"><button class="pr-btn sec" id="prh">💡 רמז</button><button class="pr-btn" id="prnx" style="display:none">'+(st.i+1>=n?'לסיום ←':'הבאה ←')+'</button></div></div></div>';
+m.innerHTML=h;
+document.getElementById('prh').onclick=function(){fb('💡 '+q.hint,'hint')};
+document.getElementById('prnx').onclick=function(){st.i++;render()};
+document.querySelectorAll('.pr-opt').forEach(function(b){b.onclick=function(){if(st.ans)return;if(+b.dataset.i===q.c){b.classList.add('ok');document.querySelectorAll('.pr-opt').forEach(function(x){x.disabled=true});right(b)}else{b.classList.add('bad');b.disabled=true;wrong();fb('לא מדויק, נסו שוב. 💡 '+q.hint,'bad')}}});
+var chk=document.getElementById('prchk');if(chk){var go=function(){if(st.ans)return;var v=norm(document.getElementById('prin').value);if(isNaN(v))return fb('הקלידו מספר','bad');if(Math.abs(v-q.a)<1e-6)right(chk);else{wrong();fb('לא נכון, נסו שוב. 💡 '+q.hint,'bad')}};chk.onclick=go;var inp=document.getElementById('prin');inp.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();if(st.ans)document.getElementById('prnx').click();else go()}};inp.focus()}
+var od=document.getElementById('prord');if(od)od.querySelectorAll('button').forEach(function(b){b.onclick=function(){if(st.ans||b.classList.contains('picked'))return;var i=+b.dataset.i;if(i===st.pick.length){st.pick.push(i);b.classList.add('picked','right');b.querySelector('b').textContent=st.pick.length;sOK();if(st.pick.length===q.ord.length)right(b)}else{b.classList.add('wrong');setTimeout(function(){b.classList.remove('wrong')},500);wrong();fb('זה לא הצעד הבא. 💡 '+q.hint,'bad')}}});
+var rw=document.getElementById('prrow');if(rw)rw.querySelectorAll('button').forEach(function(b){b.onclick=function(){if(st.ans)return;if(+b.dataset.i===q.bad){b.classList.add('right');right(b);fb('נכון! היחס הוא ½ ולא ¼ ✓','ok')}else{b.classList.add('wrong');setTimeout(function(){b.classList.remove('wrong')},500);wrong();fb('השורה הזאת תקינה. 💡 '+q.hint,'bad')}}})}
+render()})();
+</script></div><div style="text-align:center;color:#8a969f;font-size:14px;padding:6px 0 22px">מתמטיקה · לכל בעיה יש פתרון, להנות מהאתגר</div><script>
+(function(){
+if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+var SYM=['∑','π','√','∞','∠','Δ','θ','x²','½','≈','⊥','∥','α','%'],COL=['#67e8f9','#5eead4','#a7f3d0','#c4b5fd','#ffffff','#a5b4fc','#f0abfc'];
+document.querySelectorAll('.hero').forEach(function(h){
+var c=document.createElement('canvas');c.className='hfx';h.insertBefore(c,h.firstChild);
+var x=c.getContext('2d'),W,H,D=Math.min(devicePixelRatio||1,2),P=[],vis=true,mx=-999,my=-999,raf;
+function rs(){var r=h.getBoundingClientRect();W=r.width;H=r.height;c.width=W*D;c.height=H*D;x.setTransform(D,0,0,D,0,0)}
+rs();addEventListener('resize',rs);
+function mk(px,py,sp,burst){var a=Math.random()*6.283,v=sp*(.3+Math.random());
+return{x:px,y:py,vx:Math.cos(a)*v,vy:Math.sin(a)*v,s:burst?(Math.random()<.5?'':SYM[Math.random()*SYM.length|0]):SYM[Math.random()*SYM.length|0],k:Math.random()*3|0,z:burst?6+Math.random()*12:10+Math.random()*22,c:COL[Math.random()*COL.length|0],r:Math.random()*6.28,vr:(Math.random()-.5)*.08,l:burst?1:2,d:burst?.012+Math.random()*.012:0,t:Math.random()*6.28}}
+function boom(px,py,n,sp){for(var i=0;i<n;i++)P.push(mk(px,py,sp,true))}
+function amb(){for(var i=0;i<Math.min(26,W/36|0);i++){var p=mk(Math.random()*W,Math.random()*H,.35,false);p.l=1;P.push(p)}}
+amb();
+function sock(){['shock','shock s2'].forEach(function(cl){var s=document.createElement('div');s.className=cl;h.appendChild(s);setTimeout(function(){s.remove()},2200)})}
+setTimeout(function(){boom(W*.22,H*.5,70,9);boom(W*.75,H*.5,70,9);sock()},150);
+setInterval(function(){if(vis&&!document.hidden)boom(W*(.1+Math.random()*.8),H*(.15+Math.random()*.6),26,6)},4200);
+h.addEventListener('pointerdown',function(e){var r=h.getBoundingClientRect();boom(e.clientX-r.left,e.clientY-r.top,60,10);sock()});
+h.addEventListener('pointermove',function(e){var r=h.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top});
+h.addEventListener('pointerleave',function(){mx=my=-999});
+if(window.IntersectionObserver)new IntersectionObserver(function(en){vis=en[0].isIntersecting;if(vis&&!raf)loop()}).observe(h);
+function drawShape(p){x.beginPath();if(p.k==0){x.arc(0,0,p.z*.35,0,6.283)}else if(p.k==1){var r=p.z*.5;x.moveTo(0,-r);x.lineTo(r*.87,r*.5);x.lineTo(-r*.87,r*.5);x.closePath()}else{var q=p.z*.4;x.rect(-q,-q,2*q,2*q)}x.stroke()}
+function loop(){raf=0;if(!vis)return;x.clearRect(0,0,W,H);
+for(var i=P.length-1;i>=0;i--){var p=P[i];
+if(mx>-900){var dx=p.x-mx,dy=p.y-my,d2=dx*dx+dy*dy;if(d2<14000){var f=(1-d2/14000)*1.4,d=Math.sqrt(d2)||1;p.vx+=dx/d*f;p.vy+=dy/d*f}}
+p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.t+=.03;
+if(p.d){p.vx*=.965;p.vy*=.965;p.vy+=.03;p.l-=p.d;if(p.l<=0){P.splice(i,1);continue}}
+else{p.vx*=.985;p.vy*=.985;p.vx+=Math.cos(p.t)*.004;p.vy+=Math.sin(p.t*.8)*.004;if(p.x<-30)p.x=W+30;if(p.x>W+30)p.x=-30;if(p.y<-30)p.y=H+30;if(p.y>H+30)p.y=-30}
+var a=p.d?Math.min(1,p.l*1.4):.28+.16*Math.sin(p.t*2);
+x.save();x.translate(p.x,p.y);x.rotate(p.r);x.globalAlpha=a;x.shadowColor=p.c;x.shadowBlur=p.d?14:8;x.fillStyle=x.strokeStyle=p.c;x.lineWidth=1.6;
+if(p.s){x.font='700 '+p.z+'px "STIX Two Text","Frank Ruhl Libre",serif';x.textAlign='center';x.textBaseline='middle';x.fillText(p.s,0,0)}else drawShape(p);
+x.restore()}
+raf=requestAnimationFrame(loop)}
+loop()})
+})();
+</script></body></html>
