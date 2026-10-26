@@ -17,7 +17,9 @@
       });
     } catch (e) { }
   }
+  var bulk = false;
   document.addEventListener('click', function (e) {
+    if (bulk) return;
     var b = e.target.closest && e.target.closest('.chk, .mc-chk'); if (!b) return;
     setTimeout(function () {
       var host = b.closest('.part, .typed, .mc-q'); if (!host) return;
@@ -30,7 +32,36 @@
       var host = e.target.closest('.part, .typed'); var fb = host && host.querySelector('.fb'); if (fb && fb.classList.contains('ok')) chime();
     }, 0);
   });
+  function checkAll(card, btns, fbs) {
+    bulk = true;
+    try { btns.forEach(function (x) { x.click(); }); } finally { bulk = false; }
+    setTimeout(function () {
+      var all = fbs().every(function (f) { return f.classList.contains('ok'); });
+      if (all) chime();
+    }, 0);
+  }
+  function addCheckAll() {
+    Array.prototype.forEach.call(document.querySelectorAll('#main .typed.multi'), function (box) {
+      var ctl = box.closest('.ex-ctl'); if (!ctl || ctl.querySelector('.chk-all')) return;
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'btn chk-all'; b.textContent = 'בדוק הכל';
+      var parts = function () { return box._parts || Array.prototype.slice.call(box.querySelectorAll('.part')); };
+      b.addEventListener('click', function () {
+        checkAll(ctl, parts().map(function (p) { return p.querySelector('.chk'); }), function () { return parts().map(function (p) { return p.querySelector('.fb'); }); });
+      });
+      ctl.insertBefore(b, ctl.querySelector('.show-ans'));
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('#main .mc'), function (box) {
+      var qs = box.querySelectorAll('.mc-q'); if (qs.length < 2 || box.querySelector('.chk-all')) return;
+      var row = document.createElement('div'); row.className = 'mc-row';
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'btn chk-all'; b.textContent = 'בדוק הכל';
+      b.addEventListener('click', function () {
+        checkAll(box, Array.prototype.map.call(qs, function (q) { return q.querySelector('.mc-chk'); }), function () { return Array.prototype.map.call(qs, function (q) { return q.querySelector('.fb'); }); });
+      });
+      row.appendChild(b); box.appendChild(row);
+    });
+  }
   function init() {
+    addCheckAll();
     var b = document.getElementById('btn-sound'); if (!b) return;
     function paint() { b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.textContent = on ? 'צליל: פועל' : 'צליל: כבוי'; }
     b.addEventListener('click', function () { on = !on; try { localStorage.setItem(KEY, on ? 'on' : 'off'); } catch (e) { } paint(); if (on) chime(); });

@@ -32,3 +32,5 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 .math-disp .katex-display{margin:.2em 0}
 .fig svg text{direction:ltr;unicode-bidi:bidi-override}
 .ex-id{direction:ltr;unicode-bidi:isolate}
+.chk-all{margin-inline-end:8px}
+.mc > .mc-row{margin-top:8px}
