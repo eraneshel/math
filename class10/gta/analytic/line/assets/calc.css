@@ -55,8 +55,11 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 .act-tip{font-size:14px;color:var(--mut);margin:4px 0 0}
 @media print{.fig-ctl-row,.act-ctl,.fig-read{display:none}}
 
-.minus-btn{min-width:44px;font-size:22px;line-height:1;padding:6px 10px;margin-inline-start:6px}
-.typed label{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.negwrap{display:flex;gap:6px;align-items:stretch;min-width:0}
+.negwrap input{flex:1 1 auto;min-width:0}
+.neg{flex:none;width:44px;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--g,#2f5bd8);font:700 20px/1 Rubik,sans-serif;cursor:pointer}
+.neg:active{background:var(--soft)}
+@media print{.neg{display:none}}
 
 .svg-pt.calc{fill:var(--l2)}
 

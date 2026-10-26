@@ -94,17 +94,16 @@
     /* ---- minus button for phones (decimal keypad has no minus) ---- */
   function addMinus() {
     Array.prototype.forEach.call(document.querySelectorAll('#main input[inputmode=decimal]'), function (inp) {
-      if (inp.parentNode.querySelector('.minus-btn')) return;
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'btn small ghost minus-btn'; b.textContent = '−';
-      b.setAttribute('aria-label', 'הוספה או הסרה של סימן מינוס');
-      b.addEventListener('mousedown', function (e) { e.preventDefault(); });
-      b.addEventListener('click', function (e) {
-        e.preventDefault(); e.stopPropagation();
-        var v = inp.value.trim().replace(/^[−–-]\s*/, function () { return '-'; });
-        inp.value = v.charAt(0) === '-' ? v.slice(1) : '-' + v;
+      if (inp.parentNode.classList.contains('negwrap')) return;
+      var w = document.createElement('span'); w.className = 'negwrap';
+      inp.parentNode.insertBefore(w, inp); w.appendChild(inp);
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'neg'; b.textContent = '\u00b1'; b.setAttribute('aria-label', 'הפוך סימן (מינוס)');
+      b.addEventListener('click', function () {
+        var v = inp.value.replace(/^\s+/, '');
+        inp.value = /^[-\u2212]/.test(v) ? v.replace(/^[-\u2212]\s*/, '') : '-' + v;
         inp.dispatchEvent(new Event('input', { bubbles: true })); inp.focus();
       });
-      inp.parentNode.insertBefore(b, inp.nextSibling);
+      w.appendChild(b);
     });
   }
   function init() {
