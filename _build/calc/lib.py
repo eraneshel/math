@@ -72,7 +72,7 @@ def _mc(id, qs, head='בחרו את התשובה הנכונה בכל סעיף'):
 TAG = {'example': ('t-example', 'דוגמה'), 'guided': ('t-guided', 'מודרך'), 'solo': ('t-solo', 'עצמאי'), 'bagrut': ('t-bagrut', 'בגרות'),
        'quick': ('t-solo', 'תרגול מהיר')}
 
-def ex(id, kind, body, keys=None, labels=None, mc=None, answer=None, solution=None, hint_text=None, star=False):
+def ex(id, kind, body, keys=None, labels=None, mc=None, answer=None, solution=None, hint_text=None, star=False, act=False):
     cls, name = TAG[kind]
     datakind = 'solo' if kind == 'quick' else kind
     head = '<header class="ex-h"><span class="ex-id">%s</span><span class="tag %s">%s</span><span class="ex-state" aria-live="polite"></span></header>' % (id, cls, name)
@@ -82,7 +82,10 @@ def ex(id, kind, body, keys=None, labels=None, mc=None, answer=None, solution=No
     if kind == 'example':
         return ('<article class="ex example" id="ex-%s" data-id="%s" data-kind="example">%s<div class="ex-body">%s</div>'
                 '<div class="ex-foot"><button type="button" class="btn small ok-ex">הבנתי</button></div></article>\n') % (id, id, head, b)
-    ctl = _mc(id, mc) if mc else _typed(id, keys, labels)
+    if act:
+        ctl = '<div class="act-ctl" data-act="%s"><button type="button" class="btn small act-chk">בדיקה</button><span class="fb" aria-live="polite"></span></div>' % id
+    else:
+        ctl = _mc(id, mc) if mc else _typed(id, keys, labels)
     ans = ''
     if answer or solution:
         ans = '<div class="ex-ans" hidden><div class="ans-box"><strong>תשובה:</strong> %s</div>' % md(answer or '')

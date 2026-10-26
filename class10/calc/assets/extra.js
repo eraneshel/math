@@ -32,6 +32,37 @@
       var host = e.target.closest('.part, .typed'); var fb = host && host.querySelector('.fb'); if (fb && fb.classList.contains('ok')) chime();
     }, 0);
   });
+
+  /* ---- active figure exercises + layer reveal ---- */
+  function figOf(card) { var f = card.querySelector('.fig[data-fig]'); return f && f._api ? f : null; }
+  function syncReveal(card) {
+    var f = figOf(card); if (!f) return;
+    var hosts = card.querySelectorAll('.part, .mc-q');
+    if (!hosts.length) hosts = card.querySelectorAll('.typed');
+    Array.prototype.forEach.call(hosts, function (h, i) {
+      var fb = h.querySelector('.fb'); if (fb && fb.classList.contains('ok')) f._api.reveal(i + 1);
+    });
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.act-chk');
+    if (b) {
+      var card = b.closest('.ex'), f = figOf(card), fb = card.querySelector('.act-ctl .fb'); if (!f) return;
+      fb.className = 'fb';
+      if (f._api.check()) {
+        fb.classList.add('ok'); fb.textContent = 'נכון ✓';
+        var id = card.getAttribute('data-id');
+        if (window.BookApp) window.BookApp.setDone(id, 'ok');
+        f._api.reveal('act'); chime();
+      } else { fb.classList.add('no'); fb.textContent = f._api.hint || 'עדיין לא. שנו את השרטוט ונסו שוב.'; }
+      return;
+    }
+    var c = e.target.closest && e.target.closest('.chk, .mc-chk, .chk-all');
+    if (c) { var card2 = c.closest('.ex'); if (card2) setTimeout(function () { syncReveal(card2); }, 10); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' || !e.target.matches || !e.target.matches('.typed input')) return;
+    var card = e.target.closest('.ex'); if (card) setTimeout(function () { syncReveal(card); }, 10);
+  });
   function checkAll(card, btns, fbs) {
     bulk = true;
     try { btns.forEach(function (x) { x.click(); }); } finally { bulk = false; }

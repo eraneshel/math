@@ -407,6 +407,6 @@
     route({ initial: true });
     if (TEACHER) { var nn = $('#notice'); nn.hidden = false; }
   }
-  window.BookApp = { go: go, state: state };
+  window.BookApp = { go: go, state: state, setDone: setDone };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();

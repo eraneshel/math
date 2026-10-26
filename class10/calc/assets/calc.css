@@ -34,3 +34,23 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 .ex-id{direction:ltr;unicode-bidi:isolate}
 .chk-all{margin-inline-end:8px}
 .mc > .mc-row{margin-top:8px}
+
+/* ---- dynamic figures ---- */
+.svg-drag{fill:var(--l1);stroke:var(--card);stroke-width:2.5px;cursor:grab;touch-action:none;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))}
+.svg-drag.on{cursor:grabbing;fill:var(--blue)}
+.svg-drag:focus{outline:none;stroke:var(--ink);stroke-width:3px}
+.svg-val{font:600 15px Rubik,Arial,sans-serif;fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px}
+.svg-line.dash{stroke-dasharray:8 6}
+.layer{transition:opacity .35s}
+.layer.is-hidden{display:none}
+.fig-read{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin:6px 0 2px;font:700 17px "STIX Two Text","Frank Ruhl Libre",serif}
+.fig-read .rd{background:var(--fill);padding:3px 12px;border-radius:999px;direction:rtl;unicode-bidi:isolate}
+.fig-ctl-row{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;justify-content:center;margin:8px 0 2px}
+.fig-ctl{display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:center}
+.fig-ctl .sl{display:flex;align-items:center;gap:8px;font-weight:700}
+.fig-ctl .sl-n{font:italic 700 19px "STIX Two Text",serif;min-width:1.4em;text-align:center;direction:ltr}
+.fig-ctl input[type=range]{width:min(210px,40vw);direction:ltr;accent-color:var(--l1)}
+.fig-ctl .sl-v{min-width:3em;text-align:center;direction:ltr;font-variant-numeric:tabular-nums;background:var(--fill);border-radius:8px;padding:2px 6px}
+.act-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
+.act-tip{font-size:14px;color:var(--mut);margin:4px 0 0}
+@media print{.fig-ctl-row,.act-ctl,.fig-read{display:none}}
