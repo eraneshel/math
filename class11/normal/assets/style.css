@@ -369,7 +369,11 @@ fieldset.tl{border:2px solid var(--line);border-radius:12px;margin:0 0 12px;padd
 .mc-exp{margin-top:8px;padding:8px 12px;border-radius:10px;background:rgba(47,91,216,.08);font-size:.95rem;line-height:1.7}
 @media (max-width:480px){.tbl th,.tbl td{padding:6px 6px}}
 .ex-body li > .part.inline{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;max-width:420px;margin:8px 0 6px}.ex-body li > .part.inline label{display:block}.ex-body li > .part.inline .fb{grid-column:1/-1;font-size:14px}.ex-body li > .part.inline input{width:100%}
-.ex-body li > .part.inline label > span{display:none}
+.ex-body li > .part.inline label > span:not(.negwrap){display:none}
 .ex-body li > .part.inline input{padding:10px 12px;border:2px solid var(--line);border-radius:10px;font:inherit;font-size:16px;text-align:center;background:var(--card);color:var(--ink)}
 .ex-body li > .part.inline input.right{border-color:#1f9d55;background:rgba(31,157,85,.12)}
 .ex-body li > .part.inline input.wrong{border-color:#d64545;background:rgba(214,69,69,.12)}
+.negwrap{display:flex;gap:6px;align-items:stretch;min-width:0}
+.negwrap input{flex:1 1 auto;min-width:0}
+.neg{flex:none;width:44px;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--g,#2f5bd8);font:700 20px/1 Rubik,sans-serif;cursor:pointer}
+.neg:active{background:var(--soft)}

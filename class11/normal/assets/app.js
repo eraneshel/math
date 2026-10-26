@@ -125,8 +125,23 @@
       box.hidden = true;
     });
   }
+  function addNegButtons() {
+    $$('.typed input[type="text"], .part.inline input[type="text"]').forEach(function (inp) {
+      if (inp.parentNode.classList.contains('negwrap')) return;
+      var w = document.createElement('span'); w.className = 'negwrap';
+      inp.parentNode.insertBefore(w, inp); w.appendChild(inp);
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'neg'; b.textContent = '\u00b1'; b.setAttribute('aria-label', 'הפוך סימן (מינוס)');
+      b.addEventListener('click', function () {
+        var v = inp.value.replace(/^\s+/, '');
+        inp.value = /^[-\u2212]/.test(v) ? v.replace(/^[-\u2212]\s*/, '') : '-' + v;
+        inp.dispatchEvent(new Event('input', { bubbles: true })); inp.focus();
+      });
+      w.appendChild(b);
+    });
+  }
   function initTyped() {
     inlineParts();
+    addNegButtons();
     $$('.typed').forEach(function (box) {
       var id = box.getAttribute('data-typed'), multi = box.classList.contains('multi'), ins = typedInputs(box);
       var saved = state.myAnswers[id];
