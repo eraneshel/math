@@ -132,7 +132,7 @@ text{text-anchor:middle}
 <circle id="ex-d" r="3" class="geo-point"/><circle id="ex-e" r="3" class="geo-point"/>
 <g id="ex-pts"></g><g id="ex-txt"></g>
 <g id="ex-h"></g></svg></div>
-    <div class="fcard ctl"><p class="hint">גוררים את המחוון, ואת הקדקודים <span class="math-expr">A</span>, <span class="math-expr">B</span>, <span class="math-expr">C</span> עצמם. הישר <span class="math-expr">DE</span> נשאר מקביל ל־<span class="math-expr">BC</span>, אורכי הקטעים משתנים, אבל שני היחסים תמיד שווים.</p>
+    <div class="fcard ctl"><p class="hint">גוררים את המחוון, את הנקודות D ו־E בסרטוט, ואת הקדקודים <span class="math-expr">A</span>, <span class="math-expr">B</span>, <span class="math-expr">C</span> עצמם. הישר <span class="math-expr">DE</span> נשאר מקביל ל־<span class="math-expr">BC</span>, אורכי הקטעים משתנים, אבל שני היחסים תמיד שווים.</p>
       <input type="range" id="ex-t" min="10" max="90" value="40" aria-label="מיקום הישר" oninput="exMove(this.value)">
       <div class="ratio-row"><div id="ex-r1"></div><div id="ex-r2"></div></div>
       <p class="why">למה זה תמיד נכון? נוכיח למטה.</p></div>
@@ -177,6 +177,11 @@ segs.forEach(function(n){T[n]=mk('text',{'text-anchor':'middle','style':'font:70
   h.addEventListener('click',function(e){e.stopPropagation();});
 });
 svg.addEventListener('click',function(e){e.stopPropagation();});
+['D','E'].forEach(function(n){var h=mk('circle',{r:13,fill:'rgba(255,138,61,0.15)',stroke:'#ff8a3d','stroke-width':1.5,'stroke-dasharray':'3,3',style:'cursor:grab;touch-action:none'},hd);H[n]=h;
+  h.addEventListener('pointerdown',function(e){e.stopPropagation();e.preventDefault();h.setPointerCapture(e.pointerId);h._d=true;});
+  h.addEventListener('pointermove',function(e){if(!h._d)return;var pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;var q=pt.matrixTransform(svg.getScreenCTM().inverse());
+    var a=P.A,b=P[n==='D'?'B':'C'],dx=b[0]-a[0],dy=b[1]-a[1];t=Math.max(0.1,Math.min(0.9,((q.x-a[0])*dx+(q.y-a[1])*dy)/(dx*dx+dy*dy)));document.getElementById('ex-t').value=Math.round(t*100);draw();});
+  h.addEventListener('pointerup',function(){h._d=false;});h.addEventListener('click',function(e){e.stopPropagation();});});
 function pos(a,b){return [a[0]+t*(b[0]-a[0]),a[1]+t*(b[1]-a[1])];}
 function dist(p,q){return Math.hypot(p[0]-q[0],p[1]-q[1])/U;}
 function seg(id,p,q){var e=document.getElementById(id);e.setAttribute('x1',p[0]);e.setAttribute('y1',p[1]);e.setAttribute('x2',q[0]);e.setAttribute('y2',q[1]);}
@@ -190,7 +195,7 @@ function draw(){
   document.getElementById('ex-tri').setAttribute('points',[A,B,C].map(function(p){return p.join(',');}).join(' '));
   seg('ex-de',D,E);seg('ex-ad',A,D);seg('ex-db',D,B);seg('ex-ae',A,E);seg('ex-ec',E,C);
   [['ex-d',D],['ex-e',E]].forEach(function(x){var c=document.getElementById(x[0]);c.setAttribute('cx',x[1][0]);c.setAttribute('cy',x[1][1]);});
-  ['A','B','C'].forEach(function(n){H[n].setAttribute('cx',P[n][0]);H[n].setAttribute('cy',P[n][1]);});
+  ['A','B','C'].forEach(function(n){H[n].setAttribute('cx',P[n][0]);H[n].setAttribute('cy',P[n][1]);});H.D.setAttribute('cx',D[0]);H.D.setAttribute('cy',D[1]);H.E.setAttribute('cx',E[0]);H.E.setAttribute('cy',E[1]);
   var out=function(p){var dx=p[0]-G[0],dy=p[1]-G[1],d=Math.hypot(dx,dy)||1;return [p[0]+dx/d*13,p[1]+dy/d*13+4];};
   var q;q=out(A);place(L.A,q[0],q[1]-4);q=out(B);place(L.B,q[0],q[1]);q=out(C);place(L.C,q[0],q[1]);
   place(L.D,D[0]-13,D[1]+5);place(L.E,E[0]+13,E[1]+5);
@@ -233,7 +238,7 @@ upd();
   <div class="thm2"><span class="tag">משפט תאלס המורחב</span><p>ישר המקביל לצלע במשולש וחותך את שתי הצלעות האחרות, יוצר יחס שווה בין הקטעים על הצלעות לבין יחס הקטע המקביל לצלע: <b>הקטע מהקדקוד חלקי הצלע כולה</b>.</p><div class="giv"><div><b>נתון:</b> במשולש <span class="math-expr">ABC</span>: <span class="math-expr">D</span> על <span class="math-expr">AB</span>, <span class="math-expr">E</span> על <span class="math-expr">AC</span>, <span class="math-expr">DE ∥ BC</span>.</div><div><b>צ״ל:</b> <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AD</span><span>AB</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE</span><span>AC</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>DE</span><span>BC</span></span></span></div></div></div>
   <div class="ex-grid">
     <div class="fcard"><svg id="t2-svg" viewBox="0 0 320 190" style="touch-action:none;user-select:none"></svg></div>
-    <div class="fcard ctl"><p class="hint">גוררים את המחוון ואת הקדקודים <span class="math-expr">A</span>, <span class="math-expr">B</span>, <span class="math-expr">C</span>. הישר <span class="math-expr">DE</span> נשאר מקביל ל־<span class="math-expr">BC</span>: האורכים משתנים, אבל שלושת היחסים נשארים שווים.</p><input type="range" id="t2-s" min="10" max="90" value="40" aria-label="מיקום הישר" oninput="t2d(this.value)">
+    <div class="fcard ctl"><p class="hint">גוררים את המחוון, את הנקודות <span class="math-expr">D</span> ו־<span class="math-expr">E</span> בסרטוט, או את הקדקודים <span class="math-expr">A</span>, <span class="math-expr">B</span>, <span class="math-expr">C</span>. הישר <span class="math-expr">DE</span> נשאר מקביל ל־<span class="math-expr">BC</span>: האורכים משתנים, אבל שלושת היחסים נשארים שווים.</p><input type="range" id="t2-s" min="10" max="90" value="40" aria-label="מיקום הישר" oninput="t2d(this.value)">
       <div class="ratio-row three"><div id="t2-r1"></div><div id="t2-r2"></div><div id="t2-r3"></div></div>
       <p class="why">שלושת היחסים שווים תמיד. למה? נוכיח למטה.</p></div>
   </div>
@@ -300,6 +305,13 @@ var H={};
   h.addEventListener('pointermove',function(ev){if(!h._d)return;var pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;var q=pt.matrixTransform(svg.getScreenCTM().inverse());
     P[n]=[Math.max(14,Math.min(306,q.x)),Math.max(16,Math.min(172,q.y))];draw();});
   h.addEventListener('pointerup',function(){h._d=false;});h.addEventListener('click',function(ev){ev.stopPropagation();});});
+['D','E'].forEach(function(n){var h=mk('circle',{r:13,fill:'rgba(255,138,61,0.15)',stroke:'#ff8a3d','stroke-width':1.5,'stroke-dasharray':'3,3',style:'cursor:grab;touch-action:none'});H[n]=h;
+  h.addEventListener('pointerdown',function(ev){ev.stopPropagation();ev.preventDefault();h.setPointerCapture(ev.pointerId);h._d=true;});
+  h.addEventListener('pointermove',function(ev){if(!h._d)return;var pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;var q=pt.matrixTransform(svg.getScreenCTM().inverse());
+    var a=P.A,b=P[n==='D'?'B':'C'],dx=b[0]-a[0],dy=b[1]-a[1],s=Math.max(0.08,Math.min(0.92,((q.x-a[0])*dx+(q.y-a[1])*dy)/(dx*dx+dy*dy)));
+    if(MODE==='t2'){d=s;document.getElementById(K+'-s').value=Math.round(s*100);}else if(n==='D'){d=s;document.getElementById(K+'-sd').value=Math.round(s*100);}else{e=s;document.getElementById(K+'-se').value=Math.round(s*100);}
+    draw();});
+  h.addEventListener('pointerup',function(){h._d=false;});h.addEventListener('click',function(ev){ev.stopPropagation();});});
 svg.addEventListener('click',function(ev){ev.stopPropagation();});
 function pos(a,b,s){return [a[0]+s*(b[0]-a[0]),a[1]+s*(b[1]-a[1])];}
 function dist(p,q){return Math.hypot(p[0]-q[0],p[1]-q[1])/U;}
@@ -313,6 +325,7 @@ function draw(){
   if(MODE==='t2'){sDB.setAttribute('opacity',0);sEC.setAttribute('opacity',0);}
   cd.setAttribute('cx',D[0]);cd.setAttribute('cy',D[1]);ce.setAttribute('cx',E[0]);ce.setAttribute('cy',E[1]);
   ['A','B','C'].forEach(function(n){H[n].setAttribute('cx',P[n][0]);H[n].setAttribute('cy',P[n][1]);});
+  H.D.setAttribute('cx',D[0]);H.D.setAttribute('cy',D[1]);H.E.setAttribute('cx',E[0]);H.E.setAttribute('cy',E[1]);
   var out=function(p){var dx=p[0]-G[0],dy=p[1]-G[1],q=Math.hypot(dx,dy)||1;return [p[0]+dx/q*13,p[1]+dy/q*13+4];};
   var q=out(A);place(L.A,q[0],q[1]-4);q=out(B);place(L.B,q[0],q[1]);q=out(C);place(L.C,q[0],q[1]);
   place(L.D,D[0]-13,D[1]+5);place(L.E,E[0]+13,E[1]+5);L.D.setAttribute('text-anchor','end');L.E.setAttribute('text-anchor','start');
@@ -342,7 +355,7 @@ draw();
   <div class="thm2"><span class="tag">משפט תאלס ההפוך</span><p>אם ישר חותך שתי צלעות במשולש ומחלק אותן ביחס שווה <b>מצד אותו קדקוד</b>, הוא מקביל לצלע השלישית.</p><div class="giv"><div><b>נתון:</b> במשולש <span class="math-expr">ABC</span>: <span class="math-expr">D</span> על <span class="math-expr">AB</span>, <span class="math-expr">E</span> על <span class="math-expr">AC</span>, <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AD</span><span>DB</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE</span><span>EC</span></span></span>.</div><div><b>צ״ל:</b> <span class="math-expr">DE ∥ BC</span></div></div></div>
   <div class="ex-grid">
     <div class="fcard"><svg id="t3-svg" viewBox="0 0 320 190" style="touch-action:none;user-select:none"></svg></div>
-    <div class="fcard ctl"><p class="hint">מזיזים את <span class="math-expr">D</span> ואת <span class="math-expr">E</span> בנפרד, וגם את הקדקודים <span class="math-expr">A</span>, <span class="math-expr">B</span>, <span class="math-expr">C</span>. מתי הישר <span class="math-expr">DE</span> מקביל ל־<span class="math-expr">BC</span>? בדקו את שני היחסים.</p><label class="sl"><span>הנקודה <span class="math-expr">D</span> על <span class="math-expr">AB</span></span><input type="range" id="t3-sd" min="10" max="90" value="40" oninput="t3d(this.value)"></label>
+    <div class="fcard ctl"><p class="hint">גוררים בסרטוט את <span class="math-expr">D</span> ואת <span class="math-expr">E</span> בנפרד (או עם המחוונים), וגם את הקדקודים <span class="math-expr">A</span>, <span class="math-expr">B</span>, <span class="math-expr">C</span>. מתי הישר <span class="math-expr">DE</span> מקביל ל־<span class="math-expr">BC</span>? בדקו את שני היחסים.</p><label class="sl"><span>הנקודה <span class="math-expr">D</span> על <span class="math-expr">AB</span></span><input type="range" id="t3-sd" min="10" max="90" value="40" oninput="t3d(this.value)"></label>
       <label class="sl"><span>הנקודה <span class="math-expr">E</span> על <span class="math-expr">AC</span></span><input type="range" id="t3-se" min="10" max="90" value="60" oninput="t3e(this.value)"></label>
       <div class="ratio-row"><div id="t3-r1"></div><div id="t3-r2"></div></div>
       <p class="why" id="t3-st"></p></div>
@@ -406,6 +419,13 @@ var H={};
   h.addEventListener('pointermove',function(ev){if(!h._d)return;var pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;var q=pt.matrixTransform(svg.getScreenCTM().inverse());
     P[n]=[Math.max(14,Math.min(306,q.x)),Math.max(16,Math.min(172,q.y))];draw();});
   h.addEventListener('pointerup',function(){h._d=false;});h.addEventListener('click',function(ev){ev.stopPropagation();});});
+['D','E'].forEach(function(n){var h=mk('circle',{r:13,fill:'rgba(255,138,61,0.15)',stroke:'#ff8a3d','stroke-width':1.5,'stroke-dasharray':'3,3',style:'cursor:grab;touch-action:none'});H[n]=h;
+  h.addEventListener('pointerdown',function(ev){ev.stopPropagation();ev.preventDefault();h.setPointerCapture(ev.pointerId);h._d=true;});
+  h.addEventListener('pointermove',function(ev){if(!h._d)return;var pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;var q=pt.matrixTransform(svg.getScreenCTM().inverse());
+    var a=P.A,b=P[n==='D'?'B':'C'],dx=b[0]-a[0],dy=b[1]-a[1],s=Math.max(0.08,Math.min(0.92,((q.x-a[0])*dx+(q.y-a[1])*dy)/(dx*dx+dy*dy)));
+    if(MODE==='t2'){d=s;document.getElementById(K+'-s').value=Math.round(s*100);}else if(n==='D'){d=s;document.getElementById(K+'-sd').value=Math.round(s*100);}else{e=s;document.getElementById(K+'-se').value=Math.round(s*100);}
+    draw();});
+  h.addEventListener('pointerup',function(){h._d=false;});h.addEventListener('click',function(ev){ev.stopPropagation();});});
 svg.addEventListener('click',function(ev){ev.stopPropagation();});
 function pos(a,b,s){return [a[0]+s*(b[0]-a[0]),a[1]+s*(b[1]-a[1])];}
 function dist(p,q){return Math.hypot(p[0]-q[0],p[1]-q[1])/U;}
@@ -419,6 +439,7 @@ function draw(){
   if(MODE==='t2'){sDB.setAttribute('opacity',0);sEC.setAttribute('opacity',0);}
   cd.setAttribute('cx',D[0]);cd.setAttribute('cy',D[1]);ce.setAttribute('cx',E[0]);ce.setAttribute('cy',E[1]);
   ['A','B','C'].forEach(function(n){H[n].setAttribute('cx',P[n][0]);H[n].setAttribute('cy',P[n][1]);});
+  H.D.setAttribute('cx',D[0]);H.D.setAttribute('cy',D[1]);H.E.setAttribute('cx',E[0]);H.E.setAttribute('cy',E[1]);
   var out=function(p){var dx=p[0]-G[0],dy=p[1]-G[1],q=Math.hypot(dx,dy)||1;return [p[0]+dx/q*13,p[1]+dy/q*13+4];};
   var q=out(A);place(L.A,q[0],q[1]-4);q=out(B);place(L.B,q[0],q[1]);q=out(C);place(L.C,q[0],q[1]);
   place(L.D,D[0]-13,D[1]+5);place(L.E,E[0]+13,E[1]+5);L.D.setAttribute('text-anchor','end');L.E.setAttribute('text-anchor','start');
