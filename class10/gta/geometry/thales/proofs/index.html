@@ -109,6 +109,9 @@ text{text-anchor:middle}
  .pside{top:6px;z-index:5;background:var(--bg);padding-bottom:6px}.pside .fcard:first-child svg{max-height:26vh}
  .phd{display:none}.pr{grid-template-columns:1fr}.pr.visible{display:block}.pn{text-align:right;border:0;padding-bottom:0;font-size:14px}.pn:before{content:'שורה '}.pc{border:0;padding-top:2px}}
 
+.ratio-row.three div{font-size:15px;padding:8px 6px}.sl{display:flex;flex-direction:column;gap:2px;font-weight:700;font-size:16px;color:#1d3a8f}
+.hl{pointer-events:none}.pside .fcard svg{overflow:visible}
+
 .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
 .tab{font:700 17px Rubik,Arial,sans-serif;color:#fff;background:rgba(255,255,255,.1);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.28);border-bottom-width:3px;border-radius:14px;padding:9px 20px;cursor:pointer;transition:transform .08s}
 .tab:hover{transform:translateY(-1px)}.tab.on{background:linear-gradient(90deg,#67e8f9,#a7f3d0);color:#0b1b4a;border-color:#34d399}
@@ -224,7 +227,222 @@ if('IntersectionObserver' in window)new IntersectionObserver(function(en){vis=en
 document.addEventListener('keydown',function(e){if(!vis||/INPUT|TEXTAREA/.test((e.target||{}).tagName||''))return;if(e.key==='ArrowLeft'){e.preventDefault();nx();}else if(e.key==='ArrowRight'){e.preventDefault();pv();}});
 upd();
 })();
-</script></div><div class="tpanel" id="t2"><div class="card" style="border-style:dashed;margin-top:26px;text-align:center;color:var(--mut)"><h3>משפט תאלס המורחב</h3><p>ההוכחה והחוויה האינטראקטיבית יתווספו בקרוב.</p></div></div><div class="tpanel" id="t3"><div class="card" style="border-style:dashed;margin-top:26px;text-align:center;color:var(--mut)"><h3>משפט תאלס ההפוך</h3><p>ההוכחה והחוויה האינטראקטיבית יתווספו בקרוב.</p></div></div><script>(function(){var tabs=document.querySelectorAll('.tab'),ps=document.querySelectorAll('.tpanel');
+</script></div><div class="tpanel" id="t2">
+<section class="pf-sec" id="t2-explore">
+  <h2 class="sec">התנסות <small>גוררים ורואים</small></h2>
+  <div class="thm2"><span class="tag">משפט תאלס המורחב</span><p>ישר המקביל לצלע במשולש וחותך את שתי הצלעות האחרות, יוצר יחס שווה בין הקטעים על הצלעות לבין יחס הקטע המקביל לצלע: <b>הקטע מהקדקוד חלקי הצלע כולה</b>.</p><div class="giv"><div><b>נתון:</b> במשולש <span class="math-expr">ABC</span>: <span class="math-expr">D</span> על <span class="math-expr">AB</span>, <span class="math-expr">E</span> על <span class="math-expr">AC</span>, <span class="math-expr">DE ∥ BC</span>.</div><div><b>צ״ל:</b> <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AD</span><span>AB</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE</span><span>AC</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>DE</span><span>BC</span></span></span></div></div></div>
+  <div class="ex-grid">
+    <div class="fcard"><svg id="t2-svg" viewBox="0 0 320 190" style="touch-action:none;user-select:none"></svg></div>
+    <div class="fcard ctl"><p class="hint">גוררים את המחוון ואת הקדקודים <span class="math-expr">A</span>, <span class="math-expr">B</span>, <span class="math-expr">C</span>. הישר <span class="math-expr">DE</span> נשאר מקביל ל־<span class="math-expr">BC</span>: האורכים משתנים, אבל שלושת היחסים נשארים שווים.</p><input type="range" id="t2-s" min="10" max="90" value="40" aria-label="מיקום הישר" oninput="t2d(this.value)">
+      <div class="ratio-row three"><div id="t2-r1"></div><div id="t2-r2"></div><div id="t2-r3"></div></div>
+      <p class="why">שלושת היחסים שווים תמיד. למה? נוכיח למטה.</p></div>
+  </div>
+</section>
+<section class="pf-sec" id="t2-proof">
+  <h2 class="sec">הוכחה <small>שורה אחרי שורה</small></h2>
+  <div class="proof-wrap">
+    <div class="pside"><div class="fcard"><svg viewBox="0 0 320 190"><polygon points="150.0,18.0 36.0,168.0 284.0,168.0" fill="none" class="geo-line-base"/><line x1="104.4" y1="78.0" x2="203.6" y2="78.0" class="geo-line-med"/><g class="hl" id="t2-hl-1"><circle cx="104.4" cy="78.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><circle cx="203.6" cy="78.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><line x1="104.4" y1="78.0" x2="203.6" y2="78.0" stroke="var(--c-orange)" stroke-width="5" /><line x1="36.0" y1="168.0" x2="284.0" y2="168.0" stroke="var(--c-purple)" stroke-width="5" /></g><g class="hl" id="t2-hl-2"><line x1="150.0" y1="18.0" x2="104.4" y2="78.0" stroke="var(--c-blue)" stroke-width="5" /><line x1="104.4" y1="78.0" x2="36.0" y2="168.0" stroke="var(--c-green)" stroke-width="5" /><line x1="150.0" y1="18.0" x2="203.6" y2="78.0" stroke="var(--c-blue)" stroke-width="5" /><line x1="203.6" y1="78.0" x2="284.0" y2="168.0" stroke="var(--c-green)" stroke-width="5" /></g><g class="hl" id="t2-hl-3"><line x1="150.0" y1="18.0" x2="36.0" y2="168.0" stroke="var(--c-purple)" stroke-width="7" /><line x1="150.0" y1="18.0" x2="284.0" y2="168.0" stroke="var(--c-purple)" stroke-width="7" /><line x1="150.0" y1="18.0" x2="104.4" y2="78.0" stroke="var(--c-blue)" stroke-width="5" /><line x1="150.0" y1="18.0" x2="203.6" y2="78.0" stroke="var(--c-blue)" stroke-width="5" /></g><g class="hl" id="t2-hl-4"><circle cx="135.2" cy="168.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><line x1="203.6" y1="78.0" x2="135.2" y2="168.0" stroke="var(--c-teal)" stroke-width="5" /><line x1="150.0" y1="18.0" x2="36.0" y2="168.0" stroke="var(--c-purple)" stroke-width="3" /></g><g class="hl" id="t2-hl-5"><polygon points="104.4,78.0 36.0,168.0 135.2,168.0 203.6,78.0" fill="rgba(255,138,61,0.18)" stroke="var(--c-orange)" stroke-width="2"/><line x1="104.4" y1="78.0" x2="203.6" y2="78.0" stroke="var(--c-orange)" stroke-width="5" /><line x1="36.0" y1="168.0" x2="135.2" y2="168.0" stroke="var(--c-orange)" stroke-width="5" /><line x1="104.4" y1="78.0" x2="36.0" y2="168.0" stroke="var(--c-teal)" stroke-width="5" /><line x1="203.6" y1="78.0" x2="135.2" y2="168.0" stroke="var(--c-teal)" stroke-width="5" /></g><g class="hl" id="t2-hl-6"><line x1="104.4" y1="78.0" x2="203.6" y2="78.0" stroke="var(--c-orange)" stroke-width="6" /><line x1="36.0" y1="168.0" x2="135.2" y2="168.0" stroke="var(--c-orange)" stroke-width="6" /></g><g class="hl" id="t2-hl-7"><line x1="36.0" y1="168.0" x2="135.2" y2="168.0" stroke="var(--c-orange)" stroke-width="6" /><line x1="135.2" y1="168.0" x2="284.0" y2="168.0" stroke="var(--c-blue)" stroke-width="6" /><line x1="150.0" y1="18.0" x2="203.6" y2="78.0" stroke="var(--c-orange)" stroke-width="6" /><line x1="203.6" y1="78.0" x2="284.0" y2="168.0" stroke="var(--c-blue)" stroke-width="6" /></g><g class="hl" id="t2-hl-8"><line x1="36.0" y1="168.0" x2="284.0" y2="168.0" stroke="var(--c-purple)" stroke-width="7" /><line x1="150.0" y1="18.0" x2="284.0" y2="168.0" stroke="var(--c-purple)" stroke-width="7" /><line x1="36.0" y1="168.0" x2="135.2" y2="168.0" stroke="var(--c-orange)" stroke-width="5" /><line x1="150.0" y1="18.0" x2="203.6" y2="78.0" stroke="var(--c-orange)" stroke-width="5" /></g><g class="hl" id="t2-hl-9"><line x1="104.4" y1="78.0" x2="203.6" y2="78.0" stroke="var(--c-orange)" stroke-width="6" /><line x1="36.0" y1="168.0" x2="284.0" y2="168.0" stroke="var(--c-purple)" stroke-width="7" /><line x1="150.0" y1="18.0" x2="203.6" y2="78.0" stroke="var(--c-orange)" stroke-width="5" /><line x1="150.0" y1="18.0" x2="284.0" y2="168.0" stroke="var(--c-purple)" stroke-width="3" /></g><g class="hl" id="t2-hl-10"><line x1="150.0" y1="18.0" x2="36.0" y2="168.0" stroke="var(--c-purple)" stroke-width="3" /><line x1="150.0" y1="18.0" x2="104.4" y2="78.0" stroke="var(--c-blue)" stroke-width="6" /><line x1="150.0" y1="18.0" x2="203.6" y2="78.0" stroke="var(--c-blue)" stroke-width="6" /><line x1="150.0" y1="18.0" x2="284.0" y2="168.0" stroke="var(--c-purple)" stroke-width="3" /><line x1="104.4" y1="78.0" x2="203.6" y2="78.0" stroke="var(--c-orange)" stroke-width="6" /><line x1="36.0" y1="168.0" x2="284.0" y2="168.0" stroke="var(--c-purple)" stroke-width="3" /></g><g class="aux" data-from="4"><line x1="203.6" y1="78.0" x2="135.2" y2="168.0" class="geo-line-dashed"/><circle cx="135.2" cy="168.0" r="2.5" class="geo-point"/></g><circle cx="150.0" cy="18.0" r="2.5" class="geo-point"/><circle cx="36.0" cy="168.0" r="2.5" class="geo-point"/><circle cx="284.0" cy="168.0" r="2.5" class="geo-point"/><circle cx="104.4" cy="78.0" r="2.5" class="geo-point"/><circle cx="203.6" cy="78.0" r="2.5" class="geo-point"/><circle cx="135.2" cy="168.0" r="2.5" class="geo-point"/><text x="150.0" y="10.0" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">A</text><text x="28.0" y="182.0" text-anchor="end" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">B</text><text x="292.0" y="182.0" text-anchor="start" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">C</text><text x="91.4" y="83.0" text-anchor="end" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">D</text><text x="216.6" y="83.0" text-anchor="start" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">E</text><g class="aux" data-from="4"><text x="135.2" y="185.0" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">F</text></g></svg></div>
+      <div class="fcard pctl"><div class="pstat" id="t2-pstat"></div><div class="pbtns"><button class="btn ghost" type="button" id="t2-pprev">→ הקודם</button><button class="btn" type="button" id="t2-pnext">הבא ←</button></div></div></div>
+    <div class="ptable"><div class="phd"><div>מס׳</div><div>טענה</div><div>נימוק</div></div>
+<div class="pr" id="t2-card-1"><div class="pn">1</div><div class="pc claim"><span class="math-expr">DE ∥ BC</span>, <span class="math-expr">D</span> על <span class="math-expr">AB</span>, <span class="math-expr">E</span> על <span class="math-expr">AC</span></div><div class="pz reason">נתון</div></div>
+<div class="pr" id="t2-card-2"><div class="pn">2</div><div class="pc claim"><span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AD</span><span>DB</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE</span><span>EC</span></span></span></div><div class="pz reason"><span class="reason-name">משפט תאלס:</span> ישר המקביל לצלע במשולש וחותך את שתי הצלעות האחרות, מחלק אותן ביחס שווה. <span class="reason-here">כאן: <span class="math-expr">DE ∥ BC</span> חותך את <span class="math-expr">AB</span> ו־<span class="math-expr">AC</span> במשולש <span class="math-expr">ABC</span> (טענה 1)</span></div></div>
+<div class="pr" id="t2-card-3"><div class="pn">3</div><div class="pc claim"><span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AD</span><span>AB</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE</span><span>AC</span></span></span></div><div class="pz reason"><span class="reason-name">תכונת הפרופורציה:</span> אם <span class="math-expr">a : b = c : d</span> אז <span class="math-expr">a : (a+b) = c : (c+d)</span>. <span class="reason-here">כאן: מטענה 2: <span class="math-expr" style="white-space:nowrap">AD : (AD+DB) = AE : (AE+EC)</span>, ועל פי חיבור קטעים <span class="math-expr">AD+DB = AB</span> ו־<span class="math-expr">AE+EC = AC</span></span></div></div>
+<div class="pr" id="t2-card-4"><div class="pn">4</div><div class="pc claim"><span class="math-expr">F</span> על <span class="math-expr">BC</span> כך ש־<span class="math-expr">EF ∥ AB</span></div><div class="pz reason"><span class="reason-name">בניית עזר:</span> דרך <span class="math-expr">E</span> נעביר ישר המקביל ל־<span class="math-expr">AB</span>, והוא חותך את <span class="math-expr">BC</span> בנקודה <span class="math-expr">F</span></div></div>
+<div class="pr" id="t2-card-5"><div class="pn">5</div><div class="pc claim">המרובע <span class="math-expr">DBFE</span> מקבילית</div><div class="pz reason"><span class="reason-name">מרובע שבו שני זוגות של צלעות נגדיות מקבילות הוא מקבילית.</span> <span class="reason-here">כאן: <span class="math-expr">DE ∥ BF</span> (טענה 1, כי <span class="math-expr">F</span> על <span class="math-expr">BC</span>) ו־<span class="math-expr">DB ∥ EF</span> (טענה 4, כי <span class="math-expr">D</span> על <span class="math-expr">AB</span>)</span></div></div>
+<div class="pr" id="t2-card-6"><div class="pn">6</div><div class="pc claim"><span class="math-expr">DE = BF</span></div><div class="pz reason"><span class="reason-name">במקבילית צלעות נגדיות שוות.</span> <span class="reason-here">כאן: <span class="math-expr">DE</span> ו־<span class="math-expr">BF</span> צלעות נגדיות במקבילית <span class="math-expr">DBFE</span> (טענה 5)</span></div></div>
+<div class="pr" id="t2-card-7"><div class="pn">7</div><div class="pc claim"><span class="math-expr" style="white-space:nowrap"><span class="frac"><span>BF</span><span>FC</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE</span><span>EC</span></span></span></div><div class="pz reason"><span class="reason-name">משפט תאלס:</span> ישר המקביל לצלע במשולש וחותך את שתי הצלעות האחרות, מחלק אותן ביחס שווה. <span class="reason-here">כאן: <span class="math-expr">EF ∥ AB</span> חותך את <span class="math-expr">BC</span> ו־<span class="math-expr">AC</span> במשולש <span class="math-expr">ABC</span>, והקטעים מצד <span class="math-expr">AB</span> הם <span class="math-expr">BF</span> ו־<span class="math-expr">AE</span> (טענה 4)</span></div></div>
+<div class="pr" id="t2-card-8"><div class="pn">8</div><div class="pc claim"><span class="math-expr" style="white-space:nowrap"><span class="frac"><span>BF</span><span>BC</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE</span><span>AC</span></span></span></div><div class="pz reason"><span class="reason-name">תכונת הפרופורציה:</span> אם <span class="math-expr">a : b = c : d</span> אז <span class="math-expr">a : (a+b) = c : (c+d)</span>. <span class="reason-here">כאן: מטענה 7: <span class="math-expr" style="white-space:nowrap">BF : (BF+FC) = AE : (AE+EC)</span>, ועל פי חיבור קטעים <span class="math-expr">BF+FC = BC</span> ו־<span class="math-expr">AE+EC = AC</span></span></div></div>
+<div class="pr" id="t2-card-9"><div class="pn">9</div><div class="pc claim"><span class="math-expr" style="white-space:nowrap"><span class="frac"><span>DE</span><span>BC</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE</span><span>AC</span></span></span></div><div class="pz reason">הצבת טענה 6 בטענה 8: מחליפים את <span class="math-expr">BF</span> ב־<span class="math-expr">DE</span></div></div>
+<div class="pr" id="t2-card-10"><div class="pn">10</div><div class="pc claim"><span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AD</span><span>AB</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE</span><span>AC</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>DE</span><span>BC</span></span></span> ∎</div><div class="pz reason">איחוד טענות 3, 9: שני היחסים <span class="math-expr">AD : AB</span> ו־<span class="math-expr">DE : BC</span> שווים כל אחד ל־<span class="math-expr">AE : AC</span></div></div>
+</div>
+  </div>
+</section>
+<section class="pf-sec"><h2 class="sec">סיכום</h2><div class="sumlist"><div>אם <span class="math-expr">DE ∥ BC</span> אז <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AD</span><span>AB</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE</span><span>AC</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>DE</span><span>BC</span></span></span></div><div><b>רעיון (1):</b> משפט תאלס ותכונת הפרופורציה: מהיחס בין <i>חלקים</i> עוברים ליחס בין <i>חלק לשלם</i>.</div><div><b>רעיון (2):</b> מעבירים מקביל לצלע אחרת ויוצרים מקבילית, כדי להעביר את הקטע <span class="math-expr">DE</span> אל הצלע <span class="math-expr">BC</span>.</div><div><b>שימו לב:</b> המשפט תקף גם בשעון חול, כשהישר המקביל חותך את המשכי הצלעות מעבר לקדקוד <span class="math-expr">A</span>.</div></div></section>
+<script>
+(function(){
+var N=10,K='t2',step=0,phaseTxt=['','הסרטוט','הטענה','הנימוק'],refs={};
+function refsFor(row){if(refs[row])return refs[row];var c=document.getElementById(K+'-card-'+row),set={},txt=c.querySelector('.reason').textContent,re=/טענ(?:ה|ות)\s*((?:\d+[\s,ו־]*)+)/g,m;
+  while((m=re.exec(txt))){(m[1].match(/\d+/g)||[]).forEach(function(n){var q=parseInt(n);if(q>=1)set[q]=1;});}refs[row]=set;return set;}
+function upd(){
+  var row=Math.ceil(step/3),ph=step>0?((step-1)%3)+1:0;
+  document.querySelectorAll('#'+K+'-proof .aux').forEach(function(e){e.classList.toggle('visible',row>=parseInt(e.dataset.from));});
+  for(var i=1;i<=N;i++){var c=document.getElementById(K+'-card-'+i),h=document.getElementById(K+'-hl-'+i);
+    if(i<=row){c.classList.add('visible');c.classList.toggle('show-claim',i<row||ph>=2);c.classList.toggle('show-reason',i<row||ph>=3);c.classList.toggle('dimmed',i<row);
+      if(h){var keep=(i===row)||(i<row&&refsFor(row)[i]);h.classList.toggle('visible',!!keep);h.classList.toggle('dimmed',!!keep&&i<row);}}
+    else{c.classList.remove('visible','show-claim','show-reason','dimmed');if(h)h.classList.remove('visible','dimmed');}}
+  document.getElementById(K+'-pstat').textContent=step===0?'לחצו "הבא" כדי להתחיל':('שורה '+row+' מתוך '+N+' · '+phaseTxt[ph]);
+  document.getElementById(K+'-pprev').disabled=step===0;document.getElementById(K+'-pnext').disabled=step===N*3;
+  if(row>0){var cur=document.getElementById(K+'-card-'+row),r=cur.getBoundingClientRect(),mob=window.innerWidth<=800,top=mob?document.querySelector('#'+K+'-proof .pside').getBoundingClientRect().height+16:60;
+    if(r.bottom>window.innerHeight-16||r.top<top){cur.style.scrollMarginTop=top+'px';cur.scrollIntoView({block:'start',behavior:'smooth'});}}
+}
+function nx(){if(step<N*3){step++;upd();}}function pv(){if(step>0){step--;upd();}}
+document.getElementById(K+'-pnext').addEventListener('click',nx);document.getElementById(K+'-pprev').addEventListener('click',pv);
+var sec=document.getElementById(K+'-proof'),vis=false;
+if('IntersectionObserver' in window)new IntersectionObserver(function(en){vis=en[0].isIntersecting;},{threshold:0.2}).observe(sec);
+document.addEventListener('keydown',function(e){if(!vis||/INPUT|TEXTAREA/.test((e.target||{}).tagName||''))return;if(e.key==='ArrowLeft'){e.preventDefault();nx();}else if(e.key==='ArrowRight'){e.preventDefault();pv();}});
+upd();
+})();
+</script><script>
+(function(){
+var K='t2',MODE='t2',P={A:[150,18],B:[36,168],C:[284,168]},d=0.4,e=0.4,U=20,NS='http://www.w3.org/2000/svg';
+var svg=document.getElementById(K+'-svg');
+function mk(tag,at,par){var x=document.createElementNS(NS,tag);for(var q in at)x.setAttribute(q,at[q]);(par||svg).appendChild(x);return x;}
+var tri=mk('polygon',{fill:'none','class':'geo-line-base'});
+var guide=mk('line',{stroke:'#19b5c9','stroke-width':2,'stroke-dasharray':'5,4',opacity:0});
+var sAD=mk('line',{stroke:'#2a52bd','stroke-width':5}),sDB=mk('line',{stroke:'#3fae2a','stroke-width':5}),sAE=mk('line',{stroke:'#2a52bd','stroke-width':5}),sEC=mk('line',{stroke:'#3fae2a','stroke-width':5});
+var sDE=mk('line',{stroke:'#ff8a3d','stroke-width':4,'stroke-linecap':'round'});
+var cd=mk('circle',{r:3,'class':'geo-point'}),ce=mk('circle',{r:3,'class':'geo-point'});
+var L={},LS='paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round';
+['A','B','C','D','E'].forEach(function(n){L[n]=mk('text',{'text-anchor':'middle','class':'geo-text',style:LS});L[n].textContent=n;});
+var H={};
+['A','B','C'].forEach(function(n){var h=mk('circle',{r:15,fill:'rgba(15,107,110,0.10)',stroke:'#0f6b6e','stroke-width':1.5,'stroke-dasharray':'3,3',style:'cursor:grab;touch-action:none'});H[n]=h;
+  h.addEventListener('pointerdown',function(ev){ev.stopPropagation();ev.preventDefault();h.setPointerCapture(ev.pointerId);h._d=true;});
+  h.addEventListener('pointermove',function(ev){if(!h._d)return;var pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;var q=pt.matrixTransform(svg.getScreenCTM().inverse());
+    P[n]=[Math.max(14,Math.min(306,q.x)),Math.max(16,Math.min(172,q.y))];draw();});
+  h.addEventListener('pointerup',function(){h._d=false;});h.addEventListener('click',function(ev){ev.stopPropagation();});});
+svg.addEventListener('click',function(ev){ev.stopPropagation();});
+function pos(a,b,s){return [a[0]+s*(b[0]-a[0]),a[1]+s*(b[1]-a[1])];}
+function dist(p,q){return Math.hypot(p[0]-q[0],p[1]-q[1])/U;}
+function seg(el,p,q){el.setAttribute('x1',p[0]);el.setAttribute('y1',p[1]);el.setAttribute('x2',q[0]);el.setAttribute('y2',q[1]);}
+function place(el,x,y){el.setAttribute('x',x);el.setAttribute('y',y);}
+function LR(s){return '<span style="direction:ltr;unicode-bidi:isolate;display:inline-block">'+s+'</span>';}
+function draw(){
+  var A=P.A,B=P.B,C=P.C,D=pos(A,B,d),E=pos(A,C,MODE==='t2'?d:e),G=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3];
+  tri.setAttribute('points',[A,B,C].map(function(p){return p.join(',');}).join(' '));
+  seg(sAD,A,D);seg(sDB,D,B);seg(sAE,A,E);seg(sEC,E,C);seg(sDE,D,E);
+  if(MODE==='t2'){sDB.setAttribute('opacity',0);sEC.setAttribute('opacity',0);}
+  cd.setAttribute('cx',D[0]);cd.setAttribute('cy',D[1]);ce.setAttribute('cx',E[0]);ce.setAttribute('cy',E[1]);
+  ['A','B','C'].forEach(function(n){H[n].setAttribute('cx',P[n][0]);H[n].setAttribute('cy',P[n][1]);});
+  var out=function(p){var dx=p[0]-G[0],dy=p[1]-G[1],q=Math.hypot(dx,dy)||1;return [p[0]+dx/q*13,p[1]+dy/q*13+4];};
+  var q=out(A);place(L.A,q[0],q[1]-4);q=out(B);place(L.B,q[0],q[1]);q=out(C);place(L.C,q[0],q[1]);
+  place(L.D,D[0]-13,D[1]+5);place(L.E,E[0]+13,E[1]+5);L.D.setAttribute('text-anchor','end');L.E.setAttribute('text-anchor','start');
+  var ad=dist(A,D),ab=dist(A,B),ae=dist(A,E),ac=dist(A,C),de=dist(D,E),bc=dist(B,C),db=dist(D,B),ec=dist(E,C);
+  if(MODE==='t2'){
+    document.getElementById(K+'-r1').innerHTML=LR('AD = '+ad.toFixed(1)+' , AB = '+ab.toFixed(1))+'<br>'+LR('AD : AB = '+(ad/ab).toFixed(2));
+    document.getElementById(K+'-r2').innerHTML=LR('AE = '+ae.toFixed(1)+' , AC = '+ac.toFixed(1))+'<br>'+LR('AE : AC = '+(ae/ac).toFixed(2));
+    document.getElementById(K+'-r3').innerHTML=LR('DE = '+de.toFixed(1)+' , BC = '+bc.toFixed(1))+'<br>'+LR('DE : BC = '+(de/bc).toFixed(2));
+  } else {
+    var ok=Math.abs(d-e)<0.006;
+    sDE.setAttribute('stroke',ok?'#2a8a55':'#ff8a3d');
+    var gE=pos(A,C,d),gD=D;var dx=gE[0]-gD[0],dy=gE[1]-gD[1];
+    guide.setAttribute('opacity',ok?0:0.9);seg(guide,[gD[0]-dx*0.25,gD[1]-dy*0.25],[gE[0]+dx*0.25,gE[1]+dy*0.25]);
+    document.getElementById(K+'-r1').innerHTML=LR('AD = '+ad.toFixed(1)+' , DB = '+db.toFixed(1))+'<br>'+LR('AD : DB = '+(ad/db).toFixed(2));
+    document.getElementById(K+'-r2').innerHTML=LR('AE = '+ae.toFixed(1)+' , EC = '+ec.toFixed(1))+'<br>'+LR('AE : EC = '+(ae/ec).toFixed(2));
+    var st=document.getElementById(K+'-st');st.textContent=ok?'היחסים שווים, ולכן DE ∥ BC ✓':'היחסים שונים, ולכן DE לא מקביל ל־BC (הקו המקווקו הוא המקביל דרך D)';
+    st.style.color=ok?'#1f7a46':'#8a3b00';
+    var ang=Math.abs(Math.atan2(dy,dx)-Math.atan2(E[1]-D[1],E[0]-D[0]));
+  }
+}
+window['t2d']=function(v){d=v/100;draw();};window['t2e']=function(v){e=v/100;draw();};
+draw();
+})();
+</script></div><div class="tpanel" id="t3">
+<section class="pf-sec" id="t3-explore">
+  <h2 class="sec">התנסות <small>גוררים ורואים</small></h2>
+  <div class="thm2"><span class="tag">משפט תאלס ההפוך</span><p>אם ישר חותך שתי צלעות במשולש ומחלק אותן ביחס שווה <b>מצד אותו קדקוד</b>, הוא מקביל לצלע השלישית.</p><div class="giv"><div><b>נתון:</b> במשולש <span class="math-expr">ABC</span>: <span class="math-expr">D</span> על <span class="math-expr">AB</span>, <span class="math-expr">E</span> על <span class="math-expr">AC</span>, <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AD</span><span>DB</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE</span><span>EC</span></span></span>.</div><div><b>צ״ל:</b> <span class="math-expr">DE ∥ BC</span></div></div></div>
+  <div class="ex-grid">
+    <div class="fcard"><svg id="t3-svg" viewBox="0 0 320 190" style="touch-action:none;user-select:none"></svg></div>
+    <div class="fcard ctl"><p class="hint">מזיזים את <span class="math-expr">D</span> ואת <span class="math-expr">E</span> בנפרד, וגם את הקדקודים <span class="math-expr">A</span>, <span class="math-expr">B</span>, <span class="math-expr">C</span>. מתי הישר <span class="math-expr">DE</span> מקביל ל־<span class="math-expr">BC</span>? בדקו את שני היחסים.</p><label class="sl"><span>הנקודה <span class="math-expr">D</span> על <span class="math-expr">AB</span></span><input type="range" id="t3-sd" min="10" max="90" value="40" oninput="t3d(this.value)"></label>
+      <label class="sl"><span>הנקודה <span class="math-expr">E</span> על <span class="math-expr">AC</span></span><input type="range" id="t3-se" min="10" max="90" value="60" oninput="t3e(this.value)"></label>
+      <div class="ratio-row"><div id="t3-r1"></div><div id="t3-r2"></div></div>
+      <p class="why" id="t3-st"></p></div>
+  </div>
+</section>
+<section class="pf-sec" id="t3-proof">
+  <h2 class="sec">הוכחה <small>שורה אחרי שורה</small></h2>
+  <div class="proof-wrap">
+    <div class="pside"><div class="fcard"><svg viewBox="0 0 320 190"><polygon points="150.0,18.0 36.0,168.0 284.0,168.0" fill="none" class="geo-line-base"/><line x1="104.4" y1="78.0" x2="230.4" y2="108.0" stroke="var(--c-orange)" stroke-width="3" stroke-dasharray="1,0"/><g class="hl" id="t3-hl-1"><circle cx="104.4" cy="78.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><circle cx="230.4" cy="108.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><line x1="150.0" y1="18.0" x2="104.4" y2="78.0" stroke="var(--c-blue)" stroke-width="5" /><line x1="104.4" y1="78.0" x2="36.0" y2="168.0" stroke="var(--c-green)" stroke-width="5" /><line x1="150.0" y1="18.0" x2="230.4" y2="108.0" stroke="var(--c-blue)" stroke-width="5" /><line x1="230.4" y1="108.0" x2="284.0" y2="168.0" stroke="var(--c-green)" stroke-width="5" /></g><g class="hl" id="t3-hl-2"><circle cx="203.6" cy="78.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><line x1="104.4" y1="78.0" x2="203.6" y2="78.0" stroke="var(--c-teal)" stroke-width="5" /><line x1="36.0" y1="168.0" x2="284.0" y2="168.0" stroke="var(--c-purple)" stroke-width="4" /></g><g class="hl" id="t3-hl-3"><line x1="150.0" y1="18.0" x2="104.4" y2="78.0" stroke="var(--c-blue)" stroke-width="5" /><line x1="104.4" y1="78.0" x2="36.0" y2="168.0" stroke="var(--c-green)" stroke-width="5" /><line x1="150.0" y1="18.0" x2="203.6" y2="78.0" stroke="var(--c-blue)" stroke-width="5" /><line x1="203.6" y1="78.0" x2="284.0" y2="168.0" stroke="var(--c-green)" stroke-width="5" /></g><g class="hl" id="t3-hl-4"><line x1="150.0" y1="18.0" x2="230.4" y2="108.0" stroke="var(--c-orange)" stroke-width="4" /><line x1="230.4" y1="108.0" x2="284.0" y2="168.0" stroke="var(--c-red)" stroke-width="4" /><line x1="150.0" y1="18.0" x2="203.6" y2="78.0" stroke="var(--c-blue)" stroke-width="7" /><line x1="203.6" y1="78.0" x2="284.0" y2="168.0" stroke="var(--c-green)" stroke-width="7" /></g><g class="hl" id="t3-hl-5"><circle cx="203.6" cy="78.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><circle cx="230.4" cy="108.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><text x="237.0" y="119.0" class="geo-text" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:3px">E₁ = E</text></g><g class="hl" id="t3-hl-6"><line x1="104.4" y1="78.0" x2="230.4" y2="108.0" stroke="var(--c-orange)" stroke-width="6" /><line x1="36.0" y1="168.0" x2="284.0" y2="168.0" stroke="var(--c-purple)" stroke-width="6" /></g><g class="aux" data-from="2"><line x1="69.7" y1="78.0" x2="203.6" y2="78.0" class="geo-line-dashed"/><circle cx="203.6" cy="78.0" r="2.5" class="geo-point"/></g><circle cx="150.0" cy="18.0" r="2.5" class="geo-point"/><circle cx="36.0" cy="168.0" r="2.5" class="geo-point"/><circle cx="284.0" cy="168.0" r="2.5" class="geo-point"/><circle cx="104.4" cy="78.0" r="2.5" class="geo-point"/><circle cx="230.4" cy="108.0" r="2.5" class="geo-point"/><text x="150.0" y="10.0" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">A</text><text x="28.0" y="182.0" text-anchor="end" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">B</text><text x="292.0" y="182.0" text-anchor="start" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">C</text><text x="91.4" y="83.0" text-anchor="end" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">D</text><text x="243.4" y="120.0" text-anchor="start" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">E</text><g class="aux" data-from="2"><text x="216.6" y="75.0" text-anchor="start" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">E₁</text></g></svg><p class="hint" style="margin:6px 4px 0;font-size:13px">בסרטוט נמתחות E ו־E₁ בנפרד רק כדי להבדיל ביניהן. בטענה 5 מוכח שהן אותה נקודה.</p></div>
+      <div class="fcard pctl"><div class="pstat" id="t3-pstat"></div><div class="pbtns"><button class="btn ghost" type="button" id="t3-pprev">→ הקודם</button><button class="btn" type="button" id="t3-pnext">הבא ←</button></div></div></div>
+    <div class="ptable"><div class="phd"><div>מס׳</div><div>טענה</div><div>נימוק</div></div>
+<div class="pr" id="t3-card-1"><div class="pn">1</div><div class="pc claim"><span class="math-expr">D</span> על <span class="math-expr">AB</span>, <span class="math-expr">E</span> על <span class="math-expr">AC</span>, <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AD</span><span>DB</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE</span><span>EC</span></span></span></div><div class="pz reason">נתון</div></div>
+<div class="pr" id="t3-card-2"><div class="pn">2</div><div class="pc claim">דרך <span class="math-expr">D</span> ישר המקביל ל־<span class="math-expr">BC</span>, החותך את <span class="math-expr">AC</span> בנקודה <span class="math-expr">E₁</span></div><div class="pz reason"><span class="reason-name">בניית עזר:</span> ישר המקביל ל־<span class="math-expr">BC</span> דרך <span class="math-expr">D</span> חותך את <span class="math-expr">AC</span></div></div>
+<div class="pr" id="t3-card-3"><div class="pn">3</div><div class="pc claim"><span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AD</span><span>DB</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE₁</span><span>E₁C</span></span></span></div><div class="pz reason"><span class="reason-name">משפט תאלס:</span> ישר המקביל לצלע במשולש וחותך את שתי הצלעות האחרות, מחלק אותן ביחס שווה. <span class="reason-here">כאן: <span class="math-expr">DE₁ ∥ BC</span> חותך את <span class="math-expr">AB</span> ו־<span class="math-expr">AC</span> במשולש <span class="math-expr">ABC</span> (טענה 2)</span></div></div>
+<div class="pr" id="t3-card-4"><div class="pn">4</div><div class="pc claim"><span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE₁</span><span>E₁C</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE</span><span>EC</span></span></span></div><div class="pz reason"><span class="reason-name">טרנזיטיביות השוויון:</span> שני יחסים השווים ליחס שלישי שווים זה לזה. <span class="reason-here">כאן: שניהם שווים ל־<span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AD</span><span>DB</span></span></span> (טענות 1, 3)</span></div></div>
+<div class="pr" id="t3-card-5"><div class="pn">5</div><div class="pc claim"><span class="math-expr">E₁ = E</span></div><div class="pz reason"><span class="reason-name">נקודה על קטע המחלקת אותו ביחס נתון היא יחידה:</span> אם <span class="math-expr">X</span> על <span class="math-expr">AC</span> ו־<span class="math-expr">AX : XC = k</span>, אז <span class="math-expr">AX = </span><span class="math-expr" style="white-space:nowrap"><span class="frac"><span>k</span><span>1+k</span></span></span><span class="math-expr">·AC</span>, ולכן מיקומה קבוע. <span class="reason-here">כאן: <span class="math-expr">E</span> ו־<span class="math-expr">E₁</span> על <span class="math-expr">AC</span> ומחלקות אותו באותו יחס (טענה 4)</span></div></div>
+<div class="pr" id="t3-card-6"><div class="pn">6</div><div class="pc claim"><span class="math-expr">DE ∥ BC</span> ∎</div><div class="pz reason">הצבת טענה 5 בטענה 2: הישר <span class="math-expr">DE₁</span> שהועבר מקביל ל־<span class="math-expr">BC</span> הוא הישר <span class="math-expr">DE</span></div></div>
+</div>
+  </div>
+</section>
+<section class="pf-sec"><h2 class="sec">סיכום</h2><div class="sumlist"><div>אם <span class="math-expr">D</span> על <span class="math-expr">AB</span>, <span class="math-expr">E</span> על <span class="math-expr">AC</span> ו־<span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AD</span><span>DB</span></span></span> = <span class="math-expr" style="white-space:nowrap"><span class="frac"><span>AE</span><span>EC</span></span></span> אז <span class="math-expr">DE ∥ BC</span></div><div><b>רעיון:</b> בונים את המקביל דרך <span class="math-expr">D</span> (משפט תאלס נותן לו את אותו יחס), ומראים שנקודת החיתוך שלו היא בדיוק <span class="math-expr">E</span>, כי נקודה שמחלקת קטע ביחס נתון היא יחידה.</div><div><b>שימו לב:</b> היחסים נמדדים מאותו קדקוד, <span class="math-expr">AD : DB</span> ו־<span class="math-expr">AE : EC</span>. אם נשווה <span class="math-expr">AD : DB</span> ל־<span class="math-expr">EC : AE</span> המסקנה לא תתקיים.</div></div></section>
+<script>
+(function(){
+var N=6,K='t3',step=0,phaseTxt=['','הסרטוט','הטענה','הנימוק'],refs={};
+function refsFor(row){if(refs[row])return refs[row];var c=document.getElementById(K+'-card-'+row),set={},txt=c.querySelector('.reason').textContent,re=/טענ(?:ה|ות)\s*((?:\d+[\s,ו־]*)+)/g,m;
+  while((m=re.exec(txt))){(m[1].match(/\d+/g)||[]).forEach(function(n){var q=parseInt(n);if(q>=1)set[q]=1;});}refs[row]=set;return set;}
+function upd(){
+  var row=Math.ceil(step/3),ph=step>0?((step-1)%3)+1:0;
+  document.querySelectorAll('#'+K+'-proof .aux').forEach(function(e){e.classList.toggle('visible',row>=parseInt(e.dataset.from));});
+  for(var i=1;i<=N;i++){var c=document.getElementById(K+'-card-'+i),h=document.getElementById(K+'-hl-'+i);
+    if(i<=row){c.classList.add('visible');c.classList.toggle('show-claim',i<row||ph>=2);c.classList.toggle('show-reason',i<row||ph>=3);c.classList.toggle('dimmed',i<row);
+      if(h){var keep=(i===row)||(i<row&&refsFor(row)[i]);h.classList.toggle('visible',!!keep);h.classList.toggle('dimmed',!!keep&&i<row);}}
+    else{c.classList.remove('visible','show-claim','show-reason','dimmed');if(h)h.classList.remove('visible','dimmed');}}
+  document.getElementById(K+'-pstat').textContent=step===0?'לחצו "הבא" כדי להתחיל':('שורה '+row+' מתוך '+N+' · '+phaseTxt[ph]);
+  document.getElementById(K+'-pprev').disabled=step===0;document.getElementById(K+'-pnext').disabled=step===N*3;
+  if(row>0){var cur=document.getElementById(K+'-card-'+row),r=cur.getBoundingClientRect(),mob=window.innerWidth<=800,top=mob?document.querySelector('#'+K+'-proof .pside').getBoundingClientRect().height+16:60;
+    if(r.bottom>window.innerHeight-16||r.top<top){cur.style.scrollMarginTop=top+'px';cur.scrollIntoView({block:'start',behavior:'smooth'});}}
+}
+function nx(){if(step<N*3){step++;upd();}}function pv(){if(step>0){step--;upd();}}
+document.getElementById(K+'-pnext').addEventListener('click',nx);document.getElementById(K+'-pprev').addEventListener('click',pv);
+var sec=document.getElementById(K+'-proof'),vis=false;
+if('IntersectionObserver' in window)new IntersectionObserver(function(en){vis=en[0].isIntersecting;},{threshold:0.2}).observe(sec);
+document.addEventListener('keydown',function(e){if(!vis||/INPUT|TEXTAREA/.test((e.target||{}).tagName||''))return;if(e.key==='ArrowLeft'){e.preventDefault();nx();}else if(e.key==='ArrowRight'){e.preventDefault();pv();}});
+upd();
+})();
+</script><script>
+(function(){
+var K='t3',MODE='t3',P={A:[150,18],B:[36,168],C:[284,168]},d=0.4,e=0.6,U=20,NS='http://www.w3.org/2000/svg';
+var svg=document.getElementById(K+'-svg');
+function mk(tag,at,par){var x=document.createElementNS(NS,tag);for(var q in at)x.setAttribute(q,at[q]);(par||svg).appendChild(x);return x;}
+var tri=mk('polygon',{fill:'none','class':'geo-line-base'});
+var guide=mk('line',{stroke:'#19b5c9','stroke-width':2,'stroke-dasharray':'5,4',opacity:0});
+var sAD=mk('line',{stroke:'#2a52bd','stroke-width':5}),sDB=mk('line',{stroke:'#3fae2a','stroke-width':5}),sAE=mk('line',{stroke:'#2a52bd','stroke-width':5}),sEC=mk('line',{stroke:'#3fae2a','stroke-width':5});
+var sDE=mk('line',{stroke:'#ff8a3d','stroke-width':4,'stroke-linecap':'round'});
+var cd=mk('circle',{r:3,'class':'geo-point'}),ce=mk('circle',{r:3,'class':'geo-point'});
+var L={},LS='paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round';
+['A','B','C','D','E'].forEach(function(n){L[n]=mk('text',{'text-anchor':'middle','class':'geo-text',style:LS});L[n].textContent=n;});
+var H={};
+['A','B','C'].forEach(function(n){var h=mk('circle',{r:15,fill:'rgba(15,107,110,0.10)',stroke:'#0f6b6e','stroke-width':1.5,'stroke-dasharray':'3,3',style:'cursor:grab;touch-action:none'});H[n]=h;
+  h.addEventListener('pointerdown',function(ev){ev.stopPropagation();ev.preventDefault();h.setPointerCapture(ev.pointerId);h._d=true;});
+  h.addEventListener('pointermove',function(ev){if(!h._d)return;var pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;var q=pt.matrixTransform(svg.getScreenCTM().inverse());
+    P[n]=[Math.max(14,Math.min(306,q.x)),Math.max(16,Math.min(172,q.y))];draw();});
+  h.addEventListener('pointerup',function(){h._d=false;});h.addEventListener('click',function(ev){ev.stopPropagation();});});
+svg.addEventListener('click',function(ev){ev.stopPropagation();});
+function pos(a,b,s){return [a[0]+s*(b[0]-a[0]),a[1]+s*(b[1]-a[1])];}
+function dist(p,q){return Math.hypot(p[0]-q[0],p[1]-q[1])/U;}
+function seg(el,p,q){el.setAttribute('x1',p[0]);el.setAttribute('y1',p[1]);el.setAttribute('x2',q[0]);el.setAttribute('y2',q[1]);}
+function place(el,x,y){el.setAttribute('x',x);el.setAttribute('y',y);}
+function LR(s){return '<span style="direction:ltr;unicode-bidi:isolate;display:inline-block">'+s+'</span>';}
+function draw(){
+  var A=P.A,B=P.B,C=P.C,D=pos(A,B,d),E=pos(A,C,MODE==='t2'?d:e),G=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3];
+  tri.setAttribute('points',[A,B,C].map(function(p){return p.join(',');}).join(' '));
+  seg(sAD,A,D);seg(sDB,D,B);seg(sAE,A,E);seg(sEC,E,C);seg(sDE,D,E);
+  if(MODE==='t2'){sDB.setAttribute('opacity',0);sEC.setAttribute('opacity',0);}
+  cd.setAttribute('cx',D[0]);cd.setAttribute('cy',D[1]);ce.setAttribute('cx',E[0]);ce.setAttribute('cy',E[1]);
+  ['A','B','C'].forEach(function(n){H[n].setAttribute('cx',P[n][0]);H[n].setAttribute('cy',P[n][1]);});
+  var out=function(p){var dx=p[0]-G[0],dy=p[1]-G[1],q=Math.hypot(dx,dy)||1;return [p[0]+dx/q*13,p[1]+dy/q*13+4];};
+  var q=out(A);place(L.A,q[0],q[1]-4);q=out(B);place(L.B,q[0],q[1]);q=out(C);place(L.C,q[0],q[1]);
+  place(L.D,D[0]-13,D[1]+5);place(L.E,E[0]+13,E[1]+5);L.D.setAttribute('text-anchor','end');L.E.setAttribute('text-anchor','start');
+  var ad=dist(A,D),ab=dist(A,B),ae=dist(A,E),ac=dist(A,C),de=dist(D,E),bc=dist(B,C),db=dist(D,B),ec=dist(E,C);
+  if(MODE==='t2'){
+    document.getElementById(K+'-r1').innerHTML=LR('AD = '+ad.toFixed(1)+' , AB = '+ab.toFixed(1))+'<br>'+LR('AD : AB = '+(ad/ab).toFixed(2));
+    document.getElementById(K+'-r2').innerHTML=LR('AE = '+ae.toFixed(1)+' , AC = '+ac.toFixed(1))+'<br>'+LR('AE : AC = '+(ae/ac).toFixed(2));
+    document.getElementById(K+'-r3').innerHTML=LR('DE = '+de.toFixed(1)+' , BC = '+bc.toFixed(1))+'<br>'+LR('DE : BC = '+(de/bc).toFixed(2));
+  } else {
+    var ok=Math.abs(d-e)<0.006;
+    sDE.setAttribute('stroke',ok?'#2a8a55':'#ff8a3d');
+    var gE=pos(A,C,d),gD=D;var dx=gE[0]-gD[0],dy=gE[1]-gD[1];
+    guide.setAttribute('opacity',ok?0:0.9);seg(guide,[gD[0]-dx*0.25,gD[1]-dy*0.25],[gE[0]+dx*0.25,gE[1]+dy*0.25]);
+    document.getElementById(K+'-r1').innerHTML=LR('AD = '+ad.toFixed(1)+' , DB = '+db.toFixed(1))+'<br>'+LR('AD : DB = '+(ad/db).toFixed(2));
+    document.getElementById(K+'-r2').innerHTML=LR('AE = '+ae.toFixed(1)+' , EC = '+ec.toFixed(1))+'<br>'+LR('AE : EC = '+(ae/ec).toFixed(2));
+    var st=document.getElementById(K+'-st');st.textContent=ok?'היחסים שווים, ולכן DE ∥ BC ✓':'היחסים שונים, ולכן DE לא מקביל ל־BC (הקו המקווקו הוא המקביל דרך D)';
+    st.style.color=ok?'#1f7a46':'#8a3b00';
+    var ang=Math.abs(Math.atan2(dy,dx)-Math.atan2(E[1]-D[1],E[0]-D[0]));
+  }
+}
+window['t3d']=function(v){d=v/100;draw();};window['t3e']=function(v){e=v/100;draw();};
+draw();
+})();
+</script></div><script>(function(){var tabs=document.querySelectorAll('.tab'),ps=document.querySelectorAll('.tpanel');
 function show(id){tabs.forEach(function(t){t.classList.toggle('on',t.dataset.t===id)});ps.forEach(function(p){p.classList.toggle('on',p.id===id)});try{history.replaceState(null,'','#'+id)}catch(e){}}
 tabs.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.t)})});
 var h=(location.hash||'').slice(1);if(h&&document.getElementById(h)&&document.getElementById(h).classList.contains('tpanel'))show(h);})();</script></div><div style="text-align:center;color:#8a969f;font-size:14px;padding:6px 0 22px">מתמטיקה · לכל בעיה יש פתרון, להנות מהאתגר</div></body></html>
