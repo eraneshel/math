@@ -409,3 +409,6 @@ body{padding-bottom:76px}
 .ztable tbody th{min-width:3em;padding:7px 6px}
 @media (min-width:560px){.ztable{font-size:16px}}
 .field input::placeholder{color:#9aa1b5;font-style:italic;opacity:1}
+
+#c-out .calc-l1{color:var(--mut);margin-bottom:4px;text-align:left}
+#c-out .calc-l2{font-weight:700;text-align:left}

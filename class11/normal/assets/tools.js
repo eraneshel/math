@@ -80,19 +80,26 @@
       v.forEach(function (s, i) { if (s !== '' && isNaN(n[i])) bad = true; });
       if (bad) { out.textContent = 'יש להזין מספרים בלבד.'; return; }
       var x = n[0], m = n[1], s = n[2], z = n[3], html;
+      function f(v, d) { return show(v, d).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, ''); }
+      function p(v, d) { var t = f(v, d); return v < 0 ? '(' + t + ')' : t; }
+      function two(formula, subst, res) {
+        return '<div class="calc-l1" dir="ltr">' + formula + '</div><div class="calc-l2" dir="ltr">' + subst + ' = <span class="big">' + res + '</span></div>';
+      }
       if (v[3] === '') {
         if (s <= 0) { out.textContent = 'סטיית התקן חייבת להיות חיובית.'; return; }
         z = (x - m) / s;
-        html = 'z = (x − x̄) ÷ S = (' + ltr(show(x, 4).replace(/\.?0+$/, '')) + ' − ' + ltr(show(m, 4).replace(/\.?0+$/, '')) + ') ÷ ' + ltr(show(s, 4).replace(/\.?0+$/, '')) + ' = <span class="big">' + ltr(show(z, 2).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '')) + '</span>';
+        html = two('z = (x − x̄) ÷ S', 'z = (' + f(x, 4) + ' − ' + p(m, 4) + ') ÷ ' + f(s, 4), f(z, 2));
       } else if (v[0] === '') {
-        x = m + z * s; html = 'x = x̄ + z·S = <span class="big">' + ltr(show(x, 4).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '')) + '</span>';
+        x = m + z * s;
+        html = two('x = x̄ + z · S', 'x = ' + f(m, 4) + ' + ' + p(z, 4) + ' · ' + f(s, 4), f(x, 4));
       } else if (v[1] === '') {
-        m = x - z * s; html = 'x̄ = x − z·S = <span class="big">' + ltr(show(m, 4).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '')) + '</span>';
+        m = x - z * s;
+        html = two('x̄ = x − z · S', 'x̄ = ' + f(x, 4) + ' − ' + p(z, 4) + ' · ' + f(s, 4), f(m, 4));
       } else {
         if (z === 0) { out.textContent = 'כש-z = 0 אי אפשר לחשב את S.'; return; }
         s = (x - m) / z;
         if (s <= 0) { out.textContent = 'התקבלה סטיית תקן שאינה חיובית. בדקו את הנתונים.'; return; }
-        html = 'S = (x − x̄) ÷ z = <span class="big">' + ltr(show(s, 4).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '')) + '</span>';
+        html = two('S = (x − x̄) ÷ z', 'S = (' + f(x, 4) + ' − ' + p(m, 4) + ') ÷ ' + p(z, 4), f(s, 4));
       }
       out.innerHTML = html;
     }
