@@ -146,6 +146,10 @@
       var id = box.getAttribute('data-typed'), multi = box.classList.contains('multi'), ins = typedInputs(box);
       var saved = state.myAnswers[id];
       if (saved) { if (multi) { try { JSON.parse(saved).forEach(function (v, i) { if (ins[i]) ins[i].value = v; }); } catch (e) { } } else ins[0].value = saved; }
+      var unsolve = function () {
+        if (state.done[id] === 'ok') setDone(id, null);
+        var w = box.closest('.ex') && $('.chkall', box.closest('.ex')); if (w) { var sm = $('.chkall-s', w), nx = $('.chkall-n', w); if (sm) { sm.className = 'chkall-s'; sm.textContent = ''; } if (nx) nx.hidden = true; }
+      };
       var persist = function () {
         var v = multi ? JSON.stringify(ins.map(function (i) { return i.value; })) : ins[0].value;
         if (ins.some(function (i) { return i.value; })) state.myAnswers[id] = v; else delete state.myAnswers[id]; save();
@@ -160,7 +164,7 @@
             var all = ins.length && ins.every(function (x, k) { return okParts[k]; });
             if (all) setDone(id, 'ok');
           };
-          inp.addEventListener('input', function () { persist(); okParts[idx] = false; inp.classList.remove('right', 'wrong'); $('.fb', part).textContent = ''; });
+          inp.addEventListener('input', function () { persist(); unsolve(); okParts[idx] = false; inp.classList.remove('right', 'wrong'); $('.fb', part).textContent = ''; });
           inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); run(); } });
           $('.chk', part).addEventListener('click', run);
         });
@@ -191,7 +195,7 @@
         return;
       }
       var btn = $('.chk', box);
-      ins[0].addEventListener('input', function () { persist(); ins[0].classList.remove('right', 'wrong'); });
+      ins[0].addEventListener('input', function () { persist(); unsolve(); ins[0].classList.remove('right', 'wrong'); $('.fb', box).className = 'fb'; $('.fb', box).textContent = ''; });
       var run1 = function () {
         var r = checkTyped(box); if (r === null) return;
         if (box.closest('.ex').classList.contains('diag-item')) return;
