@@ -329,7 +329,7 @@
       var h1 = $('.ch-title', el); if (h1 && !(opts && opts.initial)) h1.focus({ preventScroll: true });
     }
     $('#toc').classList.remove('open'); $('#btn-menu').setAttribute('aria-expanded', 'false');
-    document.title = (META.filter(function (c) { return c.id === id; })[0] || { title: 'חוברת' }).title.replace(/\$[^$]*\$/g, '') + ' · קדם אנליזה';
+    document.title = (META.filter(function (c) { return c.id === id; })[0] || { title: 'חוברת' }).title.replace(/\$[^$]*\$/g, '') + ' · משוואת ישר';
   }
   function go(id) { if (location.hash === '#' + id) route({ keepHl: true }); else location.hash = '#' + id; }
 

@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import lib
 from content import CH, FORMULAS_HTML
 
-OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'class10', 'calc')
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'class10', 'gta', 'analytic', 'line')
 V = str(int(time.time()))[-8:]
 
 meta = [c.meta() for c in CH]
@@ -29,7 +29,7 @@ page = f'''<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <meta name="color-scheme" content="light dark">
-<title>קדם אנליזה · חוברת עבודה אישית</title>
+<title>משוואת ישר · חוברת עבודה אישית</title>
 <link rel="stylesheet" href="assets/katex.min.css?v={V}">
 <link rel="stylesheet" href="assets/style.css?v={V}">
 <link rel="stylesheet" href="assets/calc.css?v={V}">
@@ -40,9 +40,9 @@ page = f'''<!doctype html>
 <section class="hero">
   <svg class="deco" viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="dg"><stop offset="0" stop-color="#67e8f9" stop-opacity="0"/><stop offset=".5" stop-color="#a7f3d0"/><stop offset="1" stop-color="#c4b5fd" stop-opacity="0"/></linearGradient></defs><path class="wv" d="M0 90C100 90 140 30 300 60S500 20 600 30" fill="none" stroke="url(#dg)" stroke-width="2.5"/><path class="wv2" d="M0 110C120 100 200 60 320 80S520 50 600 60" fill="none" stroke="url(#dg)" stroke-width="1.5" opacity=".6"/></svg>
   <div class="t">
-    <div class="crumb"><a href="../../" target="_top">בית</a> › <a href="../" target="_top">כיתה י׳</a> › חשבון דיפרנציאלי ואינטגרלי</div>
+    <div class="crumb"><a href="../../../../" target="_top">בית</a> › <a href="../../../" target="_top">כיתה י׳</a> › <a href="../../" target="_top">גאומטריה, טריגונומטריה ואנליטית</a> › <a href="../" target="_top">גיאומטריה אנליטית</a> › משוואת ישר</div>
     <span class="k">חוברת עבודה אישית · כיתה י׳ · 5 יחידות</span>
-    <h1>קדם <em>אנליזה</em></h1>
+    <h1>משוואת <em>ישר</em></h1>
     <p>שאלון 35571 · פונקציה ממעלה ראשונה · מהבסיס ועד רמת בגרות</p>
   </div>
   <div class="hero-fig" aria-hidden="true">{hero_fig}</div>
