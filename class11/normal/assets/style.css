@@ -412,3 +412,10 @@ body{padding-bottom:76px}
 
 #c-out .calc-l1{color:var(--mut);margin-bottom:4px;text-align:left}
 #c-out .calc-l2{font-weight:700;text-align:left}
+
+#l-d{width:100%;font:inherit;font-size:18px;padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);direction:ltr;text-align:left}
+#l-out .steps{border-collapse:collapse;margin:8px 0;direction:ltr}
+#l-out .steps th,#l-out .steps td{border:1px solid var(--line);padding:5px 12px;text-align:center}
+#l-out .calc-l1,#l-out .calc-l2{overflow-x:auto}
+#l-out .calc-l1{color:var(--mut);margin:6px 0 2px;text-align:left}
+#l-out .calc-l2{font-weight:700;text-align:left;margin-bottom:6px}

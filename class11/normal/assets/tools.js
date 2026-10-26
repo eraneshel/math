@@ -108,6 +108,50 @@
     upd();
   }
 
+
+  /* ---- mean and standard deviation from a list ---- */
+  function initList() {
+    var p = document.getElementById('pane-list');
+    p.innerHTML = '<p class="muted">כתבו את הנתונים עם רווח או פסיק ביניהם. אם ערך חוזר כמה פעמים, כתבו אותו עם נקודתיים ושכיחות: <span dir="ltr" style="unicode-bidi:isolate;display:inline-block">5:3</span> פירושו שהערך 5 מופיע 3 פעמים.</p>' +
+      '<label class="field"><span>הנתונים</span><textarea id="l-d" rows="3" inputmode="decimal" autocomplete="off" placeholder="למשל 4 6 8 10 12"></textarea></label>' +
+      '<div class="tool-out" id="l-out" aria-live="polite"></div>' +
+      '<div class="btn-row"><button type="button" class="btn small ghost" id="l-clear">נקה</button></div>';
+    function f(v, d) { return show(v, d).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, ''); }
+    function par(v) { return v < 0 ? '(' + f(v, 4) + ')' : f(v, 4); }
+    function upd() {
+      var out = document.getElementById('l-out'), raw = document.getElementById('l-d').value.trim();
+      if (!raw) { out.textContent = 'כתבו את הנתונים.'; return; }
+      var toks = raw.replace(/−/g, '-').split(/[\s,;]+/).filter(Boolean), xs = [], fs = [], bad = false;
+      toks.forEach(function (t) {
+        var a = t.split(':'), x = num(a[0]), fr = a.length > 1 ? num(a[1]) : 1;
+        if (a.length > 2 || isNaN(x) || isNaN(fr) || fr <= 0 || fr !== Math.floor(fr)) bad = true; else { xs.push(x); fs.push(fr); }
+      });
+      if (bad) { out.textContent = 'כתבו מספרים בלבד. שכיחות היא מספר שלם חיובי.'; return; }
+      var N = 0, sum = 0, i;
+      for (i = 0; i < xs.length; i++) { N += fs[i]; sum += fs[i] * xs[i]; }
+      if (N < 2) { out.textContent = 'צריך לפחות שני נתונים.'; return; }
+      var m = sum / N, ss = 0;
+      for (i = 0; i < xs.length; i++) ss += fs[i] * (xs[i] - m) * (xs[i] - m);
+      var S = Math.sqrt(ss / N), lim = 12, hasF = fs.some(function (q) { return q > 1; });
+      var terms = xs.slice(0, lim).map(function (x, k) { return hasF ? fs[k] + '·' + par(x) : par(x); }).join(' + ') + (xs.length > lim ? ' + …' : '');
+      var h = '<div class="calc-l1" dir="ltr">N = ' + N + '</div>' +
+        '<div class="calc-l1" dir="ltr">x̄ = ' + (hasF ? '(f₁x₁ + f₂x₂ + … ) ÷ N' : '(x₁ + x₂ + … + xₙ) ÷ N') + '</div>' +
+        '<div class="calc-l2" dir="ltr">x̄ = (' + terms + ') ÷ ' + N + ' = <span class="big">' + f(m, 4) + '</span></div>' +
+        '<div class="calc-l1" dir="ltr">S = √( (' + (hasF ? 'f₁(x₁ − x̄)² + …' : '(x₁ − x̄)² + …') + ') ÷ N )</div>' +
+        '<div class="calc-l2" dir="ltr">S = √( ' + f(ss, 4) + ' ÷ ' + N + ' ) = √' + f(ss / N, 4) + ' = <span class="big">' + f(S, 2) + '</span></div>';
+      h += '<div class="tbl"><table class="steps" dir="ltr"><thead><tr><th>x</th>' + (hasF ? '<th>f</th>' : '') + '<th>x − x̄</th><th>(x − x̄)²</th></tr></thead><tbody>';
+      xs.slice(0, 15).forEach(function (x, k) {
+        h += '<tr><td>' + f(x, 4) + '</td>' + (hasF ? '<td>' + fs[k] + '</td>' : '') + '<td>' + f(x - m, 4) + '</td><td>' + f((x - m) * (x - m), 4) + '</td></tr>';
+      });
+      h += '</tbody></table></div>' + (xs.length > 15 ? '<p class="muted">מוצגות 15 השורות הראשונות. החישוב כולל את כל הנתונים.</p>' : '') +
+        '<p class="muted">בבחינה מעגלים את סטיית התקן לשתי ספרות אחרי הנקודה, ובודקים במחשבון שהתוצאה זהה.</p>';
+      out.innerHTML = h;
+    }
+    document.getElementById('l-d').addEventListener('input', upd);
+    document.getElementById('l-clear').addEventListener('click', function () { document.getElementById('l-d').value = ''; upd(); });
+    upd();
+  }
+
   /* ---- table lookup ---- */
   function initTable() {
     var p = document.getElementById('pane-table');
@@ -181,7 +225,7 @@
   }
 
   function init() {
-    initCalc(); initTable(); initBell();
+    initCalc(); initList(); initTable(); initBell();
     var tabs = Array.prototype.slice.call(document.querySelectorAll('.tabs .tab'));
     function select(t) {
       tabs.forEach(function (x) {
