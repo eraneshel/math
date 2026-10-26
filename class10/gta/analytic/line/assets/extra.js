@@ -56,6 +56,17 @@
       } else { fb.classList.add('no'); fb.textContent = f._api.hint || 'עדיין לא. שנו את השרטוט ונסו שוב.'; }
       return;
     }
+    var rs = e.target.closest && e.target.closest('.fig-reset');
+    if (rs) {
+      var rc = rs.closest('.ex'), rb = rc && rc.querySelector('.act-chk');
+      if (rc && rb) {
+        var rf = figOf(rc), rfb = rc.querySelector('.act-ctl .fb'), rid = rc.getAttribute('data-id');
+        if (rfb) { rfb.className = 'fb'; rfb.textContent = ''; }
+        if (rf && rf._api) rf._api.hide('act');
+        if (window.BookApp && window.BookApp.state && window.BookApp.state.done && window.BookApp.state.done[rid]) window.BookApp.setDone(rid, null);
+      }
+      return;
+    }
     var c = e.target.closest && e.target.closest('.chk, .mc-chk, .chk-all');
     if (c) { var card2 = c.closest('.ex'); if (card2) setTimeout(function () { syncReveal(card2); }, 10); }
   });
