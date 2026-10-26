@@ -1,0 +1,311 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><title>המשפט וההוכחה</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&display=swap');
+:root{--ink:#10181f;--mut:#5b6872;--line:#e3e8ec;--bg:#f6f8f5;--g:#3fae2a;--gd:#2f8a1e;--navy:#0e1a24;--y:#ffc83d;--p:#7a5af8;--o:#ff8a3d;--c:#19b5c9;--pk:#ff5c8a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Rubik,Heebo,Arial,sans-serif;color:var(--ink);background:var(--bg);direction:rtl;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding:18px 16px 36px}
+.btn{display:inline-block;background:var(--g);color:#fff;text-decoration:none;font-weight:700;font-size:17px;padding:12px 26px;border-radius:14px;border-bottom:4px solid var(--gd);transition:transform .08s}
+.btn:hover{transform:translateY(-1px)}.btn:active{transform:translateY(2px);border-bottom-width:2px}
+.btn.off{background:#e8ecef;color:#8a969f;border-bottom-color:#d3dade;pointer-events:none}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--line);border-bottom-width:4px}
+h2.sec{font-size:26px;font-weight:800;margin:30px 0 14px}
+h2.sec small{font-size:15px;font-weight:500;color:var(--mut);margin-right:8px}
+.grid{display:grid;gap:16px}
+.card{background:#fff;border:2px solid var(--line);border-bottom-width:5px;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:inherit;transition:transform .12s,border-color .12s}
+a.card:hover{transform:translateY(-3px);border-color:var(--cc,var(--g))}
+.card .ic{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;background:var(--cc,var(--g))}
+.card h3{font-size:21px;font-weight:800;line-height:1.25}.card p{color:var(--mut);font-size:15px}
+.tag{align-self:flex-start;font-size:13px;font-weight:700;border-radius:99px;padding:3px 12px;background:#eaf7e6;color:var(--gd)}
+.tag.soon{background:#eef1f3;color:#7d8a93}
+@media(max-width:700px){.wrap{padding:12px 12px 28px}h2.sec{font-size:22px}}
+
+.hero{background:var(--navy);border-radius:28px;color:#fff;padding:44px 40px;position:relative;overflow:hidden;display:flex;gap:30px;align-items:center}
+.hero:before{content:"π  ∠  √  Σ  ∞  ∥  △";position:absolute;inset:auto 0 -20px 0;font:800 90px Rubik;color:#ffffff0d;white-space:nowrap;letter-spacing:18px;text-align:center}
+.hero .t{flex:1;position:relative;z-index:1}
+.hero .k{display:inline-block;background:#ffffff1a;border-radius:99px;padding:4px 16px;font-size:14px;font-weight:500;margin-bottom:14px}
+.hero h1{font-size:46px;font-weight:800;line-height:1.15;margin-bottom:12px}
+.hero h1 em{font-style:normal;color:var(--y)}
+.hero p{font-size:18px;color:#c4d0d8;max-width:520px;margin-bottom:22px}
+.hero .fig{flex:0 0 250px;position:relative;z-index:1}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.step{background:#fff;border:2px solid var(--line);border-bottom-width:5px;border-radius:20px;padding:18px;text-align:center}
+.step b{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--y);font-weight:800;font-size:20px;margin:0 auto 8px}
+.step h4{font-size:18px;font-weight:800}.step p{color:var(--mut);font-size:15px}
+@media(max-width:700px){.hero{flex-direction:column;padding:28px 22px;text-align:center}.hero h1{font-size:32px}.hero p{font-size:16px}.hero .fig{flex:none;width:200px}.steps{grid-template-columns:1fr}}
+
+.q{background:#fff;border:2px solid var(--line);border-bottom-width:5px;border-radius:22px;padding:20px;margin-bottom:18px}
+.qh{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.qn{width:46px;height:46px;border-radius:14px;background:var(--navy);color:var(--y);font-weight:800;font-size:22px;display:grid;place-items:center}
+.qh h2{font-size:24px;font-weight:800}
+.row{display:flex;gap:22px;align-items:flex-start}
+.q .fig{flex:0 0 330px;background:#f6f8f5;border:2px solid var(--line);border-radius:16px;padding:10px}
+.q .fig svg{width:100%;height:auto}
+.txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;font-size:17px;line-height:1.65}
+.question-box{background:#fff8e1;border:2px solid #ffe29a;border-radius:14px;padding:12px 14px}
+.parts{background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px 14px}
+.parts p{margin-bottom:8px}.parts p:last-child{margin:0}
+.math-expr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 3px;line-height:1.25}.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 4px}.frac>span:last-child{padding:0 4px}
+.geo-line-base{stroke:#2b3b49;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}.geo-line-med{stroke:#6b7c8b;stroke-width:1.5}.geo-line-dashed{stroke:#8a9ba8;stroke-width:1.5;stroke-dasharray:4,4}.geo-point{fill:#1b2733}
+.geo-text{font-family:'Frank Ruhl Libre',Georgia,serif;font-style:italic;font-size:14px;fill:#1b2733;font-weight:bold;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
+text{text-anchor:middle}
+.act{display:flex;align-items:center;gap:12px;margin-top:4px}
+@media(max-width:700px){.row{flex-direction:column}.q .fig{flex:none;width:100%}.qh h2{font-size:20px}}
+
+.q .parts{border:0!important;background:none!important;box-shadow:none!important;padding:8px 4px 0!important}.q .tag{background:#e0e8ff!important;color:#1d3a8f!important}
+
+.qn{display:none!important}.qh{margin-bottom:12px}.qh h2{font-size:24px;color:#1d3a8f;padding-right:14px;border-right:5px solid #3a5bdc;line-height:1.2}
+
+.question-box{background:linear-gradient(135deg,#eef2ff,#e3f4fd)!important;border:2px solid #c7d4fb!important}
+
+:root{--g:#2f5bd8;--gd:#1d3a8f}
+
+.hero .figp{background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(6px)}
+.hero .figp .geo-line-base{stroke:#fff;stroke-width:2.6}.hero .figp .geo-line-med{stroke:#5eead4;stroke-width:2.6}
+.hero .figp .geo-point{fill:#fff}.hero .figp .geo-text{fill:#fff;font-family:'Frank Ruhl Libre',serif;font-weight:700;font-size:15px}
+
+.hero{background:linear-gradient(135deg,#1d3a8f 0%,#2a52bd 100%)!important}.hero .k{background:#ffffff26}.hero p{color:#dbe5ff}.hero .crumb,.hero .crumb a{color:#c9d7fb!important}.hero:before{color:#ffffff12} 
+.hero{background:radial-gradient(760px 360px at 12% -10%,rgba(34,211,238,.38),transparent 62%),radial-gradient(640px 380px at 100% 110%,rgba(167,139,250,.5),transparent 62%),linear-gradient(135deg,#1a1768 0%,#2a39b4 55%,#3a5bdc 100%)!important;box-shadow:0 18px 40px -18px rgba(42,57,180,.55)}
+.hero:after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.16) 1px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(135deg,#000 0%,transparent 70%);mask-image:linear-gradient(135deg,#000 0%,transparent 70%);pointer-events:none}
+.hero .t,.hero .fig{z-index:2}
+.hero .k{background:rgba(255,255,255,.12)!important;border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(6px);letter-spacing:.3px}
+.hero h1 em,.hero p em{font-style:normal;background:linear-gradient(90deg,#67e8f9,#a7f3d0);-webkit-background-clip:text;background-clip:text;color:transparent!important}
+.hero p{color:#dbe4ff!important}
+.hero svg [stroke="#ffc83d"]{stroke:#5eead4}.hero svg [fill="#ffc83d"]{fill:#5eead4}
+.hero svg [stroke="#3fae2a"]{stroke:#38bdf8}.hero svg [stroke="#19b5c9"]{stroke:#a5b4fc}.hero svg [fill="#19b5c9"]{fill:#a5b4fc}.hero svg [stroke="#ff5c8a"]{stroke:#f0abfc}.hero svg [fill="#ff5c8a"]{fill:#f0abfc}.hero svg [stroke="#ff8a3d"]{stroke:#fcd34d}.hero svg [fill="#3fae2a"]{fill:#38bdf8}
+.hero svg text[fill="#ffc83d"]{fill:#5eead4}
+
+.hero .crumb{font-size:14px;color:#9fb0bc;margin-bottom:12px}.hero .crumb a{color:#c4d0d8;text-decoration:none}
+.hero .figp{background:#fff;border-radius:18px;padding:10px}.hero .figp svg{width:100%;height:auto;display:block}
+.pick{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:12px}
+.nums a,.nums span{display:flex;flex-direction:column;align-items:center;gap:2px;padding:14px 6px;border-radius:16px;font-weight:800;font-size:26px;text-decoration:none;border:2px solid var(--line);border-bottom-width:5px;background:#fff;color:var(--ink)}
+.nums a.on{background:var(--g);border-color:var(--gd);color:#fff}.nums small{font-size:12px;font-weight:700}
+.nums span{color:#9aa6ae;background:#f0f3f5}.nums a:hover{transform:translateY(-2px)}
+.q{scroll-margin-top:14px}
+.deck{display:block;width:100%;aspect-ratio:16/9;height:auto;border:0;border-radius:20px;background:#f6f8f5}@media(max-width:700px){.deck{height:92vh;min-height:560px}}
+:root{--c-blue:#2a52bd;--c-orange:#ff8a3d;--c-green:#3fae2a;--c-purple:#7a5af8;--c-red:#e5484d;--c-teal:#19b5c9}
+.pf-sec{margin-bottom:34px}.pf-sec .sec{margin-top:34px}
+.thm2{background:linear-gradient(135deg,#eef2ff,#e3f4fd);border:2px solid #c7d4fb;border-bottom-width:5px;border-radius:22px;padding:22px 26px;margin-bottom:18px}
+.thm2 .tag{background:linear-gradient(90deg,#2a39b4,#3a5bdc);color:#fff;font-size:15px;padding:4px 16px}
+.thm2 p{font-size:27px;font-weight:700;line-height:1.45;margin:12px 0 14px}.thm2 p b{color:#1d3a8f}
+.thm2 .giv{display:flex;gap:26px;flex-wrap:wrap;font-size:18px;line-height:1.7;border-top:2px dashed #b8c6f5;padding-top:12px}
+.ex-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;align-items:stretch}
+.fcard{background:#fff;border:2px solid var(--line);border-bottom-width:5px;border-radius:20px;padding:14px}
+.fcard svg{width:100%;height:auto;display:block}
+.fcard.ctl{display:flex;flex-direction:column;gap:14px;justify-content:center}
+.hint{font-size:17px;line-height:1.65;color:var(--mut)}.why{font-weight:700;color:#1d3a8f;font-size:17px}
+.fcard input[type=range]{width:100%;accent-color:var(--g);height:30px}
+.ratio-row{display:flex;gap:12px;font-size:18px;font-weight:700;line-height:1.5}
+.ratio-row div{flex:1;background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.proof-wrap{display:grid;grid-template-columns:minmax(280px,400px) minmax(0,1fr);gap:20px;align-items:start}
+.pside{position:sticky;top:12px;display:flex;flex-direction:column;gap:12px}
+.pctl{display:flex;flex-direction:column;gap:10px;text-align:center}.pstat{font-weight:700;color:#1d3a8f;font-size:17px}
+.pbtns{display:flex;gap:10px;justify-content:center}.pbtns .btn{font-family:inherit;cursor:pointer;padding:10px 22px;font-size:16px}
+.pbtns .btn:disabled{opacity:.4;pointer-events:none}.pbtns .btn.ghost{border:2px solid var(--line);border-bottom-width:4px}
+.ptable{background:#fff;border:2px solid var(--line);border-bottom-width:5px;border-radius:20px;overflow:hidden}
+.phd,.pr{display:grid;grid-template-columns:46px minmax(0,1fr) minmax(0,1.5fr);gap:0}
+.phd{background:linear-gradient(135deg,#1d3a8f,#2a52bd);color:#fff;font-weight:700;font-size:16px}.phd div{padding:10px 12px}
+.pr{display:none;border-top:1px solid var(--line)}.pr.visible{display:grid}
+.pr>div{padding:11px 12px}.pn{text-align:center;color:#2a52bd;font-weight:800;border-left:1px solid var(--line)}
+.pc{font-size:19px;font-weight:700;border-left:1px solid var(--line);opacity:0;transition:opacity .35s}.pz{font-size:15px;color:var(--mut);line-height:1.5;opacity:0;transition:opacity .35s}
+.pr.show-claim .pc,.pr.show-reason .pz{opacity:1}.pr.dimmed{background:#fafbfa}
+.pz .reason-name{font-weight:800;color:var(--ink)}.pz .reason-here{font-style:italic}
+.hl{opacity:0;transition:opacity .4s}.hl.visible{opacity:1}.hl.dimmed{opacity:.35}.aux{opacity:0;transition:opacity .4s}.aux.visible{opacity:1}
+.sumlist{display:flex;flex-direction:column;gap:12px}.sumlist div{background:#fff;border:2px solid var(--line);border-bottom-width:5px;border-right:6px solid var(--g);border-radius:16px;padding:14px 18px;font-size:18px}
+@media(max-width:800px){.ex-grid,.proof-wrap{grid-template-columns:1fr}.thm2 p{font-size:22px}
+ .pside{top:6px;z-index:5;background:var(--bg);padding-bottom:6px}.pside .fcard:first-child svg{max-height:26vh}
+ .phd{display:none}.pr{grid-template-columns:1fr}.pr.visible{display:block}.pn{text-align:right;border:0;padding-bottom:0;font-size:14px}.pn:before{content:'שורה '}.pc{border:0;padding-top:2px}}
+
+.ratio-row.three div{font-size:15px;padding:8px 6px}.sl{display:flex;flex-direction:column;gap:2px;font-weight:700;font-size:16px;color:#1d3a8f}
+.hl{pointer-events:none}.pside .fcard svg{overflow:visible}
+
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.tab{font:700 17px Rubik,Arial,sans-serif;color:#fff;background:rgba(255,255,255,.1);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.28);border-bottom-width:3px;border-radius:14px;padding:9px 20px;cursor:pointer;transition:transform .08s}
+.tab:hover{transform:translateY(-1px)}.tab.on{background:linear-gradient(90deg,#67e8f9,#a7f3d0);color:#0b1b4a;border-color:#34d399}
+.tab small{font-weight:500;font-size:12px;opacity:.85;margin-right:6px}
+.tpanel{display:none}.tpanel.on{display:block}
+</style></head><body><div class="wrap"><section class="hero"><div class="t"><div class="crumb"><a href="../../../../../" target="_top">בית</a> › <a href="../../../../" target="_top">כיתה י׳</a> › <a href="../../../" target="_top">גאומטריה, טריגונומטריה ואנליטית</a> › <a href="../../" target="_top">גאומטריה</a> › <a href="../" target="_top">משפט התיכונים</a> › המשפט וההוכחה</div><span class="k">משפט התיכונים</span><h1>המשפט <em>וההוכחה</em></h1><p>בחרו חלק: התנסות אינטראקטיבית, ואחריה הוכחה שורה אחרי שורה.</p><div class="tabs"><button class="tab on" type="button" data-t="m1">החלוקה ביחס 2 : 1</button><button class="tab" type="button" data-t="m2">נפגשים בנקודה אחת</button></div></div><div class="fig"><svg viewBox="-14 -6 280 214" width="100%"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M125 18L22 178h206z" stroke="#fff" stroke-width="4"/><path d="M125 18V178M22 178L176 98M228 178L74 98" stroke="#ffc83d" stroke-width="3"/><circle cx="125" cy="125" r="8" fill="#ff5c8a"/><text x="140" y="148" fill="#ff5c8a" font-family="Rubik" font-weight="700" font-size="20">G</text><g fill="#fff"><circle cx="125" cy="18" r="6"/><circle cx="22" cy="178" r="6"/><circle cx="228" cy="178" r="6"/><circle cx="125" cy="178" r="6"/><circle cx="176" cy="98" r="6"/><circle cx="74" cy="98" r="6"/></g></g></svg></div></section><div class="tpanel on" id="m1">
+<section class="pf-sec" id="m1-explore">
+  <h2 class="sec">התנסות <small>גוררים ורואים</small></h2>
+  <div class="thm2"><span class="tag">משפט התיכונים</span><p>שני תיכונים במשולש נחתכים בנקודה <b>המחלקת כל אחד מהם ביחס 2 : 1</b> מצד הקדקוד.</p><div class="giv"><div><b>נתון:</b> במשולש <span class="math-expr">ABC</span>: <span class="math-expr">D</span> אמצע <span class="math-expr">AB</span>, <span class="math-expr">E</span> אמצע <span class="math-expr">AC</span>, <span class="math-expr">CD</span> ו־<span class="math-expr">BE</span> נחתכים ב־<span class="math-expr">G</span>.</div><div><b>צ״ל:</b> <span class="math-expr">BG = 2GE</span> וגם <span class="math-expr">CG = 2GD</span></div></div></div>
+  <div class="ex-grid">
+    <div class="fcard"><svg id="m1-svg" viewBox="0 0 320 190" style="touch-action:none;user-select:none"></svg></div>
+    <div class="fcard ctl"><p class="hint">גוררים את הקדקודים <span class="math-expr">A</span>, <span class="math-expr">B</span>, <span class="math-expr">C</span> ובודקים: איך משתנים אורכי התיכונים, ומה קורה ליחסים?</p><div class="ratio-row three"><div id="m1-r1"></div><div id="m1-r2"></div><div id="m1-r3"></div></div>
+      <p class="why" id="m1-st"></p></div>
+  </div>
+</section>
+<section class="pf-sec" id="m1-proof">
+  <h2 class="sec">הוכחה <small>שורה אחרי שורה</small></h2>
+  <div class="proof-wrap">
+    <div class="pside"><div class="fcard"><svg viewBox="0 0 320 190"><polygon points="150.0,18.0 36.0,168.0 284.0,168.0" fill="none" class="geo-line-base"/><line x1="36.0" y1="168.0" x2="217.0" y2="93.0" class="geo-line-med"/><line x1="284.0" y1="168.0" x2="93.0" y2="93.0" class="geo-line-med"/><g class="hl" id="m1-hl-1"><circle cx="93.0" cy="93.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><circle cx="217.0" cy="93.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><circle cx="156.7" cy="118.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><line x1="36.0" y1="168.0" x2="217.0" y2="93.0" stroke="var(--c-blue)" stroke-width="5" /><line x1="284.0" y1="168.0" x2="93.0" y2="93.0" stroke="var(--c-orange)" stroke-width="5" /></g><g class="hl" id="m1-hl-2"><circle cx="96.3" cy="143.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><circle cx="220.3" cy="143.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><line x1="36.0" y1="168.0" x2="156.7" y2="118.0" stroke="var(--c-purple)" stroke-width="6" /><line x1="156.7" y1="118.0" x2="284.0" y2="168.0" stroke="var(--c-purple)" stroke-width="6" /></g><g class="hl" id="m1-hl-3"><line x1="93.0" y1="93.0" x2="217.0" y2="93.0" stroke="var(--c-orange)" stroke-width="6" /><line x1="36.0" y1="168.0" x2="284.0" y2="168.0" stroke="var(--c-purple)" stroke-width="6" /><line x1="150.0" y1="18.0" x2="36.0" y2="168.0" stroke="var(--c-blue)" stroke-width="3" /><line x1="150.0" y1="18.0" x2="284.0" y2="168.0" stroke="var(--c-blue)" stroke-width="3" /></g><g class="hl" id="m1-hl-4"><line x1="96.3" y1="143.0" x2="220.3" y2="143.0" stroke="var(--c-teal)" stroke-width="6" /><line x1="36.0" y1="168.0" x2="284.0" y2="168.0" stroke="var(--c-purple)" stroke-width="6" /><line x1="156.7" y1="118.0" x2="36.0" y2="168.0" stroke="var(--c-blue)" stroke-width="3" /><line x1="156.7" y1="118.0" x2="284.0" y2="168.0" stroke="var(--c-blue)" stroke-width="3" /></g><g class="hl" id="m1-hl-5"><line x1="93.0" y1="93.0" x2="217.0" y2="93.0" stroke="var(--c-orange)" stroke-width="6" /><line x1="96.3" y1="143.0" x2="220.3" y2="143.0" stroke="var(--c-orange)" stroke-width="6" /><line x1="36.0" y1="168.0" x2="284.0" y2="168.0" stroke="var(--c-purple)" stroke-width="3" /></g><g class="hl" id="m1-hl-6"><polygon points="93.0,93.0 217.0,93.0 220.3,143.0 96.3,143.0" fill="rgba(25,181,201,0.2)" stroke="var(--c-teal)" stroke-width="2"/><line x1="93.0" y1="93.0" x2="217.0" y2="93.0" stroke="var(--c-teal)" stroke-width="4" /><line x1="217.0" y1="93.0" x2="220.3" y2="143.0" stroke="var(--c-teal)" stroke-width="4" /><line x1="220.3" y1="143.0" x2="96.3" y2="143.0" stroke="var(--c-teal)" stroke-width="4" /><line x1="96.3" y1="143.0" x2="93.0" y2="93.0" stroke="var(--c-teal)" stroke-width="4" /></g><g class="hl" id="m1-hl-7"><line x1="217.0" y1="93.0" x2="96.3" y2="143.0" stroke="var(--c-blue)" stroke-width="5" /><line x1="93.0" y1="93.0" x2="220.3" y2="143.0" stroke="var(--c-orange)" stroke-width="5" /><circle cx="156.7" cy="118.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><polygon points="93.0,93.0 217.0,93.0 220.3,143.0 96.3,143.0" fill="rgba(25,181,201,0.12)" stroke="var(--c-teal)" stroke-width="2"/></g><g class="hl" id="m1-hl-8"><line x1="36.0" y1="168.0" x2="156.7" y2="118.0" stroke="var(--c-purple)" stroke-width="7" /><line x1="156.7" y1="118.0" x2="217.0" y2="93.0" stroke="var(--c-blue)" stroke-width="7" /><line x1="284.0" y1="168.0" x2="156.7" y2="118.0" stroke="var(--c-purple)" stroke-width="7" /><line x1="156.7" y1="118.0" x2="93.0" y2="93.0" stroke="var(--c-orange)" stroke-width="7" /></g><g class="aux" data-from="2"><line x1="96.3" y1="143.0" x2="220.3" y2="143.0" class="geo-line-dashed"/><line x1="93.0" y1="93.0" x2="217.0" y2="93.0" class="geo-line-dashed"/><circle cx="96.3" cy="143.0" r="2.5" class="geo-point"/><circle cx="220.3" cy="143.0" r="2.5" class="geo-point"/><text x="84.3" y="151.0" text-anchor="end" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">M</text><text x="232.3" y="151.0" text-anchor="start" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">N</text></g><circle cx="150.0" cy="18.0" r="2.5" class="geo-point"/><circle cx="36.0" cy="168.0" r="2.5" class="geo-point"/><circle cx="284.0" cy="168.0" r="2.5" class="geo-point"/><circle cx="93.0" cy="93.0" r="2.5" class="geo-point"/><circle cx="217.0" cy="93.0" r="2.5" class="geo-point"/><circle cx="156.7" cy="118.0" r="2.5" class="geo-point"/><text x="150.0" y="10.0" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">A</text><text x="28.0" y="182.0" text-anchor="end" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">B</text><text x="292.0" y="182.0" text-anchor="start" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">C</text><text x="80.0" y="98.0" text-anchor="end" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">D</text><text x="230.0" y="98.0" text-anchor="start" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">E</text><text x="156.7" y="134.0" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">G</text></svg></div>
+      <div class="fcard pctl"><div class="pstat" id="m1-pstat"></div><div class="pbtns"><button class="btn ghost" type="button" id="m1-pprev">→ הקודם</button><button class="btn" type="button" id="m1-pnext">הבא ←</button></div></div></div>
+    <div class="ptable"><div class="phd"><div>מס׳</div><div>טענה</div><div>נימוק</div></div>
+<div class="pr" id="m1-card-1"><div class="pn">1</div><div class="pc claim"><span class="math-expr">D</span> אמצע <span class="math-expr">AB</span>, <span class="math-expr">E</span> אמצע <span class="math-expr">AC</span>, והתיכונים <span class="math-expr">CD</span> ו־<span class="math-expr">BE</span> נחתכים ב־<span class="math-expr">G</span></div><div class="pz reason">נתון</div></div>
+<div class="pr" id="m1-card-2"><div class="pn">2</div><div class="pc claim"><span class="math-expr">M</span> אמצע <span class="math-expr">GB</span> ו־<span class="math-expr">N</span> אמצע <span class="math-expr">GC</span></div><div class="pz reason"><span class="reason-name">בניית עזר:</span> נסמן את אמצעי הקטעים <span class="math-expr">GB</span> ו־<span class="math-expr">GC</span></div></div>
+<div class="pr" id="m1-card-3"><div class="pn">3</div><div class="pc claim"><span class="math-expr">DE ∥ BC</span> וגם <span class="math-expr">DE = ½BC</span></div><div class="pz reason"><span class="reason-name">משפט קטע האמצעים:</span> קטע המחבר את אמצעי שתי צלעות במשולש מקביל לצלע השלישית ושווה למחציתה. <span class="reason-here">כאן: במשולש <span class="math-expr">ABC</span>: <span class="math-expr">D</span> אמצע <span class="math-expr">AB</span> ו־<span class="math-expr">E</span> אמצע <span class="math-expr">AC</span> (טענה 1)</span></div></div>
+<div class="pr" id="m1-card-4"><div class="pn">4</div><div class="pc claim"><span class="math-expr">MN ∥ BC</span> וגם <span class="math-expr">MN = ½BC</span></div><div class="pz reason"><span class="reason-name">משפט קטע האמצעים:</span> קטע המחבר את אמצעי שתי צלעות במשולש מקביל לצלע השלישית ושווה למחציתה. <span class="reason-here">כאן: במשולש <span class="math-expr">GBC</span>: <span class="math-expr">M</span> אמצע <span class="math-expr">GB</span> ו־<span class="math-expr">N</span> אמצע <span class="math-expr">GC</span> (טענה 2)</span></div></div>
+<div class="pr" id="m1-card-5"><div class="pn">5</div><div class="pc claim"><span class="math-expr">DE ∥ MN</span> וגם <span class="math-expr">DE = MN</span></div><div class="pz reason"><span class="reason-name">תכונת המעבר:</span> שני ישרים המקבילים לישר שלישי מקבילים זה לזה, ושני קטעים השווים לקטע שלישי שווים זה לזה. <span class="reason-here">כאן: שני הקטעים מקבילים ל־<span class="math-expr">BC</span> ושווים ל־<span class="math-expr">½BC</span> (טענות 3, 4)</span></div></div>
+<div class="pr" id="m1-card-6"><div class="pn">6</div><div class="pc claim">המרובע <span class="math-expr">DENM</span> מקבילית</div><div class="pz reason"><span class="reason-name">מרובע שבו זוג צלעות נגדיות שוות ומקבילות הוא מקבילית.</span> <span class="reason-here">כאן: <span class="math-expr">DE</span> ו־<span class="math-expr">MN</span> צלעות נגדיות, <span class="math-expr">DE ∥ MN</span> ו־<span class="math-expr">DE = MN</span> (טענה 5)</span></div></div>
+<div class="pr" id="m1-card-7"><div class="pn">7</div><div class="pc claim"><span class="math-expr">GM = GE</span> וגם <span class="math-expr">GN = GD</span></div><div class="pz reason"><span class="reason-name">במקבילית האלכסונים חוצים זה את זה.</span> <span class="reason-here">כאן: האלכסונים <span class="math-expr">EM</span> ו־<span class="math-expr">DN</span> של <span class="math-expr">DENM</span> נחתכים ב־<span class="math-expr">G</span>, כי <span class="math-expr">EM</span> על <span class="math-expr">BE</span> ו־<span class="math-expr">DN</span> על <span class="math-expr">CD</span> (טענות 1, 6)</span></div></div>
+<div class="pr" id="m1-card-8"><div class="pn">8</div><div class="pc claim"><span class="math-expr">BG = 2GE</span> וגם <span class="math-expr">CG = 2GD</span> ∎</div><div class="pz reason">הצבת טענה 7 בטענה 2: <span class="math-expr">M</span> אמצע <span class="math-expr">GB</span>, ולכן <span class="math-expr">BG = 2GM = 2GE</span>. כך גם <span class="math-expr">CG = 2GN = 2GD</span></div></div>
+</div>
+  </div>
+</section>
+<section class="pf-sec"><h2 class="sec">סיכום</h2><div class="sumlist"><div>אם <span class="math-expr">BE</span> ו־<span class="math-expr">CD</span> תיכונים הנחתכים ב־<span class="math-expr">G</span>, אז <span class="math-expr">BG : GE = 2 : 1</span> וגם <span class="math-expr">CG : GD = 2 : 1</span></div><div><b>רעיון:</b> מסמנים את אמצעי <span class="math-expr">GB</span> ו־<span class="math-expr">GC</span>. הקטע <span class="math-expr">MN</span> הוא קטע אמצעים של <span class="math-expr">GBC</span> ו־<span class="math-expr">DE</span> של <span class="math-expr">ABC</span>, לכן <span class="math-expr">DENM</span> מקבילית, ואלכסוניה חוצים זה את זה ב־<span class="math-expr">G</span>.</div></div></section>
+<script>
+(function(){
+var N=8,K='m1',step=0,phaseTxt=['','הסרטוט','הטענה','הנימוק'],refs={};
+function refsFor(row){if(refs[row])return refs[row];var c=document.getElementById(K+'-card-'+row),set={},txt=c.querySelector('.reason').textContent,re=/טענ(?:ה|ות)\s*((?:\d+[\s,ו־]*)+)/g,m;
+  while((m=re.exec(txt))){(m[1].match(/\d+/g)||[]).forEach(function(n){var q=parseInt(n);if(q>=1)set[q]=1;});}refs[row]=set;return set;}
+function upd(){
+  var row=Math.ceil(step/3),ph=step>0?((step-1)%3)+1:0;
+  document.querySelectorAll('#'+K+'-proof .aux').forEach(function(e){e.classList.toggle('visible',row>=parseInt(e.dataset.from));});
+  for(var i=1;i<=N;i++){var c=document.getElementById(K+'-card-'+i),h=document.getElementById(K+'-hl-'+i);
+    if(i<=row){c.classList.add('visible');c.classList.toggle('show-claim',i<row||ph>=2);c.classList.toggle('show-reason',i<row||ph>=3);c.classList.toggle('dimmed',i<row);
+      if(h){var keep=(i===row)||(i<row&&refsFor(row)[i]);h.classList.toggle('visible',!!keep);h.classList.toggle('dimmed',!!keep&&i<row);}}
+    else{c.classList.remove('visible','show-claim','show-reason','dimmed');if(h)h.classList.remove('visible','dimmed');}}
+  document.getElementById(K+'-pstat').textContent=step===0?'לחצו "הבא" כדי להתחיל':('שורה '+row+' מתוך '+N+' · '+phaseTxt[ph]);
+  document.getElementById(K+'-pprev').disabled=step===0;document.getElementById(K+'-pnext').disabled=step===N*3;
+  if(row>0){var cur=document.getElementById(K+'-card-'+row),r=cur.getBoundingClientRect(),mob=window.innerWidth<=800,top=mob?document.querySelector('#'+K+'-proof .pside').getBoundingClientRect().height+16:60;
+    if(r.bottom>window.innerHeight-16||r.top<top){cur.style.scrollMarginTop=top+'px';cur.scrollIntoView({block:'start',behavior:'smooth'});}}
+}
+function nx(){if(step<N*3){step++;upd();}}function pv(){if(step>0){step--;upd();}}
+document.getElementById(K+'-pnext').addEventListener('click',nx);document.getElementById(K+'-pprev').addEventListener('click',pv);
+var sec=document.getElementById(K+'-proof'),vis=false;
+if('IntersectionObserver' in window)new IntersectionObserver(function(en){vis=en[0].isIntersecting;},{threshold:0.2}).observe(sec);
+document.addEventListener('keydown',function(e){if(!vis||/INPUT|TEXTAREA/.test((e.target||{}).tagName||''))return;if(e.key==='ArrowLeft'){e.preventDefault();nx();}else if(e.key==='ArrowRight'){e.preventDefault();pv();}});
+upd();
+})();
+</script><script>
+(function(){
+var K='m1',MODE='m1',P={A:[150,18],B:[36,168],C:[284,168]},U=20,NS='http://www.w3.org/2000/svg';
+var svg=document.getElementById(K+'-svg');
+function mk(tag,at,par){var x=document.createElementNS(NS,tag);for(var q in at)x.setAttribute(q,at[q]);(par||svg).appendChild(x);return x;}
+mk('polygon',{fill:'none','class':'geo-line-base'});var tri=svg.lastChild;
+var mAF=mk('line',{stroke:MODE==='m2'?'#19b5c9':'#9aa6ae','stroke-width':MODE==='m2'?4:2,'stroke-dasharray':MODE==='m2'?'':'5,4'});
+var mBE=mk('line',{stroke:'#2a52bd','stroke-width':4}),mCD=mk('line',{stroke:'#ff8a3d','stroke-width':4});
+var LS='paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round',L={},dots={};
+['D','E','F','G'].forEach(function(n){dots[n]=mk('circle',{r:3,'class':'geo-point'});});
+['A','B','C','D','E','F','G'].forEach(function(n){L[n]=mk('text',{'text-anchor':'middle','class':'geo-text',style:LS});L[n].textContent=n;});
+var H={};
+['A','B','C'].forEach(function(n){var h=mk('circle',{r:15,fill:'rgba(15,107,110,0.10)',stroke:'#0f6b6e','stroke-width':1.5,'stroke-dasharray':'3,3',style:'cursor:grab;touch-action:none'});H[n]=h;
+  h.addEventListener('pointerdown',function(ev){ev.stopPropagation();ev.preventDefault();h.setPointerCapture(ev.pointerId);h._d=true;});
+  h.addEventListener('pointermove',function(ev){if(!h._d)return;var pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;var q=pt.matrixTransform(svg.getScreenCTM().inverse());
+    P[n]=[Math.max(14,Math.min(306,q.x)),Math.max(16,Math.min(172,q.y))];draw();});
+  h.addEventListener('pointerup',function(){h._d=false;});h.addEventListener('click',function(ev){ev.stopPropagation();});});
+svg.addEventListener('click',function(ev){ev.stopPropagation();});
+function mid(a,b){return [(a[0]+b[0])/2,(a[1]+b[1])/2];}
+function dist(p,q){return Math.hypot(p[0]-q[0],p[1]-q[1])/U;}
+function seg(el,p,q){el.setAttribute('x1',p[0]);el.setAttribute('y1',p[1]);el.setAttribute('x2',q[0]);el.setAttribute('y2',q[1]);}
+function place(el,x,y){el.setAttribute('x',x);el.setAttribute('y',y);}
+function LR(s){return '<span style="direction:ltr;unicode-bidi:isolate;display:inline-block">'+s+'</span>';}
+function draw(){
+  var A=P.A,B=P.B,C=P.C,D=mid(A,B),E=mid(A,C),F=mid(B,C),G=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3];
+  tri.setAttribute('points',[A,B,C].map(function(p){return p.join(',');}).join(' '));
+  seg(mAF,A,F);seg(mBE,B,E);seg(mCD,C,D);
+  var pos={D:D,E:E,F:F,G:G};for(var n in dots){dots[n].setAttribute('cx',pos[n][0]);dots[n].setAttribute('cy',pos[n][1]);}
+  ['A','B','C'].forEach(function(n){H[n].setAttribute('cx',P[n][0]);H[n].setAttribute('cy',P[n][1]);});
+  var out=function(p,k){var dx=p[0]-G[0],dy=p[1]-G[1],q=Math.hypot(dx,dy)||1;return [p[0]+dx/q*k,p[1]+dy/q*k+4];};
+  [['A',A,13],['B',B,13],['C',C,13],['D',D,12],['E',E,12],['F',F,13]].forEach(function(x){var q=out(x[1],x[2]);place(L[x[0]],q[0],x[0]==='A'?q[1]-4:q[1]);});
+  var q2=out(G,0);place(L.G,G[0]+11,G[1]-5);L.G.setAttribute('text-anchor','start');
+  var r1=[dist(A,G),dist(G,F)],r2=[dist(B,G),dist(G,E)],r3=[dist(C,G),dist(G,D)];
+  function box(id,a,b,nm){document.getElementById(K+'-'+id).innerHTML=LR(nm[0]+' = '+a.toFixed(1)+' , '+nm[1]+' = '+b.toFixed(1))+'<br>'+LR(nm[0]+' : '+nm[1]+' = '+(a/b).toFixed(2));}
+  box('r1',r2[0],r2[1],['BG','GE']);box('r2',r3[0],r3[1],['CG','GD']);box('r3',r1[0],r1[1],['AG','GF']);
+  var st=document.getElementById(K+'-st');if(st){st.textContent=MODE==='m2'?'שלושת התיכונים עוברים דרך G, והיחס בכולם 2 : 1':'בכל משולש BG : GE = CG : GD = AG : GF = 2 : 1';}
+}
+draw();
+})();
+</script></div><div class="tpanel" id="m2">
+<section class="pf-sec" id="m2-explore">
+  <h2 class="sec">התנסות <small>גוררים ורואים</small></h2>
+  <div class="thm2"><span class="tag">שלושת התיכונים נפגשים</span><p>שלושת התיכונים במשולש <b>נפגשים בנקודה אחת</b>, המחלקת כל תיכון ביחס 2 : 1 מצד הקדקוד.</p><div class="giv"><div><b>נתון:</b> במשולש <span class="math-expr">ABC</span>: <span class="math-expr">D</span>, <span class="math-expr">E</span>, <span class="math-expr">F</span> אמצעי <span class="math-expr">AB</span>, <span class="math-expr">AC</span>, <span class="math-expr">BC</span>.</div><div><b>צ״ל:</b> <span class="math-expr">AF</span>, <span class="math-expr">BE</span>, <span class="math-expr">CD</span> עוברים דרך נקודה אחת</div></div></div>
+  <div class="ex-grid">
+    <div class="fcard"><svg id="m2-svg" viewBox="0 0 320 190" style="touch-action:none;user-select:none"></svg></div>
+    <div class="fcard ctl"><p class="hint">גוררים את הקדקודים <span class="math-expr">A</span>, <span class="math-expr">B</span>, <span class="math-expr">C</span> ובודקים: איך משתנים אורכי התיכונים, ומה קורה ליחסים?</p><div class="ratio-row three"><div id="m2-r1"></div><div id="m2-r2"></div><div id="m2-r3"></div></div>
+      <p class="why" id="m2-st"></p></div>
+  </div>
+</section>
+<section class="pf-sec" id="m2-proof">
+  <h2 class="sec">הוכחה <small>שורה אחרי שורה</small></h2>
+  <div class="proof-wrap">
+    <div class="pside"><div class="fcard"><svg viewBox="0 0 320 190"><polygon points="150.0,18.0 36.0,168.0 284.0,168.0" fill="none" class="geo-line-base"/><line x1="150.0" y1="18.0" x2="160.0" y2="168.0" class="geo-line-med"/><line x1="36.0" y1="168.0" x2="217.0" y2="93.0" class="geo-line-med"/><line x1="284.0" y1="168.0" x2="93.0" y2="93.0" class="geo-line-med"/><g class="hl" id="m2-hl-1"><circle cx="93.0" cy="93.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><circle cx="217.0" cy="93.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><circle cx="160.0" cy="168.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/><line x1="36.0" y1="168.0" x2="217.0" y2="93.0" stroke="var(--c-blue)" stroke-width="5" /><line x1="284.0" y1="168.0" x2="93.0" y2="93.0" stroke="var(--c-orange)" stroke-width="5" /><line x1="150.0" y1="18.0" x2="160.0" y2="168.0" stroke="var(--c-teal)" stroke-width="5" /><circle cx="156.7" cy="118.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/></g><g class="hl" id="m2-hl-2"><line x1="36.0" y1="168.0" x2="156.7" y2="118.0" stroke="var(--c-purple)" stroke-width="7" /><line x1="156.7" y1="118.0" x2="217.0" y2="93.0" stroke="var(--c-blue)" stroke-width="7" /><line x1="284.0" y1="168.0" x2="156.7" y2="118.0" stroke="var(--c-purple)" stroke-width="3" /><line x1="156.7" y1="118.0" x2="93.0" y2="93.0" stroke="var(--c-orange)" stroke-width="3" /></g><g class="hl" id="m2-hl-3"><line x1="36.0" y1="168.0" x2="156.7" y2="118.0" stroke="var(--c-purple)" stroke-width="7" /><line x1="156.7" y1="118.0" x2="217.0" y2="93.0" stroke="var(--c-blue)" stroke-width="7" /><line x1="150.0" y1="18.0" x2="160.0" y2="168.0" stroke="var(--c-teal)" stroke-width="5" /><circle cx="156.7" cy="118.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/></g><g class="hl" id="m2-hl-4"><line x1="36.0" y1="168.0" x2="217.0" y2="93.0" stroke="var(--c-blue)" stroke-width="5" /><circle cx="156.7" cy="118.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/></g><g class="hl" id="m2-hl-5"><circle cx="156.7" cy="118.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/></g><g class="hl" id="m2-hl-6"><line x1="150.0" y1="18.0" x2="160.0" y2="168.0" stroke="var(--c-teal)" stroke-width="6" /><line x1="36.0" y1="168.0" x2="217.0" y2="93.0" stroke="var(--c-blue)" stroke-width="6" /><line x1="284.0" y1="168.0" x2="93.0" y2="93.0" stroke="var(--c-orange)" stroke-width="6" /><circle cx="156.7" cy="118.0" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/></g><g class="aux" data-from="3"><text x="144.7" y="112.0" text-anchor="end" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">G₁</text></g><circle cx="150.0" cy="18.0" r="2.5" class="geo-point"/><circle cx="36.0" cy="168.0" r="2.5" class="geo-point"/><circle cx="284.0" cy="168.0" r="2.5" class="geo-point"/><circle cx="93.0" cy="93.0" r="2.5" class="geo-point"/><circle cx="217.0" cy="93.0" r="2.5" class="geo-point"/><circle cx="160.0" cy="168.0" r="2.5" class="geo-point"/><circle cx="156.7" cy="118.0" r="2.5" class="geo-point"/><text x="150.0" y="10.0" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">A</text><text x="28.0" y="182.0" text-anchor="end" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">B</text><text x="292.0" y="182.0" text-anchor="start" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">C</text><text x="80.0" y="98.0" text-anchor="end" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">D</text><text x="230.0" y="98.0" text-anchor="start" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">E</text><text x="160.0" y="185.0" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">F</text><text x="168.7" y="116.0" text-anchor="start" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">G</text></svg><p class="hint" style="margin:6px 4px 0;font-size:13px">בסרטוט G₁ ו־G מתלכדות. בטענה 5 מוכח שהן אותה נקודה.</p></div>
+      <div class="fcard pctl"><div class="pstat" id="m2-pstat"></div><div class="pbtns"><button class="btn ghost" type="button" id="m2-pprev">→ הקודם</button><button class="btn" type="button" id="m2-pnext">הבא ←</button></div></div></div>
+    <div class="ptable"><div class="phd"><div>מס׳</div><div>טענה</div><div>נימוק</div></div>
+<div class="pr" id="m2-card-1"><div class="pn">1</div><div class="pc claim"><span class="math-expr">D</span>, <span class="math-expr">E</span>, <span class="math-expr">F</span> אמצעי <span class="math-expr">AB</span>, <span class="math-expr">AC</span>, <span class="math-expr">BC</span>. התיכונים <span class="math-expr">CD</span> ו־<span class="math-expr">BE</span> נחתכים ב־<span class="math-expr">G</span>, והתיכונים <span class="math-expr">AF</span> ו־<span class="math-expr">BE</span> נחתכים ב־<span class="math-expr">G₁</span></div><div class="pz reason">נתון</div></div>
+<div class="pr" id="m2-card-2"><div class="pn">2</div><div class="pc claim"><span class="math-expr">BG = 2GE</span></div><div class="pz reason"><span class="reason-name">משפט חלוקת התיכונים (הכרטיסייה הקודמת):</span> שני תיכונים במשולש נחתכים בנקודה המחלקת כל אחד מהם ביחס 2 : 1 מצד הקדקוד. <span class="reason-here">כאן: התיכונים <span class="math-expr">CD</span> ו־<span class="math-expr">BE</span> נחתכים ב־<span class="math-expr">G</span> (טענה 1)</span></div></div>
+<div class="pr" id="m2-card-3"><div class="pn">3</div><div class="pc claim"><span class="math-expr">BG₁ = 2G₁E</span></div><div class="pz reason"><span class="reason-name">משפט חלוקת התיכונים (הכרטיסייה הקודמת):</span> שני תיכונים במשולש נחתכים בנקודה המחלקת כל אחד מהם ביחס 2 : 1 מצד הקדקוד. <span class="reason-here">כאן: התיכונים <span class="math-expr">AF</span> ו־<span class="math-expr">BE</span> נחתכים ב־<span class="math-expr">G₁</span> (טענה 1)</span></div></div>
+<div class="pr" id="m2-card-4"><div class="pn">4</div><div class="pc claim"><span class="math-expr">BG = <span class="frac"><span>2</span><span>3</span></span>·BE</span> וגם <span class="math-expr">BG₁ = <span class="frac"><span>2</span><span>3</span></span>·BE</span></div><div class="pz reason">חיבור קטעים: <span class="math-expr">BE = BG + GE = 3GE</span>, ולכן <span class="math-expr">BG = 2GE = ⅔BE</span>; אותו חישוב ל־<span class="math-expr">G₁</span> (טענות 2, 3)</div></div>
+<div class="pr" id="m2-card-5"><div class="pn">5</div><div class="pc claim"><span class="math-expr">G₁ = G</span></div><div class="pz reason"><span class="reason-name">נקודה על קטע הנמצאת במרחק נתון מקצהו היא יחידה.</span> <span class="reason-here">כאן: <span class="math-expr">G</span> ו־<span class="math-expr">G₁</span> על <span class="math-expr">BE</span> ובאותו מרחק <span class="math-expr">⅔BE</span> מ־<span class="math-expr">B</span> (טענה 4)</span></div></div>
+<div class="pr" id="m2-card-6"><div class="pn">6</div><div class="pc claim"><span class="math-expr">G</span> על <span class="math-expr">AF</span>, כלומר שלושת התיכונים נפגשים בנקודה אחת ∎</div><div class="pz reason"><span class="math-expr">G = G₁</span> (טענה 5) ו־<span class="math-expr">G₁</span> על <span class="math-expr">AF</span>, ולכן <span class="math-expr">G</span> על <span class="math-expr">AF</span>. גם <span class="math-expr">G</span> על <span class="math-expr">BE</span> ועל <span class="math-expr">CD</span> (טענה 1)</div></div>
+</div>
+  </div>
+</section>
+<section class="pf-sec"><h2 class="sec">סיכום</h2><div class="sumlist"><div>שלושת התיכונים במשולש נפגשים בנקודה אחת, והיא מחלקת כל תיכון ביחס <span class="math-expr">2 : 1</span> מצד הקדקוד</div><div><b>רעיון:</b> מראים שהנקודה על <span class="math-expr">BE</span> שבה נחתך תיכון שני היא תמיד בדיוק <span class="math-expr">⅔</span> מ־<span class="math-expr">B</span>, ולכן אותה נקודה גם על התיכון השלישי.</div></div></section>
+<script>
+(function(){
+var N=6,K='m2',step=0,phaseTxt=['','הסרטוט','הטענה','הנימוק'],refs={};
+function refsFor(row){if(refs[row])return refs[row];var c=document.getElementById(K+'-card-'+row),set={},txt=c.querySelector('.reason').textContent,re=/טענ(?:ה|ות)\s*((?:\d+[\s,ו־]*)+)/g,m;
+  while((m=re.exec(txt))){(m[1].match(/\d+/g)||[]).forEach(function(n){var q=parseInt(n);if(q>=1)set[q]=1;});}refs[row]=set;return set;}
+function upd(){
+  var row=Math.ceil(step/3),ph=step>0?((step-1)%3)+1:0;
+  document.querySelectorAll('#'+K+'-proof .aux').forEach(function(e){e.classList.toggle('visible',row>=parseInt(e.dataset.from));});
+  for(var i=1;i<=N;i++){var c=document.getElementById(K+'-card-'+i),h=document.getElementById(K+'-hl-'+i);
+    if(i<=row){c.classList.add('visible');c.classList.toggle('show-claim',i<row||ph>=2);c.classList.toggle('show-reason',i<row||ph>=3);c.classList.toggle('dimmed',i<row);
+      if(h){var keep=(i===row)||(i<row&&refsFor(row)[i]);h.classList.toggle('visible',!!keep);h.classList.toggle('dimmed',!!keep&&i<row);}}
+    else{c.classList.remove('visible','show-claim','show-reason','dimmed');if(h)h.classList.remove('visible','dimmed');}}
+  document.getElementById(K+'-pstat').textContent=step===0?'לחצו "הבא" כדי להתחיל':('שורה '+row+' מתוך '+N+' · '+phaseTxt[ph]);
+  document.getElementById(K+'-pprev').disabled=step===0;document.getElementById(K+'-pnext').disabled=step===N*3;
+  if(row>0){var cur=document.getElementById(K+'-card-'+row),r=cur.getBoundingClientRect(),mob=window.innerWidth<=800,top=mob?document.querySelector('#'+K+'-proof .pside').getBoundingClientRect().height+16:60;
+    if(r.bottom>window.innerHeight-16||r.top<top){cur.style.scrollMarginTop=top+'px';cur.scrollIntoView({block:'start',behavior:'smooth'});}}
+}
+function nx(){if(step<N*3){step++;upd();}}function pv(){if(step>0){step--;upd();}}
+document.getElementById(K+'-pnext').addEventListener('click',nx);document.getElementById(K+'-pprev').addEventListener('click',pv);
+var sec=document.getElementById(K+'-proof'),vis=false;
+if('IntersectionObserver' in window)new IntersectionObserver(function(en){vis=en[0].isIntersecting;},{threshold:0.2}).observe(sec);
+document.addEventListener('keydown',function(e){if(!vis||/INPUT|TEXTAREA/.test((e.target||{}).tagName||''))return;if(e.key==='ArrowLeft'){e.preventDefault();nx();}else if(e.key==='ArrowRight'){e.preventDefault();pv();}});
+upd();
+})();
+</script><script>
+(function(){
+var K='m2',MODE='m2',P={A:[150,18],B:[36,168],C:[284,168]},U=20,NS='http://www.w3.org/2000/svg';
+var svg=document.getElementById(K+'-svg');
+function mk(tag,at,par){var x=document.createElementNS(NS,tag);for(var q in at)x.setAttribute(q,at[q]);(par||svg).appendChild(x);return x;}
+mk('polygon',{fill:'none','class':'geo-line-base'});var tri=svg.lastChild;
+var mAF=mk('line',{stroke:MODE==='m2'?'#19b5c9':'#9aa6ae','stroke-width':MODE==='m2'?4:2,'stroke-dasharray':MODE==='m2'?'':'5,4'});
+var mBE=mk('line',{stroke:'#2a52bd','stroke-width':4}),mCD=mk('line',{stroke:'#ff8a3d','stroke-width':4});
+var LS='paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round',L={},dots={};
+['D','E','F','G'].forEach(function(n){dots[n]=mk('circle',{r:3,'class':'geo-point'});});
+['A','B','C','D','E','F','G'].forEach(function(n){L[n]=mk('text',{'text-anchor':'middle','class':'geo-text',style:LS});L[n].textContent=n;});
+var H={};
+['A','B','C'].forEach(function(n){var h=mk('circle',{r:15,fill:'rgba(15,107,110,0.10)',stroke:'#0f6b6e','stroke-width':1.5,'stroke-dasharray':'3,3',style:'cursor:grab;touch-action:none'});H[n]=h;
+  h.addEventListener('pointerdown',function(ev){ev.stopPropagation();ev.preventDefault();h.setPointerCapture(ev.pointerId);h._d=true;});
+  h.addEventListener('pointermove',function(ev){if(!h._d)return;var pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;var q=pt.matrixTransform(svg.getScreenCTM().inverse());
+    P[n]=[Math.max(14,Math.min(306,q.x)),Math.max(16,Math.min(172,q.y))];draw();});
+  h.addEventListener('pointerup',function(){h._d=false;});h.addEventListener('click',function(ev){ev.stopPropagation();});});
+svg.addEventListener('click',function(ev){ev.stopPropagation();});
+function mid(a,b){return [(a[0]+b[0])/2,(a[1]+b[1])/2];}
+function dist(p,q){return Math.hypot(p[0]-q[0],p[1]-q[1])/U;}
+function seg(el,p,q){el.setAttribute('x1',p[0]);el.setAttribute('y1',p[1]);el.setAttribute('x2',q[0]);el.setAttribute('y2',q[1]);}
+function place(el,x,y){el.setAttribute('x',x);el.setAttribute('y',y);}
+function LR(s){return '<span style="direction:ltr;unicode-bidi:isolate;display:inline-block">'+s+'</span>';}
+function draw(){
+  var A=P.A,B=P.B,C=P.C,D=mid(A,B),E=mid(A,C),F=mid(B,C),G=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3];
+  tri.setAttribute('points',[A,B,C].map(function(p){return p.join(',');}).join(' '));
+  seg(mAF,A,F);seg(mBE,B,E);seg(mCD,C,D);
+  var pos={D:D,E:E,F:F,G:G};for(var n in dots){dots[n].setAttribute('cx',pos[n][0]);dots[n].setAttribute('cy',pos[n][1]);}
+  ['A','B','C'].forEach(function(n){H[n].setAttribute('cx',P[n][0]);H[n].setAttribute('cy',P[n][1]);});
+  var out=function(p,k){var dx=p[0]-G[0],dy=p[1]-G[1],q=Math.hypot(dx,dy)||1;return [p[0]+dx/q*k,p[1]+dy/q*k+4];};
+  [['A',A,13],['B',B,13],['C',C,13],['D',D,12],['E',E,12],['F',F,13]].forEach(function(x){var q=out(x[1],x[2]);place(L[x[0]],q[0],x[0]==='A'?q[1]-4:q[1]);});
+  var q2=out(G,0);place(L.G,G[0]+11,G[1]-5);L.G.setAttribute('text-anchor','start');
+  var r1=[dist(A,G),dist(G,F)],r2=[dist(B,G),dist(G,E)],r3=[dist(C,G),dist(G,D)];
+  function box(id,a,b,nm){document.getElementById(K+'-'+id).innerHTML=LR(nm[0]+' = '+a.toFixed(1)+' , '+nm[1]+' = '+b.toFixed(1))+'<br>'+LR(nm[0]+' : '+nm[1]+' = '+(a/b).toFixed(2));}
+  box('r1',r2[0],r2[1],['BG','GE']);box('r2',r3[0],r3[1],['CG','GD']);box('r3',r1[0],r1[1],['AG','GF']);
+  var st=document.getElementById(K+'-st');if(st){st.textContent=MODE==='m2'?'שלושת התיכונים עוברים דרך G, והיחס בכולם 2 : 1':'בכל משולש BG : GE = CG : GD = AG : GF = 2 : 1';}
+}
+draw();
+})();
+</script></div><script>(function(){var tabs=document.querySelectorAll('.tab'),ps=document.querySelectorAll('.tpanel');
+function show(id){tabs.forEach(function(t){t.classList.toggle('on',t.dataset.t===id)});ps.forEach(function(p){p.classList.toggle('on',p.id===id)});try{history.replaceState(null,'','#'+id)}catch(e){}}
+tabs.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.t)})});
+var h=(location.hash||'').slice(1);if(h&&document.getElementById(h)&&document.getElementById(h).classList.contains('tpanel'))show(h);})();</script></div><div style="text-align:center;color:#8a969f;font-size:14px;padding:6px 0 22px">מתמטיקה · לכל בעיה יש פתרון, להנות מהאתגר</div></body></html>
