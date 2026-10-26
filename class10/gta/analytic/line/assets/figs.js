@@ -181,6 +181,8 @@
       vsegEl = el('line', { 'class': 'svg-seg thick' }, gDyn);
       vdotA = el('circle', { r: 4, 'class': 'svg-pt' }, gDyn); vdotB = el('circle', { r: 4, 'class': 'svg-pt' }, gDyn);
     }
+    var riseEls = null;
+    if (spec.rise) riseEls = { run: el('line', { 'class': 'svg-seg thick run' }, gDyn), up: el('line', { 'class': 'svg-seg thick rise' }, gDyn), end: el('circle', { r: 5, 'class': 'svg-pt' }, gDyn), lr: el('text', { 'class': 'svg-plab run' }, gDyn), lu: el('text', { 'class': 'svg-plab rise' }, gDyn) };
     var lineEls = (spec.lines || []).map(function (L, idx) {
       var e = el('line', { 'class': 'svg-line l' + (L.cls || 0) + (L.dash ? ' dash' : '') }, gDyn);
       var n = null;
@@ -233,6 +235,10 @@
         var tq = lineOf(spec.lines[o.line || 0]); if (tq.vert) return L('α = ' + fmt(Pm[o.param]) + '°') + ': ישר אנכי, אין שיפוע';
         return L('α = ' + fmt(Pm[o.param]) + '°  ;  m = tan α = ' + fmt(tq.m));
       }
+      if (o.k === 'rise') {
+        var hq = lineOf(spec.lines[spec.rise.line || 0]), hdx = val(spec.rise.dx);
+        return L('Δy = m·Δx = ' + fmt(hq.m) + '·' + (hdx < 0 ? '(' + fmt(hdx) + ')' : fmt(hdx)) + ' = ' + fmt(hq.m * hdx));
+      }
       if (o.k === 'len') { var t = vsegInfo(); return 'אורך הקטע: ' + L(fmt(t.len)); }
       if (o.k === 'cmp') { var t2 = vsegInfo(); var a = t2.ya, b = t2.yb; var rel = Math.abs(a - b) < 0.005 ? '=' : (a > b ? '>' : '<'); var nm = spec.cmpNames || ['f', 'g']; return L(nm[0] + '(' + (spec.vseg.x || 'x') + ') ' + rel + ' ' + nm[1] + '(' + (spec.vseg.x || 'x') + ')'); }
       if (o.k === 'sign') { var yy = D[o.id].y; return yy > 0.005 ? L('y > 0') + ': הפונקציה חיובית' : yy < -0.005 ? L('y < 0') + ': הפונקציה שלילית' : L('y = 0') + ': אפס הפונקציה'; }
@@ -271,6 +277,14 @@
         var t = vsegInfo();
         vsegEl.setAttribute('x1', sx(t.x)); vsegEl.setAttribute('x2', sx(t.x)); vsegEl.setAttribute('y1', sy(t.ya)); vsegEl.setAttribute('y2', sy(t.yb));
         vdotA.setAttribute('cx', sx(t.x)); vdotA.setAttribute('cy', sy(t.ya)); vdotB.setAttribute('cx', sx(t.x)); vdotB.setAttribute('cy', sy(t.yb));
+      }
+      if (riseEls) {
+        var rq = lineOf(spec.lines[spec.rise.line || 0]), rp = D[spec.rise.id], rdx = val(spec.rise.dx), rdy = rq.m * rdx, rx2 = rp.x + rdx, ry2 = rp.y + rdy;
+        riseEls.run.setAttribute('x1', sx(rp.x)); riseEls.run.setAttribute('y1', sy(rp.y)); riseEls.run.setAttribute('x2', sx(rx2)); riseEls.run.setAttribute('y2', sy(rp.y));
+        riseEls.up.setAttribute('x1', sx(rx2)); riseEls.up.setAttribute('y1', sy(rp.y)); riseEls.up.setAttribute('x2', sx(rx2)); riseEls.up.setAttribute('y2', sy(ry2));
+        riseEls.end.setAttribute('cx', sx(rx2)); riseEls.end.setAttribute('cy', sy(ry2));
+        riseEls.lr.textContent = 'Δx = ' + fmt(rdx); riseEls.lr.setAttribute('x', sx(rp.x + rdx / 2)); riseEls.lr.setAttribute('y', sy(rp.y) + (rp.y > 0 ? -12 : 24)); riseEls.lr.setAttribute('text-anchor', 'middle');
+        riseEls.lu.textContent = 'Δy = ' + fmt(rdy); riseEls.lu.setAttribute('x', sx(rx2) + (rdx >= 0 ? 8 : -8)); riseEls.lu.setAttribute('y', sy(rp.y + rdy / 2) + 5); riseEls.lu.setAttribute('text-anchor', rdx >= 0 ? 'start' : 'end');
       }
       drags.forEach(function (d) {
         var p = D[d.id], e = dragEls[d.id];
