@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+<meta name="color-scheme" content="light only">
+<style>:root{color-scheme:light only}</style>
+<script>(function(){try{var d=document.documentElement,t=("ontouchstart" in window)||navigator.maxTouchPoints>0;if(Math.min(screen.width,screen.height)<600&&t){d.classList.add("mob");if(matchMedia("(orientation: portrait)").matches)d.classList.add("port")}}catch(e){}})();</script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover">
+    <title>שאלה 4: פתרון מלא בגאומטריה</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700&family=Heebo:wght@400;600;700&display=swap');
+
+        :root {
+            --bg-color: #f6f3ee;
+            --text-main: #1b2733;
+            --text-sub: #566472;
+            --card-border: #ddd6c9;
+            --title-color: #0f6b6e;
+
+            --c-blue: #1f5fa8;
+            --c-orange: #d9731a;
+            --c-green: #2a8a55;
+            --c-purple: #6b3fa0;
+            --c-red: #c43b4a;
+            --c-teal: #0f6b6e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Heebo', Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            direction: rtl;
+        }
+
+        .deck-container {
+            width: 1280px;
+            height: 720px;
+            background-color: var(--bg-color);
+            position: relative;
+            flex: none;
+            transform-origin: center center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 40px 50px;
+            display: none;
+            flex-direction: column;
+            background-color: var(--bg-color);
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* Title Slide */
+        .slide-title-layout {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+        }
+
+        .main-title {
+            font-family: 'Frank Ruhl Libre', serif;
+            font-size: 56px;
+            color: var(--title-color);
+            margin-bottom: 20px;
+        }
+
+        .sub-title {
+            font-size: 28px;
+            color: var(--text-sub);
+        }
+
+        /* Content Layout */
+        .slide-header {
+            font-family: 'Frank Ruhl Libre', serif;
+            font-size: 38px;
+            color: var(--title-color);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--card-border);
+            padding-bottom: 5px;
+        }
+
+        .content-container {
+            display: flex;
+            gap: 30px;
+            height: calc(100% - 60px);
+        }
+
+        .left-pane {
+            flex: 0 0 460px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .right-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            padding-left: 10px;
+        }
+
+        .svg-card {
+            background: white;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .question-box {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 18px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .proof-card {
+            background: white;
+            border: 1px solid var(--card-border);
+            border-right: 6px solid var(--title-color);
+            border-radius: 6px;
+            padding: 12px 16px;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.4s ease, transform 0.4s ease, filter 0.3s ease;
+        }
+
+        .proof-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .proof-card.dimmed {
+            opacity: 0.7;
+        }
+
+
+        .proof-table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 16px;
+        }
+        .proof-table th {
+            background: var(--title-color);
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            padding: 8px 12px;
+            text-align: right;
+        }
+        .proof-table th.num, .proof-table td.num { width: 46px; text-align: center; }
+        .proof-table th:nth-child(2) { width: 38%; }
+        .proof-table td {
+            padding: 9px 12px;
+            vertical-align: top;
+            border-top: 1px solid var(--card-border);
+            text-align: right;
+        }
+        .proof-table td.num { color: var(--title-color); font-weight: 700; border-left: 1px solid var(--card-border); border-right: 1px solid var(--card-border); }
+        .proof-table td.claim { font-size: 19px; font-weight: 700; margin: 0; border-left: 1px solid var(--card-border); }
+        .proof-table td.reason { font-size: 15px; color: var(--text-sub); line-height: 1.4; }
+        .proof-table td.claim, .proof-table td.reason { opacity: 0; transition: opacity 0.4s ease; }
+        tr.proof-card.show-claim td.claim, tr.proof-card.show-reason td.reason { opacity: 1; }
+        tr.proof-card { opacity: 0; transform: none; transition: opacity 0.4s ease; }
+        tr.proof-card.visible { opacity: 1; }
+        tr.proof-card.dimmed { opacity: 0.7; }
+
+        .claim {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .reason {
+            font-size: 16px;
+            color: var(--text-sub);
+            line-height: 1.4;
+        }
+
+        .reason-name {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .reason-here {
+            font-style: italic;
+        }
+
+        /* SVG Styles */
+        svg {
+            width: 100%;
+            height: auto;
+            overflow: visible;
+        }
+
+        .geo-line-base {
+            stroke: #2b3b49;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .geo-line-med {
+            stroke: #6b7c8b;
+            stroke-width: 1.5;
+            stroke-dasharray: none;
+        }
+
+        .geo-line-dashed {
+            stroke: #8a9ba8;
+            stroke-width: 1.5;
+            stroke-dasharray: 4,4;
+        }
+
+        .geo-point {
+            fill: #1b2733;
+        }
+
+        .geo-text {
+            font-family: 'Frank Ruhl Libre', Georgia, serif;
+            font-style: italic;
+            font-size: 14px;
+            fill: #1b2733;
+            font-weight: bold;
+        }
+
+        /* Highlight overlays */
+        .hl {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .hl.visible {
+            opacity: 1;
+        }
+        .hl.gone { opacity: 0 !important; }
+        .proof-table.compact td { padding: 5px 10px; }
+        .proof-table.compact td.claim { font-size: 17px; }
+        .proof-table.compact td.reason { font-size: 13.5px; line-height: 1.3; }
+        .hl.dimmed {
+            opacity: 0.35;
+        }
+
+        .aux { opacity: 0; transition: opacity 0.4s ease; }
+        .aux.visible { opacity: 1; }
+
+        .math-expr {
+            direction: ltr;
+            unicode-bidi: isolate;
+            display: inline-block;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 10px;
+            left: 20px;
+            font-size: 14px;
+            color: var(--text-sub);
+            background: rgba(255,255,255,0.8);
+            padding: 4px 12px;
+            border-radius: 12px;
+            pointer-events: none;
+        }
+
+        /* Summary List */
+        .summary-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .summary-item {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-right: 5px solid var(--title-color);
+            font-size: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+            .frac { display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 3px; line-height:1.25; }
+        .frac > span:first-child { border-bottom:1.5px solid currentColor; padding:0 4px; }
+        .frac > span:last-child { padding:0 4px; }
+        .proof-table.tight td { padding: 3px 8px; }
+        .proof-table.tight td.claim { font-size: 15px; }
+        .proof-table.tight td.reason { font-size: 12px; line-height: 1.25; }
+        .proof-table.tight th { padding: 5px 8px; }
+
+        #nav { display:none; }
+        html.mob, html.mob body { display:block; width:100%; height:100%; min-height:0; overflow:hidden; background:#f6f3ee; }
+        html.mob .deck-container { position:fixed; top:0; left:0; right:0; bottom:0; width:auto; height:auto; box-shadow:none; transform:none !important; }
+        html.mob .controls { display:none; }
+        html.mob #nav { display:flex; position:fixed; z-index:50; bottom:10px; left:0; right:0; justify-content:center; gap:12px; pointer-events:none; }
+        html.mob #nav button { pointer-events:auto; font:700 17px Heebo, Arial, sans-serif; color:#fff; background:var(--title-color); border:0; border-radius:22px; padding:11px 26px; box-shadow:0 3px 10px rgba(0,0,0,.25); }
+        html.mob #nav button:active { opacity:.8; }
+        html.mob .slide { padding:10px 12px 70px; overflow-y:auto; }
+        html.mob .main-title { font-size:34px; } html.mob .sub-title { font-size:20px; padding:0 10px; }
+        html.mob .slide-header { font-size:24px; margin-bottom:8px; }
+        html.mob .summary-item { font-size:17px; padding:12px 14px; }
+        html.mob .summary-list > div, html.mob .slide > div[style*="padding: 20px 40px"] { padding:6px 0 !important; }
+        html.mob .content-container { height:auto; gap:10px; }
+        html.mob .svg-card { padding:6px; }
+        html.mob .svg-card svg { max-height:34vh; }
+        html.mob .question-box { font-size:15px; padding:10px 12px; }
+        html.mob .proof-table, html.mob .proof-table tbody { display:block; border:0; background:none; border-radius:0; }
+        html.mob .proof-table thead { display:none; }
+        html.mob .proof-table tr.proof-card { display:block; margin-bottom:8px; background:#fff; border:1px solid var(--card-border); border-right:5px solid var(--title-color); border-radius:6px; padding:6px 10px; }
+        html.mob .proof-table tr.proof-card:not(.visible) { display:none; }
+        html.mob .proof-table tr.proof-card:not(.show-claim) td.claim { display:none; }
+        html.mob .proof-table tr.proof-card:not(.show-reason) td.reason { display:none; }
+        html.mob .proof-table td { display:block; width:auto !important; border:0 !important; padding:2px 0 !important; }
+        html.mob .proof-table td.num { font-size:12px; text-align:right; }
+        html.mob .proof-table td.num::before { content:'שורה '; }
+        html.mob .proof-table td.claim { font-size:18px !important; }
+        html.mob .proof-table td.reason { font-size:14px !important; line-height:1.45 !important; }
+        html.mob.port .slide { padding-top:0; scroll-padding-top:42vh; scroll-padding-bottom:90px; }
+        html.mob:not(.port) .right-pane { padding-bottom:64px; scroll-padding-bottom:70px; }
+        html.mob.port .left-pane { display:contents; }
+        html.mob.port .content-container { flex-direction:column; }
+        html.mob.port .svg-card { position:sticky; top:0; z-index:5; box-shadow:0 6px 0 var(--bg-color); }
+        html.mob.port .slide-header { padding-top:10px; }
+        html.mob.port .right-pane { overflow:visible; padding:0; flex:none; }
+        html.mob:not(.port) .slide { padding:6px 10px 60px; overflow:hidden; }
+        html.mob:not(.port) .content-container { height:calc(100% - 10px); }
+        html.mob:not(.port) .left-pane { flex:0 0 42% !important; overflow-y:auto; }
+        html.mob:not(.port) .right-pane { overflow-y:auto; padding:0 4px 0 0; }
+        html.mob:not(.port) .slide-header { display:none; }
+        html.mob:not(.port) .svg-card svg { max-height:62vh; }
+
+        html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+        html.mob .svg-card { display:block; }
+        html.mob .svg-card svg { display:block; width:100%; height:auto; margin:0 auto; }
+    </style>
+<style>@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&display=swap');
+:root{--bg-color:#f6f8f5;--title-color:#1d3a8f;--card-border:#e3e8ec;--text-main:#10181f;--text-sub:#5b6872;--c-teal:#19b5c9}
+html,body{background:#f6f8f5!important;height:100%!important}body{min-height:0!important}body{font-family:Rubik,Heebo,Arial,sans-serif!important}
+.deck-container{box-shadow:none!important}
+.main-title,.slide-header{font-family:Rubik,Heebo,Arial,sans-serif!important;font-weight:800!important}
+.slide-header{border-bottom:3px solid #1d3a8f!important}
+.proof-table{border:2px solid #e3e8ec!important;border-bottom-width:5px!important;border-radius:16px!important}
+.proof-table th{background:linear-gradient(135deg,#1d3a8f,#2a52bd)!important}
+.proof-table td.num{color:#2a52bd!important}
+.svg-card,.question-box,.thm,.idea,.explore-ctl,.summary-item{border:2px solid #e3e8ec!important;border-bottom-width:5px!important;border-radius:16px!important}
+.thm{border-right:6px solid #2a52bd!important}.idea{border-right:6px solid #19b5c9!important}.summary-item{border-right:6px solid #3fae2a!important}
+.explore-ctl input[type=range]{accent-color:#3fae2a!important}
+.controls{background:#fff!important;border:2px solid #e3e8ec}
+#nav button{background:linear-gradient(135deg,#2a39b4,#3a5bdc)!important;color:#fff!important;border:0!important;border-bottom:4px solid #1a1768!important;font-family:Rubik,Arial,sans-serif!important;font-weight:700!important}
+</style></head>
+<body>
+
+<div class="deck-container" id="deck">
+
+    <!-- Slide 1: Title -->
+    <div class="slide slide-title-layout active">
+        <h1 class="main-title">שאלה 4: פתרון מלא</h1>
+        <h2 class="sub-title">תאלס בטרפז, המשכי השוקיים ואמצעי הבסיסים</h2>
+    </div>
+
+    <!-- Slide 2: Question -->
+    <div class="slide">
+        <h2 class="slide-header">נוסח השאלה</h2>
+        <div class="content-container" style="height:100%;">
+            <div class="left-pane" style="flex: 0 0 400px;">
+                <div class="svg-card"><svg viewBox="0 0 280 245"><polygon points="40,20 240,20 200,140 120,140" fill="none" class="geo-line-base"/><line x1="40" y1="20" x2="200" y2="140" class="geo-line-med"/><line x1="66.7" y1="60" x2="226.7" y2="60" class="geo-line-med"/><line x1="120" y1="140" x2="173.3" y2="220" class="geo-line-dashed"/><line x1="200" y1="140" x2="173.3" y2="220" class="geo-line-dashed"/><circle cx="40" cy="20" r="2.5" class="geo-point"/><circle cx="240" cy="20" r="2.5" class="geo-point"/><circle cx="200" cy="140" r="2.5" class="geo-point"/><circle cx="120" cy="140" r="2.5" class="geo-point"/><circle cx="66.7" cy="60" r="2.5" class="geo-point"/><circle cx="226.7" cy="60" r="2.5" class="geo-point"/><circle cx="173.3" cy="220" r="2.5" class="geo-point"/><circle cx="93.3" cy="60" r="2.5" class="geo-point"/><circle cx="140" cy="20" r="2.5" class="geo-point"/><circle cx="160" cy="140" r="2.5" class="geo-point"/><text x="29" y="16" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">A</text><text x="251" y="16" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">B</text><text x="211" y="156" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">C</text><text x="109" y="156" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">D</text><text x="53.7" y="65" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">E</text><text x="239.7" y="65" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">F</text><text x="173.3" y="240" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">K</text><text x="102.3" y="55" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">P</text><text x="140" y="14" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">M</text><text x="171" y="136" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">N</text></svg></div>
+            </div>
+            <div class="right-pane" style="font-size: 17px; line-height: 1.6;">
+                <div class="question-box">בטרפז <span class="math-expr">ABCD</span> (<span class="math-expr">AB ∥ CD</span>, <span class="math-expr">AB = a</span>, <span class="math-expr">CD = b</span>, <span class="math-expr">a &gt; b</span>) נקודה <span class="math-expr">E</span> על השוק <span class="math-expr">AD</span> ונקודה <span class="math-expr">F</span> על השוק <span class="math-expr">BC</span>, כך ש־<span class="math-expr">EF ∥ AB</span>. נתון <span class="math-expr">AE : ED = m : n</span>. האלכסון <span class="math-expr">AC</span> חותך את <span class="math-expr">EF</span> בנקודה <span class="math-expr">P</span>. המשכי השוקים <span class="math-expr">AD</span> ו־<span class="math-expr">BC</span> נפגשים בנקודה <span class="math-expr">K</span>. הנקודות <span class="math-expr">M</span> ו־<span class="math-expr">N</span> הן אמצעי הבסיסים <span class="math-expr">AB</span> ו־<span class="math-expr">CD</span> בהתאמה.</div>
+                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--card-border);"><p style="margin-bottom: 10px;"><strong>א.</strong> הוכיחו: <span class="math-expr"><span class="frac"><span>EP</span><span>b</span></span> + <span class="frac"><span>PF</span><span>a</span></span> = 1</span>.</p><p style="margin-bottom: 10px;"><strong>ב.</strong> הוכיחו: <span class="math-expr">EF = <span class="frac"><span>na + mb</span><span>m + n</span></span></span>.</p><p style="margin-bottom: 10px;"><strong>ג.</strong> הוכיחו: <span class="math-expr">KD : KA = b : a</span>.</p><p style="margin-bottom: 10px;"><strong>ד.</strong> הוכיחו: הנקודות <span class="math-expr">K, N, M</span> נמצאות על ישר אחד.</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: א -->
+    <div class="slide" data-steps="6">
+        <div class="content-container" style="height:100%;">
+            <div class="left-pane">
+                <div class="svg-card"><svg viewBox="0 0 280 245"><polygon points="40,20 240,20 200,140 120,140" fill="none" class="geo-line-base"/><line x1="40" y1="20" x2="200" y2="140" class="geo-line-med"/><line x1="66.7" y1="60" x2="226.7" y2="60" class="geo-line-med"/><line x1="120" y1="140" x2="173.3" y2="220" class="geo-line-dashed"/><line x1="200" y1="140" x2="173.3" y2="220" class="geo-line-dashed"/><g class="hl" id="a-hl-1"><line x1="66.7" y1="60" x2="226.7" y2="60" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/><line x1="40" y1="20" x2="240" y2="20" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/><line x1="200" y1="140" x2="120" y2="140" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/><circle cx="93.3" cy="60" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/></g><g class="hl" id="a-hl-2"><line x1="66.7" y1="60" x2="93.3" y2="60" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/><line x1="200" y1="140" x2="120" y2="140" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/><line x1="93.3" y1="60" x2="226.7" y2="60" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/><line x1="40" y1="20" x2="240" y2="20" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/></g><g class="hl" id="a-hl-3"><polygon points="40,20 120,140 200,140" fill="rgba(30,100,200,0.20)" stroke="var(--c-blue)" stroke-width="2"/><line x1="66.7" y1="60" x2="93.3" y2="60" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/><line x1="200" y1="140" x2="120" y2="140" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/><line x1="40" y1="20" x2="200" y2="140" stroke="var(--c-green)" stroke-width="3" stroke-linecap="round"/><line x1="40" y1="20" x2="93.3" y2="60" stroke="var(--c-green)" stroke-width="6" stroke-linecap="round"/></g><g class="hl" id="a-hl-4"><polygon points="40,20 240,20 200,140" fill="rgba(214,120,20,0.25)" stroke="var(--c-orange)" stroke-width="2"/><line x1="93.3" y1="60" x2="226.7" y2="60" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/><line x1="40" y1="20" x2="240" y2="20" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/><line x1="40" y1="20" x2="200" y2="140" stroke="var(--c-blue)" stroke-width="3" stroke-linecap="round"/><line x1="200" y1="140" x2="93.3" y2="60" stroke="var(--c-blue)" stroke-width="6" stroke-linecap="round"/></g><g class="hl" id="a-hl-5"><line x1="40" y1="20" x2="93.3" y2="60" stroke="var(--c-green)" stroke-width="4" stroke-linecap="round"/><line x1="93.3" y1="60" x2="200" y2="140" stroke="var(--c-blue)" stroke-width="4" stroke-linecap="round"/></g><g class="hl" id="a-hl-6"><line x1="66.7" y1="60" x2="93.3" y2="60" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/><line x1="93.3" y1="60" x2="226.7" y2="60" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/></g><circle cx="40" cy="20" r="2.5" class="geo-point"/><circle cx="240" cy="20" r="2.5" class="geo-point"/><circle cx="200" cy="140" r="2.5" class="geo-point"/><circle cx="120" cy="140" r="2.5" class="geo-point"/><circle cx="66.7" cy="60" r="2.5" class="geo-point"/><circle cx="226.7" cy="60" r="2.5" class="geo-point"/><circle cx="173.3" cy="220" r="2.5" class="geo-point"/><circle cx="93.3" cy="60" r="2.5" class="geo-point"/><circle cx="140" cy="20" r="2.5" class="geo-point"/><circle cx="160" cy="140" r="2.5" class="geo-point"/><text x="29" y="16" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">A</text><text x="251" y="16" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">B</text><text x="211" y="156" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">C</text><text x="109" y="156" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">D</text><text x="53.7" y="65" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">E</text><text x="239.7" y="65" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">F</text><text x="173.3" y="240" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">K</text><text x="102.3" y="55" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">P</text><text x="140" y="14" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">M</text><text x="171" y="136" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">N</text></svg></div>
+                <div class="question-box"><strong>א.</strong> הוכיחו: <span class="math-expr"><span class="frac"><span>EP</span><span>b</span></span> + <span class="frac"><span>PF</span><span>a</span></span> = 1</span>.</div>
+            </div>
+            <div class="right-pane">
+                <table class="proof-table"><thead><tr><th class="num">מס׳</th><th>טענה</th><th>נימוק</th></tr></thead><tbody>
+<tr class="proof-card" id="a-card-1"><td class="num">1</td><td class="claim"><span class="math-expr">EF ∥ AB</span>, <span class="math-expr">AB ∥ CD</span>, <span class="math-expr">AB = a</span>, <span class="math-expr">CD = b</span>, <span class="math-expr">P</span> נקודת החיתוך של <span class="math-expr">AC</span> ו־<span class="math-expr">EF</span></td><td class="reason">נתון</td></tr>
+<tr class="proof-card" id="a-card-2"><td class="num">2</td><td class="claim"><span class="math-expr">EP ∥ DC</span> וגם <span class="math-expr">PF ∥ AB</span></td><td class="reason"><span class="reason-name">ישרים המקבילים לישר שלישי:</span> שני ישרים המקבילים לישר שלישי – מקבילים זה לזה <span class="reason-here">כאן: <span class="math-expr">P</span> על <span class="math-expr">EF</span>, <span class="math-expr">EF ∥ AB</span> ו־<span class="math-expr">AB ∥ CD</span> (טענה 1)</span></td></tr>
+<tr class="proof-card" id="a-card-3"><td class="num">3</td><td class="claim"><span class="math-expr">EP/DC = AP/AC</span></td><td class="reason"><span class="reason-name">משפט תאלס המורחב:</span> ישר המקביל לצלע במשולש וחותך את שתי הצלעות האחרות, יוצר יחס שווה בין הקטעים על הצלעות לבין יחס הקטע המקביל לצלע <span class="reason-here">כאן: במשולש <span class="math-expr">ADC</span>: <span class="math-expr">EP ∥ DC</span> (טענה 2), <span class="math-expr">E</span> על <span class="math-expr">AD</span>, <span class="math-expr">P</span> על <span class="math-expr">AC</span></span></td></tr>
+<tr class="proof-card" id="a-card-4"><td class="num">4</td><td class="claim"><span class="math-expr">PF/AB = CP/CA</span></td><td class="reason"><span class="reason-name">משפט תאלס המורחב:</span> ישר המקביל לצלע במשולש וחותך את שתי הצלעות האחרות, יוצר יחס שווה בין הקטעים על הצלעות לבין יחס הקטע המקביל לצלע <span class="reason-here">כאן: במשולש <span class="math-expr">CAB</span>: <span class="math-expr">PF ∥ AB</span> (טענה 2), <span class="math-expr">P</span> על <span class="math-expr">CA</span>, <span class="math-expr">F</span> על <span class="math-expr">CB</span></span></td></tr>
+<tr class="proof-card" id="a-card-5"><td class="num">5</td><td class="claim"><span class="math-expr">AP/AC + CP/AC = 1</span></td><td class="reason"><span class="reason-name">חיבור קטעים:</span> אם נקודה על קטע, אורך הקטע שווה לסכום חלקיו <span class="reason-here">כאן: <span class="math-expr">P</span> בין <span class="math-expr">A</span> ל־<span class="math-expr">C</span>, ולכן <span class="math-expr">AC = AP + PC</span>; חילוק ב־<span class="math-expr">AC</span></span></td></tr>
+<tr class="proof-card" id="a-card-6"><td class="num">6</td><td class="claim"><span class="math-expr"><span class="frac"><span>EP</span><span>b</span></span> + <span class="frac"><span>PF</span><span>a</span></span> = 1</span> ∎</td><td class="reason">הצבת טענות 3, 4 בטענה 5, ו־<span class="math-expr">DC = b</span>, <span class="math-expr">AB = a</span> (טענה 1)</td></tr>
+</tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: ב -->
+    <div class="slide" data-steps="8">
+        <div class="content-container" style="height:100%;">
+            <div class="left-pane">
+                <div class="svg-card"><svg viewBox="0 0 280 245"><polygon points="40,20 240,20 200,140 120,140" fill="none" class="geo-line-base"/><line x1="40" y1="20" x2="200" y2="140" class="geo-line-med"/><line x1="66.7" y1="60" x2="226.7" y2="60" class="geo-line-med"/><line x1="120" y1="140" x2="173.3" y2="220" class="geo-line-dashed"/><line x1="200" y1="140" x2="173.3" y2="220" class="geo-line-dashed"/><g class="hl" id="b-hl-1"><line x1="40" y1="20" x2="240" y2="20" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/><line x1="200" y1="140" x2="120" y2="140" stroke="var(--c-green)" stroke-width="4" stroke-linecap="round"/><line x1="40" y1="20" x2="66.7" y2="60" stroke="var(--c-green)" stroke-width="4" stroke-linecap="round"/><line x1="66.7" y1="60" x2="120" y2="140" stroke="var(--c-blue)" stroke-width="4" stroke-linecap="round"/></g><g class="hl" id="b-hl-2"><polygon points="40,20 120,140 200,140" fill="rgba(30,100,200,0.20)" stroke="var(--c-blue)" stroke-width="2"/><line x1="40" y1="20" x2="66.7" y2="60" stroke="var(--c-green)" stroke-width="4" stroke-linecap="round"/><line x1="66.7" y1="60" x2="120" y2="140" stroke="var(--c-blue)" stroke-width="4" stroke-linecap="round"/><line x1="40" y1="20" x2="93.3" y2="60" stroke="var(--c-green)" stroke-width="4" stroke-linecap="round"/><line x1="93.3" y1="60" x2="200" y2="140" stroke="var(--c-blue)" stroke-width="4" stroke-linecap="round"/><line x1="66.7" y1="60" x2="93.3" y2="60" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/><line x1="200" y1="140" x2="120" y2="140" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/></g><g class="hl" id="b-hl-3"><line x1="40" y1="20" x2="93.3" y2="60" stroke="var(--c-green)" stroke-width="4" stroke-linecap="round"/><line x1="93.3" y1="60" x2="200" y2="140" stroke="var(--c-blue)" stroke-width="4" stroke-linecap="round"/></g><g class="hl" id="b-hl-4"><polygon points="40,20 120,140 200,140" fill="rgba(30,100,200,0.20)" stroke="var(--c-blue)" stroke-width="2"/><line x1="66.7" y1="60" x2="93.3" y2="60" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/><line x1="200" y1="140" x2="120" y2="140" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/><line x1="40" y1="20" x2="200" y2="140" stroke="var(--c-green)" stroke-width="3" stroke-linecap="round"/><line x1="40" y1="20" x2="93.3" y2="60" stroke="var(--c-green)" stroke-width="6" stroke-linecap="round"/></g><g class="hl" id="b-hl-5"><line x1="66.7" y1="60" x2="93.3" y2="60" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/></g><g class="hl" id="b-hl-6"><line x1="93.3" y1="60" x2="226.7" y2="60" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/><line x1="40" y1="20" x2="240" y2="20" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/></g><g class="hl" id="b-hl-7"><line x1="93.3" y1="60" x2="226.7" y2="60" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/></g><g class="hl" id="b-hl-8"><line x1="66.7" y1="60" x2="93.3" y2="60" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/><line x1="93.3" y1="60" x2="226.7" y2="60" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/></g><circle cx="40" cy="20" r="2.5" class="geo-point"/><circle cx="240" cy="20" r="2.5" class="geo-point"/><circle cx="200" cy="140" r="2.5" class="geo-point"/><circle cx="120" cy="140" r="2.5" class="geo-point"/><circle cx="66.7" cy="60" r="2.5" class="geo-point"/><circle cx="226.7" cy="60" r="2.5" class="geo-point"/><circle cx="173.3" cy="220" r="2.5" class="geo-point"/><circle cx="93.3" cy="60" r="2.5" class="geo-point"/><circle cx="140" cy="20" r="2.5" class="geo-point"/><circle cx="160" cy="140" r="2.5" class="geo-point"/><text x="29" y="16" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">A</text><text x="251" y="16" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">B</text><text x="211" y="156" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">C</text><text x="109" y="156" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">D</text><text x="53.7" y="65" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">E</text><text x="239.7" y="65" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">F</text><text x="173.3" y="240" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">K</text><text x="102.3" y="55" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">P</text><text x="140" y="14" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">M</text><text x="171" y="136" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">N</text></svg></div>
+                <div class="question-box"><strong>ב.</strong> הוכיחו: <span class="math-expr">EF = <span class="frac"><span>na + mb</span><span>m + n</span></span></span>.</div>
+            </div>
+            <div class="right-pane">
+                <table class="proof-table compact tight"><thead><tr><th class="num">מס׳</th><th>טענה</th><th>נימוק</th></tr></thead><tbody>
+<tr class="proof-card" id="b-card-1"><td class="num">1</td><td class="claim"><span class="math-expr">AB = a</span>, <span class="math-expr">CD = b</span>, <span class="math-expr">AE : ED = m : n</span>, <span class="math-expr">EP ∥ DC</span>, <span class="math-expr"><span class="frac"><span>EP</span><span>b</span></span> + <span class="frac"><span>PF</span><span>a</span></span> = 1</span></td><td class="reason">נתון וסעיף א</td></tr>
+<tr class="proof-card" id="b-card-2"><td class="num">2</td><td class="claim"><span class="math-expr">AP : PC = m : n</span></td><td class="reason"><span class="reason-name">משפט תאלס:</span> ישר המקביל לצלע במשולש וחותך את שתי הצלעות האחרות, מחלק אותן ביחס שווה <span class="reason-here">כאן: במשולש <span class="math-expr">ADC</span>: <span class="math-expr">EP ∥ DC</span> (טענה 1), <span class="math-expr">E</span> על <span class="math-expr">AD</span>, <span class="math-expr">P</span> על <span class="math-expr">AC</span>, ו־<span class="math-expr">AE : ED = m : n</span> (טענה 1)</span></td></tr>
+<tr class="proof-card" id="b-card-3"><td class="num">3</td><td class="claim"><span class="math-expr">AP : AC = m : (m + n)</span></td><td class="reason"><span class="reason-name">חיבור קטעים:</span> אם נקודה על קטע, אורך הקטע שווה לסכום חלקיו <span class="reason-here">כאן: <span class="math-expr">P</span> בין <span class="math-expr">A</span> ל־<span class="math-expr">C</span>, ולכן <span class="math-expr">AC = AP + PC</span>; <span class="math-expr">AP : PC = m : n</span> (טענה 2)</span></td></tr>
+<tr class="proof-card" id="b-card-4"><td class="num">4</td><td class="claim"><span class="math-expr">EP/DC = AP/AC</span></td><td class="reason"><span class="reason-name">משפט תאלס המורחב:</span> ישר המקביל לצלע במשולש וחותך את שתי הצלעות האחרות, יוצר יחס שווה בין הקטעים על הצלעות לבין יחס הקטע המקביל לצלע <span class="reason-here">כאן: במשולש <span class="math-expr">ADC</span>: <span class="math-expr">EP ∥ DC</span>, <span class="math-expr">E</span> על <span class="math-expr">AD</span>, <span class="math-expr">P</span> על <span class="math-expr">AC</span> (טענה 1)</span></td></tr>
+<tr class="proof-card" id="b-card-5"><td class="num">5</td><td class="claim"><span class="math-expr">EP = <span class="frac"><span>mb</span><span>m + n</span></span></span></td><td class="reason">הצבת <span class="math-expr">DC = b</span> (טענה 1) ו־<span class="math-expr">AP/AC = m/(m + n)</span> (טענה 3) בטענה 4 וחישוב</td></tr>
+<tr class="proof-card" id="b-card-6"><td class="num">6</td><td class="claim"><span class="math-expr">PF/a = <span class="frac"><span>n</span><span>m + n</span></span></span></td><td class="reason">הצבת <span class="math-expr">EP/b = m/(m + n)</span> (טענה 5) בשוויון <span class="math-expr">EP/b + PF/a = 1</span> (טענה 1) וחישוב</td></tr>
+<tr class="proof-card" id="b-card-7"><td class="num">7</td><td class="claim"><span class="math-expr">PF = <span class="frac"><span>na</span><span>m + n</span></span></span></td><td class="reason">חישוב (מטענה 6)</td></tr>
+<tr class="proof-card" id="b-card-8"><td class="num">8</td><td class="claim"><span class="math-expr">EF = EP + PF = <span class="frac"><span>mb</span><span>m + n</span></span> + <span class="frac"><span>na</span><span>m + n</span></span> = <span class="frac"><span>na + mb</span><span>m + n</span></span></span> ∎</td><td class="reason"><span class="reason-name">חיבור קטעים:</span> אם נקודה על קטע, אורך הקטע שווה לסכום חלקיו <span class="reason-here">כאן: <span class="math-expr">P</span> על <span class="math-expr">EF</span> בין <span class="math-expr">E</span> ל־<span class="math-expr">F</span>; הצבת טענות 5, 7</span></td></tr>
+</tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5: ג -->
+    <div class="slide" data-steps="3">
+        <div class="content-container" style="height:100%;">
+            <div class="left-pane">
+                <div class="svg-card"><svg viewBox="0 0 280 245"><polygon points="40,20 240,20 200,140 120,140" fill="none" class="geo-line-base"/><line x1="40" y1="20" x2="200" y2="140" class="geo-line-med"/><line x1="66.7" y1="60" x2="226.7" y2="60" class="geo-line-med"/><line x1="120" y1="140" x2="173.3" y2="220" class="geo-line-dashed"/><line x1="200" y1="140" x2="173.3" y2="220" class="geo-line-dashed"/><g class="hl" id="c-hl-1"><line x1="40" y1="20" x2="240" y2="20" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/><line x1="200" y1="140" x2="120" y2="140" stroke="var(--c-green)" stroke-width="4" stroke-linecap="round"/></g><g class="hl" id="c-hl-2"><polygon points="173.3,220 40,20 240,20" fill="rgba(30,100,200,0.20)" stroke="var(--c-blue)" stroke-width="2"/><line x1="200" y1="140" x2="120" y2="140" stroke="var(--c-green)" stroke-width="4" stroke-linecap="round"/><line x1="40" y1="20" x2="240" y2="20" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/><line x1="173.3" y1="220" x2="40" y2="20" stroke="var(--c-orange)" stroke-width="3" stroke-linecap="round"/><line x1="173.3" y1="220" x2="120" y2="140" stroke="var(--c-orange)" stroke-width="6" stroke-linecap="round"/></g><g class="hl" id="c-hl-3"><line x1="173.3" y1="220" x2="120" y2="140" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/><line x1="173.3" y1="220" x2="40" y2="20" stroke="var(--c-orange)" stroke-width="3" stroke-linecap="round"/></g><circle cx="40" cy="20" r="2.5" class="geo-point"/><circle cx="240" cy="20" r="2.5" class="geo-point"/><circle cx="200" cy="140" r="2.5" class="geo-point"/><circle cx="120" cy="140" r="2.5" class="geo-point"/><circle cx="66.7" cy="60" r="2.5" class="geo-point"/><circle cx="226.7" cy="60" r="2.5" class="geo-point"/><circle cx="173.3" cy="220" r="2.5" class="geo-point"/><circle cx="93.3" cy="60" r="2.5" class="geo-point"/><circle cx="140" cy="20" r="2.5" class="geo-point"/><circle cx="160" cy="140" r="2.5" class="geo-point"/><text x="29" y="16" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">A</text><text x="251" y="16" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">B</text><text x="211" y="156" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">C</text><text x="109" y="156" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">D</text><text x="53.7" y="65" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">E</text><text x="239.7" y="65" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">F</text><text x="173.3" y="240" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">K</text><text x="102.3" y="55" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">P</text><text x="140" y="14" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">M</text><text x="171" y="136" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">N</text></svg></div>
+                <div class="question-box"><strong>ג.</strong> הוכיחו: <span class="math-expr">KD : KA = b : a</span>.</div>
+            </div>
+            <div class="right-pane">
+                <table class="proof-table"><thead><tr><th class="num">מס׳</th><th>טענה</th><th>נימוק</th></tr></thead><tbody>
+<tr class="proof-card" id="c-card-1"><td class="num">1</td><td class="claim"><span class="math-expr">AB = a</span>, <span class="math-expr">CD = b</span>, <span class="math-expr">AB ∥ CD</span>, <span class="math-expr">D</span> על <span class="math-expr">KA</span>, <span class="math-expr">C</span> על <span class="math-expr">KB</span></td><td class="reason">נתון</td></tr>
+<tr class="proof-card" id="c-card-2"><td class="num">2</td><td class="claim"><span class="math-expr">KD/KA = DC/AB</span></td><td class="reason"><span class="reason-name">משפט תאלס המורחב:</span> ישר המקביל לצלע במשולש וחותך את שתי הצלעות האחרות, יוצר יחס שווה בין הקטעים על הצלעות לבין יחס הקטע המקביל לצלע <span class="reason-here">כאן: במשולש <span class="math-expr">KAB</span>: <span class="math-expr">DC ∥ AB</span>, <span class="math-expr">D</span> על <span class="math-expr">KA</span>, <span class="math-expr">C</span> על <span class="math-expr">KB</span> (טענה 1)</span></td></tr>
+<tr class="proof-card" id="c-card-3"><td class="num">3</td><td class="claim"><span class="math-expr">KD : KA = b : a</span> ∎</td><td class="reason">הצבת <span class="math-expr">DC = b</span> ו־<span class="math-expr">AB = a</span> (טענה 1) בטענה 2</td></tr>
+</tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: ד -->
+    <div class="slide" data-steps="6">
+        <div class="content-container" style="height:100%;">
+            <div class="left-pane">
+                <div class="svg-card"><svg viewBox="0 0 280 245"><polygon points="40,20 240,20 200,140 120,140" fill="none" class="geo-line-base"/><line x1="40" y1="20" x2="200" y2="140" class="geo-line-med"/><line x1="66.7" y1="60" x2="226.7" y2="60" class="geo-line-med"/><line x1="120" y1="140" x2="173.3" y2="220" class="geo-line-dashed"/><line x1="200" y1="140" x2="173.3" y2="220" class="geo-line-dashed"/><g class="hl" id="d-hl-1"><line x1="90" y1="15" x2="90" y2="25" stroke="var(--c-green)" stroke-width="2.5"/><line x1="190" y1="15" x2="190" y2="25" stroke="var(--c-green)" stroke-width="2.5"/><line x1="137.5" y1="135" x2="137.5" y2="145" stroke="var(--c-blue)" stroke-width="2.5"/><line x1="142.5" y1="135" x2="142.5" y2="145" stroke="var(--c-blue)" stroke-width="2.5"/><line x1="177.5" y1="135" x2="177.5" y2="145" stroke="var(--c-blue)" stroke-width="2.5"/><line x1="182.5" y1="135" x2="182.5" y2="145" stroke="var(--c-blue)" stroke-width="2.5"/></g><g class="hl" id="d-hl-2"><line x1="173.3" y1="220" x2="140" y2="20" stroke="var(--c-red)" stroke-width="4" stroke-linecap="round"/><circle cx="160" cy="140" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/></g><g class="hl" id="d-hl-3"><polygon points="173.3,220 40,20 140,20" fill="rgba(30,100,200,0.20)" stroke="var(--c-blue)" stroke-width="2"/><line x1="120" y1="140" x2="160" y2="140" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/><line x1="40" y1="20" x2="140" y2="20" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/><line x1="173.3" y1="220" x2="40" y2="20" stroke="var(--c-orange)" stroke-width="3" stroke-linecap="round"/><line x1="173.3" y1="220" x2="120" y2="140" stroke="var(--c-orange)" stroke-width="6" stroke-linecap="round"/></g><g class="hl" id="d-hl-4"><line x1="120" y1="140" x2="160" y2="140" stroke="var(--c-purple)" stroke-width="4" stroke-linecap="round"/></g><g class="hl" id="d-hl-5"><line x1="120" y1="140" x2="160" y2="140" stroke="var(--c-blue)" stroke-width="4" stroke-linecap="round"/><line x1="137.5" y1="135" x2="137.5" y2="145" stroke="var(--c-blue)" stroke-width="2.5"/><line x1="142.5" y1="135" x2="142.5" y2="145" stroke="var(--c-blue)" stroke-width="2.5"/><line x1="177.5" y1="135" x2="177.5" y2="145" stroke="var(--c-blue)" stroke-width="2.5"/><line x1="182.5" y1="135" x2="182.5" y2="145" stroke="var(--c-blue)" stroke-width="2.5"/></g><g class="hl" id="d-hl-6"><line x1="173.3" y1="220" x2="140" y2="20" stroke="var(--c-red)" stroke-width="4" stroke-linecap="round"/><circle cx="160" cy="140" r="7" fill="none" stroke="var(--c-teal)" stroke-width="3"/></g><g class="aux" data-from="2"><line x1="173.3" y1="220" x2="140" y2="20" class="geo-line-dashed"/><circle cx="160" cy="140" r="2.5" class="geo-point"/><text x="146" y="158" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">R</text></g><circle cx="40" cy="20" r="2.5" class="geo-point"/><circle cx="240" cy="20" r="2.5" class="geo-point"/><circle cx="200" cy="140" r="2.5" class="geo-point"/><circle cx="120" cy="140" r="2.5" class="geo-point"/><circle cx="66.7" cy="60" r="2.5" class="geo-point"/><circle cx="226.7" cy="60" r="2.5" class="geo-point"/><circle cx="173.3" cy="220" r="2.5" class="geo-point"/><circle cx="93.3" cy="60" r="2.5" class="geo-point"/><circle cx="140" cy="20" r="2.5" class="geo-point"/><circle cx="160" cy="140" r="2.5" class="geo-point"/><text x="29" y="16" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">A</text><text x="251" y="16" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">B</text><text x="211" y="156" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">C</text><text x="109" y="156" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">D</text><text x="53.7" y="65" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">E</text><text x="239.7" y="65" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">F</text><text x="173.3" y="240" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">K</text><text x="102.3" y="55" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">P</text><text x="140" y="14" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">M</text><text x="171" y="136" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">N</text></svg></div>
+                <div class="question-box"><strong>ד.</strong> הוכיחו: הנקודות <span class="math-expr">K, N, M</span> נמצאות על ישר אחד. (פתרון א׳: משפט תאלס המורחב)</div>
+            </div>
+            <div class="right-pane">
+                <table class="proof-table"><thead><tr><th class="num">מס׳</th><th>טענה</th><th>נימוק</th></tr></thead><tbody>
+<tr class="proof-card" id="d-card-1"><td class="num">1</td><td class="claim"><span class="math-expr">AM = MB</span>, <span class="math-expr">DN = NC</span>, <span class="math-expr">AB = a</span>, <span class="math-expr">CD = b</span>, <span class="math-expr">AB ∥ CD</span>, <span class="math-expr">KD : KA = b : a</span></td><td class="reason">נתון וסעיף ג</td></tr>
+<tr class="proof-card" id="d-card-2"><td class="num">2</td><td class="claim"><span class="math-expr">R</span> נקודת החיתוך של הישר <span class="math-expr">KM</span> עם <span class="math-expr">CD</span></td><td class="reason">בניית עזר</td></tr>
+<tr class="proof-card" id="d-card-3"><td class="num">3</td><td class="claim"><span class="math-expr">DR/AM = KD/KA</span></td><td class="reason"><span class="reason-name">משפט תאלס המורחב:</span> ישר המקביל לצלע במשולש וחותך את שתי הצלעות האחרות, יוצר יחס שווה בין הקטעים על הצלעות לבין יחס הקטע המקביל לצלע <span class="reason-here">כאן: במשולש <span class="math-expr">KAM</span>: <span class="math-expr">DR ∥ AM</span> (כי <span class="math-expr">DC ∥ AB</span>, טענה 1), <span class="math-expr">D</span> על <span class="math-expr">KA</span>, <span class="math-expr">R</span> על <span class="math-expr">KM</span> (טענה 2)</span></td></tr>
+<tr class="proof-card" id="d-card-4"><td class="num">4</td><td class="claim"><span class="math-expr">DR = <span class="frac"><span>b</span><span>2</span></span></span></td><td class="reason">הצבת <span class="math-expr">AM = a/2</span> (טענה 1) ו־<span class="math-expr">KD/KA = b/a</span> (טענה 1) בטענה 3 וחישוב</td></tr>
+<tr class="proof-card" id="d-card-5"><td class="num">5</td><td class="claim"><span class="math-expr">DN = <span class="frac"><span>b</span><span>2</span></span></span></td><td class="reason"><span class="math-expr">N</span> אמצע <span class="math-expr">CD</span> ו־<span class="math-expr">CD = b</span> (טענה 1)</td></tr>
+<tr class="proof-card" id="d-card-6"><td class="num">6</td><td class="claim"><span class="math-expr">R = N</span>, ולכן <span class="math-expr">K, N, M</span> על ישר אחד ∎</td><td class="reason"><span class="math-expr">R</span> ו־<span class="math-expr">N</span> על הקטע <span class="math-expr">DC</span> ובאותו מרחק מ־<span class="math-expr">D</span> (טענות 4, 5) – מתלכדות; <span class="math-expr">R</span> על הישר <span class="math-expr">KM</span> (טענה 2)</td></tr>
+</tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7: ד -->
+    <div class="slide" data-steps="8">
+        <div class="content-container" style="height:100%;">
+            <div class="left-pane">
+                <div class="svg-card"><svg viewBox="0 0 280 245"><polygon points="40,20 240,20 200,140 120,140" fill="none" class="geo-line-base"/><line x1="40" y1="20" x2="200" y2="140" class="geo-line-med"/><line x1="66.7" y1="60" x2="226.7" y2="60" class="geo-line-med"/><line x1="120" y1="140" x2="173.3" y2="220" class="geo-line-dashed"/><line x1="200" y1="140" x2="173.3" y2="220" class="geo-line-dashed"/><g class="hl" id="e-hl-1"><line x1="90" y1="15" x2="90" y2="25" stroke="var(--c-green)" stroke-width="2.5"/><line x1="190" y1="15" x2="190" y2="25" stroke="var(--c-green)" stroke-width="2.5"/><line x1="137.5" y1="135" x2="137.5" y2="145" stroke="var(--c-blue)" stroke-width="2.5"/><line x1="142.5" y1="135" x2="142.5" y2="145" stroke="var(--c-blue)" stroke-width="2.5"/><line x1="177.5" y1="135" x2="177.5" y2="145" stroke="var(--c-blue)" stroke-width="2.5"/><line x1="182.5" y1="135" x2="182.5" y2="145" stroke="var(--c-blue)" stroke-width="2.5"/></g><g class="hl" id="e-hl-2"><line x1="40" y1="20" x2="140" y2="20" stroke="var(--c-green)" stroke-width="4" stroke-linecap="round"/><line x1="120" y1="140" x2="160" y2="140" stroke="var(--c-blue)" stroke-width="4" stroke-linecap="round"/></g><g class="hl" id="e-hl-3"><line x1="40" y1="20" x2="140" y2="20" stroke="var(--c-green)" stroke-width="4" stroke-linecap="round"/><line x1="120" y1="140" x2="160" y2="140" stroke="var(--c-blue)" stroke-width="4" stroke-linecap="round"/></g><g class="hl" id="e-hl-4"><line x1="173.3" y1="220" x2="120" y2="140" stroke="var(--c-orange)" stroke-width="4" stroke-linecap="round"/><line x1="173.3" y1="220" x2="40" y2="20" stroke="var(--c-orange)" stroke-width="3" stroke-linecap="round"/><line x1="40" y1="20" x2="140" y2="20" stroke="var(--c-green)" stroke-width="4" stroke-linecap="round"/><line x1="120" y1="140" x2="160" y2="140" stroke="var(--c-blue)" stroke-width="4" stroke-linecap="round"/></g><g class="hl" id="e-hl-5"><line x1="200" y1="140" x2="120" y2="140" stroke="var(--c-blue)" stroke-width="4" stroke-linecap="round"/><line x1="40" y1="20" x2="240" y2="20" stroke="var(--c-green)" stroke-width="4" stroke-linecap="round"/><line x1="173.3" y1="220" x2="40" y2="20" stroke="var(--c-orange)" stroke-width="3" stroke-linecap="round"/><path d="M 127.8 151.6 A 14 14 0 0 0 134 140" fill="none" stroke="var(--c-purple)" stroke-width="3"/><path d="M 47.8 31.6 A 14 14 0 0 0 54 20" fill="none" stroke="var(--c-purple)" stroke-width="3"/></g><g class="hl" id="e-hl-6"><polygon points="173.3,220 120,140 160,140" fill="rgba(30,100,200,0.20)" stroke="var(--c-blue)" stroke-width="2"/><polygon points="173.3,220 40,20 140,20" fill="rgba(214,120,20,0.25)" stroke="var(--c-orange)" stroke-width="2"/></g><g class="hl" id="e-hl-7"><polygon points="173.3,220 120,140 160,140" fill="rgba(30,100,200,0.20)" stroke="var(--c-blue)" stroke-width="2"/><polygon points="173.3,220 40,20 140,20" fill="rgba(214,120,20,0.25)" stroke="var(--c-orange)" stroke-width="2"/><path d="M 165.6 208.4 A 14 14 0 0 1 171 206.2" fill="none" stroke="var(--c-purple)" stroke-width="3"/><path d="M 165.6 208.4 A 14 14 0 0 1 171 206.2" fill="none" stroke="var(--c-purple)" stroke-width="3"/><path d="M 163.3 205 A 18 18 0 0 1 170.4 202.2" fill="none" stroke="var(--c-purple)" stroke-width="3"/></g><g class="hl" id="e-hl-8"><line x1="173.3" y1="220" x2="140" y2="20" stroke="var(--c-red)" stroke-width="4" stroke-linecap="round"/></g><g class="aux" data-from="1"><line x1="173.3" y1="220" x2="140" y2="20" class="geo-line-dashed"/></g><circle cx="40" cy="20" r="2.5" class="geo-point"/><circle cx="240" cy="20" r="2.5" class="geo-point"/><circle cx="200" cy="140" r="2.5" class="geo-point"/><circle cx="120" cy="140" r="2.5" class="geo-point"/><circle cx="66.7" cy="60" r="2.5" class="geo-point"/><circle cx="226.7" cy="60" r="2.5" class="geo-point"/><circle cx="173.3" cy="220" r="2.5" class="geo-point"/><circle cx="93.3" cy="60" r="2.5" class="geo-point"/><circle cx="140" cy="20" r="2.5" class="geo-point"/><circle cx="160" cy="140" r="2.5" class="geo-point"/><text x="29" y="16" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">A</text><text x="251" y="16" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">B</text><text x="211" y="156" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">C</text><text x="109" y="156" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">D</text><text x="53.7" y="65" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">E</text><text x="239.7" y="65" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">F</text><text x="173.3" y="240" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">K</text><text x="102.3" y="55" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">P</text><text x="140" y="14" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">M</text><text x="171" y="136" text-anchor="middle" class="geo-text" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">N</text></svg></div>
+                <div class="question-box"><strong>ד.</strong> הוכיחו: הנקודות <span class="math-expr">K, N, M</span> נמצאות על ישר אחד. (פתרון ב׳: דמיון משולשים)</div>
+            </div>
+            <div class="right-pane">
+                <table class="proof-table compact"><thead><tr><th class="num">מס׳</th><th>טענה</th><th>נימוק</th></tr></thead><tbody>
+<tr class="proof-card" id="e-card-1"><td class="num">1</td><td class="claim"><span class="math-expr">AM = MB</span>, <span class="math-expr">DN = NC</span>, <span class="math-expr">AB = a</span>, <span class="math-expr">CD = b</span>, <span class="math-expr">AB ∥ CD</span>, <span class="math-expr">KD : KA = b : a</span></td><td class="reason">נתון וסעיף ג</td></tr>
+<tr class="proof-card" id="e-card-2"><td class="num">2</td><td class="claim"><span class="math-expr">AM = <span class="frac"><span>a</span><span>2</span></span></span> וגם <span class="math-expr">DN = <span class="frac"><span>b</span><span>2</span></span></span></td><td class="reason">חישוב (מטענה 1)</td></tr>
+<tr class="proof-card" id="e-card-3"><td class="num">3</td><td class="claim"><span class="math-expr">DN/AM = <span class="frac"><span>b</span><span>a</span></span></span></td><td class="reason">חישוב (מטענה 2)</td></tr>
+<tr class="proof-card" id="e-card-4"><td class="num">4</td><td class="claim"><span class="math-expr">KD/KA = DN/AM</span></td><td class="reason">השוואת טענה 1 (שבה <span class="math-expr">KD : KA = b : a</span>) וטענה 3</td></tr>
+<tr class="proof-card" id="e-card-5"><td class="num">5</td><td class="claim"><span class="math-expr">∠KDN = ∠KAM</span></td><td class="reason"><span class="reason-name">זוויות מתאימות שוות:</span> ישרים מקבילים וחותך יוצרים זוויות מתאימות שוות <span class="reason-here">כאן: <span class="math-expr">DC ∥ AB</span> (טענה 1) והחותך <span class="math-expr">KA</span>; <span class="math-expr">N</span> על <span class="math-expr">DC</span> ו־<span class="math-expr">M</span> על <span class="math-expr">AB</span></span></td></tr>
+<tr class="proof-card" id="e-card-6"><td class="num">6</td><td class="claim"><span class="math-expr">△KDN ∼ △KAM</span></td><td class="reason"><span class="reason-name">דמיון (צ.ז.צ):</span> שני משולשים שבהם זווית שווה והצלעות הכוללות אותה ביחס שווה – דומים <span class="reason-here">כאן: <span class="math-expr">∠KDN = ∠KAM</span> (טענה 5), והצלעות הכוללות אותן ביחס שווה: <span class="math-expr">KD/KA = DN/AM</span> (טענה 4)</span></td></tr>
+<tr class="proof-card" id="e-card-7"><td class="num">7</td><td class="claim"><span class="math-expr">∠DKN = ∠AKM</span></td><td class="reason"><span class="reason-name">זוויות מתאימות בדומים:</span> בשני משולשים דומים זוויות מתאימות שוות <span class="reason-here">כאן: <span class="math-expr">△KDN ∼ △KAM</span> (טענה 6)</span></td></tr>
+<tr class="proof-card" id="e-card-8"><td class="num">8</td><td class="claim"><span class="math-expr">K, N, M</span> על ישר אחד ∎</td><td class="reason">שתי קרניים היוצאות מ־<span class="math-expr">K</span> באותו צד של <span class="math-expr">KA</span> ויוצרות עם <span class="math-expr">KA</span> זוויות שוות – מתלכדות. כאן: <span class="math-expr">N</span> ו־<span class="math-expr">M</span> באותו צד של <span class="math-expr">KA</span>, <span class="math-expr">∠DKN = ∠AKM</span> (טענה 7)</td></tr>
+</tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide: Summary -->
+    <div class="slide">
+        <h2 class="slide-header">סיכום התוצאות</h2>
+        <div style="padding: 20px 40px;">
+            <ul class="summary-list">
+<li class="summary-item"><strong>סעיף א׳:</strong> <span class="math-expr"><span class="frac"><span>EP</span><span>b</span></span> + <span class="frac"><span>PF</span><span>a</span></span> = 1</span></li>
+<li class="summary-item"><strong>סעיף ב׳:</strong> <span class="math-expr">EF = <span class="frac"><span>na + mb</span><span>m + n</span></span></span></li>
+<li class="summary-item"><strong>סעיף ג׳:</strong> <span class="math-expr">KD : KA = b : a</span></li>
+<li class="summary-item"><strong>סעיף ד׳:</strong> <span class="math-expr">K, N, M</span> על ישר אחד</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="controls">
+        מקש רווח / חצים להתקדמות
+    </div>
+</div>
+
+<div id="nav"><button type="button" onclick="event.stopPropagation();prev()">→ הקודם</button><button type="button" onclick="event.stopPropagation();next()">הבא ←</button></div>
+<script>
+    let currentSlide = 0;
+    let currentStep = 0;
+
+    const slides = document.querySelectorAll('.slide');
+
+    function getPrefix(slideIndex) {
+        const slide = slides[slideIndex];
+        if (slideIndex === 2) return 'a';
+        if (slideIndex === 3) return 'b';
+        if (slideIndex === 4) return 'c';
+        if (slideIndex === 5) return 'd';
+        if (slideIndex === 6) return 'e';
+        return null;
+    }
+
+    const refCache = {};
+    function refsFor(prefix, row) {
+        if (!refCache[prefix]) {
+            const map = {};
+            const cards = document.querySelectorAll('tr[id^="' + prefix + '-card-"]');
+            const first = parseInt(cards[0].querySelector('td.num').textContent) - 1;
+            cards.forEach((c, idx) => {
+                const set = new Set();
+                const txt = c.querySelector('td.reason').textContent;
+                const re = /טענ(?:ה|ות)\s*((?:\d+[\s,ו־]*)+)/g;
+                let m;
+                while ((m = re.exec(txt))) {
+                    (m[1].match(/\d+/g) || []).forEach(n => { const k = parseInt(n) - first; if (k >= 1) set.add(k); });
+                }
+                map[idx + 1] = set;
+            });
+            refCache[prefix] = map;
+        }
+        return refCache[prefix][row] || new Set();
+    }
+
+    function updateState() {
+        slides.forEach((slide, idx) => {
+            if (idx === currentSlide) {
+                slide.classList.add('active');
+            } else {
+                slide.classList.remove('active');
+            }
+        });
+
+        const row = Math.ceil(currentStep/3), phase = currentStep>0 ? ((currentStep-1)%3)+1 : 0;
+        slides[currentSlide].querySelectorAll('.mv').forEach(el => { el.style.transform = row >= parseInt(el.dataset.from) ? 'translate(' + el.dataset.dx + 'px,' + el.dataset.dy + 'px)' : 'none'; });
+        slides[currentSlide].querySelectorAll('.aux').forEach(el => {
+            el.classList.toggle('visible', row >= parseInt(el.dataset.from));
+        });
+
+        const prefix = getPrefix(currentSlide);
+        if (prefix) {
+            const maxSteps = parseInt(slides[currentSlide].dataset.steps) * 3;
+            for (let i = 1; i <= maxSteps; i++) {
+                const card = document.getElementById(`${prefix}-card-${i}`);
+                const hl = document.getElementById(`${prefix}-hl-${i}`);
+
+                if (i <= row) {
+                    if (card) {
+                        card.classList.add('visible');
+                        card.classList.toggle('show-claim', i < row || phase >= 2);
+                        card.classList.toggle('show-reason', i < row || phase >= 3);
+                        if (i < row) {
+                            card.classList.add('dimmed');
+                        } else {
+                            card.classList.remove('dimmed');
+                            card.scrollIntoView({block: 'nearest', behavior: 'smooth'});
+                        }
+                    }
+                    if (hl) {
+                        const keep = (i === row);
+                        hl.classList.toggle('visible', keep);
+                        hl.classList.toggle('dimmed', keep && i < row);
+                    }
+                } else {
+                    if (card) {
+                        card.classList.remove('visible','show-claim','show-reason');
+                        card.classList.remove('dimmed');
+                    }
+                    if (hl) {
+                        hl.classList.remove('visible');
+                        hl.classList.remove('dimmed');
+                    }
+                }
+            }
+        }
+    }
+
+    function next() {
+        const prefix = getPrefix(currentSlide);
+        if (prefix) {
+            const maxSteps = parseInt(slides[currentSlide].dataset.steps) * 3;
+            if (currentStep < maxSteps) {
+                currentStep++;
+                updateState();
+                return;
+            }
+        }
+
+        if (currentSlide < slides.length - 1) {
+            currentSlide++;
+            currentStep = 0;
+            updateState();
+        }
+    }
+
+    function prev() {
+        const prefix = getPrefix(currentSlide);
+        if (prefix && currentStep > 0) {
+            currentStep--;
+            updateState();
+            return;
+        }
+
+        if (currentSlide > 0) {
+            currentSlide--;
+            const prevPrefix = getPrefix(currentSlide);
+            if (prevPrefix) {
+                currentStep = parseInt(slides[currentSlide].dataset.steps) * 3;
+            } else {
+                currentStep = 0;
+            }
+            updateState();
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === ' ' || e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            next();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            prev();
+        }
+    });
+
+    document.getElementById('deck').addEventListener('click', (e) => {
+        if (document.documentElement.classList.contains('mob')) return;
+        next();
+    });
+
+
+    function fit() {
+        const d = document.getElementById('deck');
+        const touch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+        const mob = (Math.min(screen.width, screen.height) < 600 && touch) || window.innerWidth < 700;
+        const R = document.documentElement.classList;
+        R.toggle('mob', mob);
+        R.toggle('port', window.matchMedia('(orientation: portrait)').matches);
+        if (mob) { d.style.transform = 'none'; return; }
+        const k = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+        d.style.transform = 'scale(' + k + ')';
+    }
+    window.addEventListener('orientationchange', () => setTimeout(fit, 250));
+    setTimeout(fit, 150); setTimeout(fit, 600);
+    window.addEventListener('resize', fit);
+    fit();
+    updateState();
+</script>
+</body>
+</html>
