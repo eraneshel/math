@@ -52,6 +52,23 @@ text{text-anchor:middle}
 .act{display:flex;align-items:center;gap:12px;margin-top:4px}
 @media(max-width:700px){.row{flex-direction:column}.q .fig{flex:none;width:100%}.qh h2{font-size:20px}}
 
+
+.hero .deco{position:absolute;left:0;right:0;bottom:0;width:100%;height:46%;pointer-events:none;opacity:.55}
+.hero .deco .wv,.hero .deco .wv2{stroke-dasharray:1 .02;stroke-dashoffset:0;animation:wvmove 9s ease-in-out infinite alternate}
+.hero .deco .wv2{animation-duration:12s;animation-direction:alternate-reverse}
+@keyframes wvmove{from{transform:translateX(-14px)}to{transform:translateX(14px)}}
+.hero .t,.hero .fig{position:relative;z-index:1}
+.hero .fig svg{animation:hfloat 7s ease-in-out infinite;filter:drop-shadow(0 0 12px rgba(94,234,212,.32)) drop-shadow(0 10px 18px rgba(10,10,60,.35))}
+@keyframes hfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.hero .fig .dr{stroke-dasharray:1;stroke-dashoffset:1;animation:hdraw 1.5s cubic-bezier(.6,0,.2,1) forwards;animation-delay:calc(var(--i,0)*70ms)}
+@keyframes hdraw{to{stroke-dashoffset:0}}
+.hero .fig .pop{transform-box:fill-box;transform-origin:center;animation:hpop .5s cubic-bezier(.3,1.6,.5,1) backwards;animation-delay:calc(.5s + var(--i,0)*60ms)}
+@keyframes hpop{from{transform:scale(0);opacity:0}}
+.hero .fig .fl{animation:hflow 1.8s linear infinite}@keyframes hflow{to{stroke-dashoffset:-26}}
+.hero .fig text{animation:hfade .8s ease 1s backwards}@keyframes hfade{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.hero .fig svg,.hero .fig .dr,.hero .fig .pop,.hero .fig .fl,.hero .deco .wv,.hero .deco .wv2,.hero .fig text{animation:none!important}.hero .fig .dr{stroke-dasharray:none;stroke-dashoffset:0}}
+.hero .figp svg{animation:none;filter:none}
+
 .q .parts{border:0!important;background:none!important;box-shadow:none!important;padding:8px 4px 0!important}.q .tag{background:#e0e8ff!important;color:#1d3a8f!important}
 
 .qn{display:none!important}.qh{margin-bottom:12px}.qh h2{font-size:24px;color:#1d3a8f;padding-right:14px;border-right:5px solid #3a5bdc;line-height:1.2}
@@ -137,24 +154,24 @@ text{text-anchor:middle}
 .pstmt strong{color:#1d3a8f}
 .solsum{margin-top:28px}.ptable .pc{font-size:18px;min-width:0}.ptable .pc .math-expr{white-space:normal}
 .sbar{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}
-</style></head><body><div class="wrap"><section class="hero"><div class="t"><div class="crumb"><a href="../../../../../../" target="_top">בית</a> › <a href="../../../../../" target="_top">כיתה י׳</a> › <a href="../../../../" target="_top">גאומטריה, טריגונומטריה ואנליטית</a> › <a href="../../../" target="_top">גאומטריה</a> › <a href="../../" target="_top">משפטי תאלס</a> › <a href="../" target="_top">שאלות ופתרונות</a> › פתרון שאלה 6</div><span class="k">משפטי תאלס</span><h1>פתרון <em>שאלה 6</em></h1><p>שורה אחרי שורה: קודם הסרטוט, אחר כך הטענה, ואז הנימוק.</p><a class="btn ghost" href="../" target="_top">→ חזרה לשאלות</a></div><div class="fig figp"><svg viewBox="0 0 320 160">
-<polygon points="90.0,10.0 15.0,140.0 250.0,140.0" fill="none" class="geo-line-base"/>
-<line x1="90.0" y1="10.0" x2="132.5" y2="140.0" class="geo-line-med"/>
-<line x1="15.0" y1="140.0" x2="170.0" y2="75.0" class="geo-line-med"/>
-<line x1="250.0" y1="140.0" x2="52.5" y2="75.0" class="geo-line-med"/>
-<line x1="52.5" y1="75.0" x2="170.0" y2="75.0" class="geo-line-med"/>
-<line x1="46.2" y1="85.8" x2="183.3" y2="85.8" class="geo-line-dashed"/>
-<circle cx="90.0" cy="10.0" r="2.5" class="geo-point"/>
-<circle cx="15.0" cy="140.0" r="2.5" class="geo-point"/>
-<circle cx="250.0" cy="140.0" r="2.5" class="geo-point"/>
-<circle cx="52.5" cy="75.0" r="2.5" class="geo-point"/>
-<circle cx="170.0" cy="75.0" r="2.5" class="geo-point"/>
-<circle cx="132.5" cy="140.0" r="2.5" class="geo-point"/>
-<circle cx="111.2" cy="75.0" r="2.5" class="geo-point"/>
-<circle cx="118.3" cy="96.7" r="2.5" class="geo-point"/>
-<circle cx="114.8" cy="85.8" r="2.5" class="geo-point"/>
-<circle cx="46.2" cy="85.8" r="2.5" class="geo-point"/>
-<circle cx="183.3" cy="85.8" r="2.5" class="geo-point"/>
+</style></head><body><div class="wrap"><section class="hero"><svg class="deco" viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="dg"><stop offset="0" stop-color="#67e8f9" stop-opacity="0"/><stop offset=".5" stop-color="#a7f3d0"/><stop offset="1" stop-color="#c4b5fd" stop-opacity="0"/></linearGradient></defs><path class="wv" d="M0 70C60 10 120 10 180 70S300 130 360 70S480 10 540 70S600 90 600 70" fill="none" stroke="url(#dg)" stroke-width="2.5"/><path class="wv2" d="M0 95C70 40 130 40 200 95S330 150 400 95S520 40 600 95" fill="none" stroke="url(#dg)" stroke-width="1.5" opacity=".6"/></svg><div class="t"><div class="crumb"><a href="../../../../../../" target="_top">בית</a> › <a href="../../../../../" target="_top">כיתה י׳</a> › <a href="../../../../" target="_top">גאומטריה, טריגונומטריה ואנליטית</a> › <a href="../../../" target="_top">גאומטריה</a> › <a href="../../" target="_top">משפטי תאלס</a> › <a href="../" target="_top">שאלות ופתרונות</a> › פתרון שאלה 6</div><span class="k">משפטי תאלס</span><h1>פתרון <em>שאלה 6</em></h1><p>שורה אחרי שורה: קודם הסרטוט, אחר כך הטענה, ואז הנימוק.</p><a class="btn ghost" href="../" target="_top">→ חזרה לשאלות</a></div><div class="fig figp"><svg viewBox="0 0 320 160">
+<polygon pathLength="1" style="--i:1" points="90.0,10.0 15.0,140.0 250.0,140.0" fill="none" class="dr geo-line-base"/>
+<line pathLength="1" style="--i:2" x1="90.0" y1="10.0" x2="132.5" y2="140.0" class="dr geo-line-med"/>
+<line pathLength="1" style="--i:3" x1="15.0" y1="140.0" x2="170.0" y2="75.0" class="dr geo-line-med"/>
+<line pathLength="1" style="--i:4" x1="250.0" y1="140.0" x2="52.5" y2="75.0" class="dr geo-line-med"/>
+<line pathLength="1" style="--i:5" x1="52.5" y1="75.0" x2="170.0" y2="75.0" class="dr geo-line-med"/>
+<line class="fl" x1="46.2" y1="85.8" x2="183.3" y2="85.8" class="geo-line-dashed"/>
+<circle class="pop" style="--i:7" cx="90.0" cy="10.0" r="2.5" class="geo-point"/>
+<circle class="pop" style="--i:8" cx="15.0" cy="140.0" r="2.5" class="geo-point"/>
+<circle class="pop" style="--i:9" cx="250.0" cy="140.0" r="2.5" class="geo-point"/>
+<circle class="pop" style="--i:10" cx="52.5" cy="75.0" r="2.5" class="geo-point"/>
+<circle class="pop" style="--i:11" cx="170.0" cy="75.0" r="2.5" class="geo-point"/>
+<circle class="pop" style="--i:12" cx="132.5" cy="140.0" r="2.5" class="geo-point"/>
+<circle class="pop" style="--i:13" cx="111.2" cy="75.0" r="2.5" class="geo-point"/>
+<circle class="pop" style="--i:14" cx="118.3" cy="96.7" r="2.5" class="geo-point"/>
+<circle class="pop" style="--i:15" cx="114.8" cy="85.8" r="2.5" class="geo-point"/>
+<circle class="pop" style="--i:16" cx="46.2" cy="85.8" r="2.5" class="geo-point"/>
+<circle class="pop" style="--i:17" cx="183.3" cy="85.8" r="2.5" class="geo-point"/>
 <text x="90.0" y="6" class="geo-text">A</text>
 <text x="8" y="152" class="geo-text">B</text>
 <text x="258" y="152" class="geo-text">C</text>
