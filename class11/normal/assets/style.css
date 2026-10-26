@@ -326,3 +326,7 @@ fieldset.tl{border:2px solid var(--line);border-radius:12px;margin:0 0 12px;padd
 .typed input{border-color:#b9c5f2}
 :root[data-theme="dark"] .toc a[aria-current="page"],:root[data-theme="auto"] .toc a[aria-current="page"]{background:#2a39b4;color:#fff}
 @media print{.hero:after,.hfx{display:none}}
+/* robustness on phones */
+.hero .hero-fig svg{width:100%;max-width:260px;height:auto;display:block;margin-inline:auto}
+.hero .deco{max-height:140px}
+@media(max-width:700px){.hero{min-height:0;height:auto}.hero .hero-fig{flex:none;width:200px}}
