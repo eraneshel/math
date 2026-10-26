@@ -104,29 +104,49 @@
     fb.textContent = all ? 'נכון! ✓' : (key.length > 1 ? ok + ' מתוך ' + key.length + ' נכונות. תקנו את המסומנות באדום.' : 'עדיין לא. נסו שוב או פתחו רמז.');
     return all;
   }
+  function checkPart(box, idx) {
+    var key = JSON.parse(box.getAttribute('data-key')), part = $$('.part', box)[idx], inp = $('input', part), fb = $('.fb', part);
+    inp.classList.remove('right', 'wrong'); fb.className = 'fb';
+    var g = parseTyped(inp.value);
+    if (!g.length) { fb.textContent = 'הקלידו תשובה.'; return null; }
+    var ok = matches(g[0], key[idx]);
+    inp.classList.add(ok ? 'right' : 'wrong'); fb.classList.add(ok ? 'ok' : 'no'); fb.textContent = ok ? 'נכון ✓' : 'לא נכון, נסו שוב';
+    return ok;
+  }
   function initTyped() {
     $$('.typed').forEach(function (box) {
-      var id = box.getAttribute('data-typed'), btn = $('.chk', box), ins = typedInputs(box), multi = ins.length > 1;
+      var id = box.getAttribute('data-typed'), multi = box.classList.contains('multi'), ins = typedInputs(box);
       var saved = state.myAnswers[id];
       if (saved) { if (multi) { try { JSON.parse(saved).forEach(function (v, i) { if (ins[i]) ins[i].value = v; }); } catch (e) { } } else ins[0].value = saved; }
       var persist = function () {
         var v = multi ? JSON.stringify(ins.map(function (i) { return i.value; })) : ins[0].value;
         if (ins.some(function (i) { return i.value; })) state.myAnswers[id] = v; else delete state.myAnswers[id]; save();
       };
-      ins.forEach(function (inp, idx) {
-        inp.addEventListener('input', function () { persist(); inp.classList.remove('right', 'wrong'); });
-        inp.addEventListener('keydown', function (e) {
-          if (e.key !== 'Enter') return; e.preventDefault();
-          if (multi && idx < ins.length - 1) ins[idx + 1].focus(); else run();
+      if (multi) {
+        var okParts = {};
+        $$('.part', box).forEach(function (part, idx) {
+          var inp = $('input', part);
+          var run = function () {
+            var r = checkPart(box, idx); if (r === null) return;
+            okParts[idx] = !!r;
+            var all = ins.length && ins.every(function (x, k) { return okParts[k]; });
+            if (all) setDone(id, 'ok');
+          };
+          inp.addEventListener('input', function () { persist(); okParts[idx] = false; inp.classList.remove('right', 'wrong'); $('.fb', part).textContent = ''; });
+          inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); run(); } });
+          $('.chk', part).addEventListener('click', run);
         });
-      });
-      var run = function () {
+        return;
+      }
+      var btn = $('.chk', box);
+      ins[0].addEventListener('input', function () { persist(); ins[0].classList.remove('right', 'wrong'); });
+      var run1 = function () {
         var r = checkTyped(box); if (r === null) return;
-        var card = box.closest('.ex');
-        if (card.classList.contains('diag-item')) return;
+        if (box.closest('.ex').classList.contains('diag-item')) return;
         if (r) setDone(id, 'ok');
       };
-      btn.addEventListener('click', run);
+      btn.addEventListener('click', run1);
+      ins[0].addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); run1(); } });
     });
   }
 

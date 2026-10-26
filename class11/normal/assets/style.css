@@ -345,3 +345,9 @@ fieldset.tl{border:2px solid var(--line);border-radius:12px;margin:0 0 12px;padd
   .top-actions .btn,.top .menu-btn{flex:none;white-space:nowrap;min-height:36px;padding:4px 10px}
   .prog{height:20px}.prog-txt{line-height:20px;font-size:12px}
 }
+
+.typed .part{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:end;gap:8px;max-width:520px;flex:1 1 100%}
+.typed .part label{display:flex;flex-direction:column;gap:3px;grid-column:1 / span 2;font-size:14px;color:var(--mut);font-weight:500}
+.typed .part .chk{align-self:end}
+.typed .part .fb{grid-column:1 / -1;min-height:1.2em;font-size:14px}
+.typed .parts{flex-direction:column;gap:8px}
