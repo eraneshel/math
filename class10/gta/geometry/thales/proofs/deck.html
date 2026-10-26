@@ -399,6 +399,20 @@ tr.proof-card,tr.proof-card td.claim,tr.proof-card td.reason{opacity:1!important
 .eq-note{font-size:20px;color:var(--title-color);font-weight:700;text-align:center}
 .idea{background:#fff;border:1px solid var(--card-border);border-right:6px solid var(--c-orange);border-radius:6px;padding:12px 16px;font-size:18px;line-height:1.55}
 .thm{background:#fff;border:1px solid var(--card-border);border-right:6px solid var(--title-color);border-radius:6px;padding:14px 18px;font-size:20px;line-height:1.6}
+</style><style>@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&display=swap');
+:root{--bg-color:#f6f8f5;--title-color:#1d3a8f;--card-border:#e3e8ec;--text-main:#10181f;--text-sub:#5b6872;--c-teal:#19b5c9}
+html,body{background:#f6f8f5!important;height:100%!important}body{min-height:0!important}body{font-family:Rubik,Heebo,Arial,sans-serif!important}
+.deck-container{box-shadow:none!important}
+.main-title,.slide-header{font-family:Rubik,Heebo,Arial,sans-serif!important;font-weight:800!important}
+.slide-header{border-bottom:3px solid #1d3a8f!important}
+.proof-table{border:2px solid #e3e8ec!important;border-bottom-width:5px!important;border-radius:16px!important}
+.proof-table th{background:linear-gradient(135deg,#1d3a8f,#2a52bd)!important}
+.proof-table td.num{color:#2a52bd!important}
+.svg-card,.question-box,.thm,.idea,.explore-ctl,.summary-item{border:2px solid #e3e8ec!important;border-bottom-width:5px!important;border-radius:16px!important}
+.thm{border-right:6px solid #2a52bd!important}.idea{border-right:6px solid #ffc83d!important}.summary-item{border-right:6px solid #3fae2a!important}
+.explore-ctl input[type=range]{accent-color:#3fae2a!important}
+.controls{background:#fff!important;border:2px solid #e3e8ec}
+#nav button{background:#3fae2a!important;color:#fff!important;border:0!important;border-bottom:4px solid #2f8a1e!important;font-family:Rubik,Arial,sans-serif!important;font-weight:700!important}
 </style></head>
 <body>
 
@@ -643,7 +657,7 @@ draw();
     function fit() {
         const d = document.getElementById('deck');
         const touch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
-        const mob = (Math.min(screen.width, screen.height) < 600 && touch) || Math.min(window.innerWidth, window.innerHeight) < 600;
+        const mob = (Math.min(screen.width, screen.height) < 600 && touch) || window.innerWidth < 700;
         const R = document.documentElement.classList;
         R.toggle('mob', mob);
         R.toggle('port', window.matchMedia('(orientation: portrait)').matches);
