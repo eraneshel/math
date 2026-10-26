@@ -305,7 +305,7 @@
     chapterEls().forEach(function (c) { var on = c === el; c.hidden = !on; c.classList.toggle('active', on); });
     $$('#toc a[data-ch]').forEach(function (a) { if (a.getAttribute('data-ch') === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
     showNotice(id);
-    if (id !== 'mistakes') { state.last = location.hash.replace(/^#/, '') || id; save(); }
+    if (id !== 'mistakes' && !(opts && opts.initial && !location.hash)) { state.last = location.hash.replace(/^#/, '') || id; save(); }
     if (id === 'mistakes') renderMistakes();
     if (id === 'appendix') { /* table highlight is cleared when entering normally */ if (!(opts && opts.keepHl) && window.Tools) window.Tools.clearHl(); }
     if (r.target) {
@@ -379,6 +379,17 @@
     if (TEACHER) { var n = $('#notice'); n.hidden = false; n.textContent = 'מצב מורה: כל התשובות והפתרונות פתוחים, וההתקדמות אינה נשמרת.'; }
     updateProgress(); renderMistakes();
     window.addEventListener('hashchange', function () { route(); });
+    var tick = null;
+    window.addEventListener('scroll', function () {
+      if (tick || TEACHER) return;
+      tick = setTimeout(function () {
+        tick = null;
+        var ch = document.querySelector('.chapter.active'); if (!ch || ch.id === 'mistakes') return;
+        var cards = $$('.ex[data-id]', ch), hit = null;
+        for (var i = 0; i < cards.length; i++) { var r = cards[i].getBoundingClientRect(); if (r.bottom > 120) { hit = cards[i]; break; } }
+        if (hit && window.scrollY > 200) { state.last = ch.id + '/ex-' + hit.getAttribute('data-id'); save(); }
+      }, 400);
+    }, { passive: true });
     if (!location.hash && state.last && !TEACHER) { /* stay on the intro; the continue button is available */ }
     route({ initial: true });
     if (TEACHER) { var nn = $('#notice'); nn.hidden = false; }
