@@ -92,7 +92,30 @@
         if (Math.abs(a.x - b.x) < 1e-9) return { vert: true, x: a.x };
         var m = (b.y - a.y) / (b.x - a.x); return { m: m, b: a.y - m * a.x };
       }
-      return { m: val(L.m), b: val(L.b) };
+      if (L.perp !== undefined || L.par !== undefined) {
+        var base = lineOf(spec.lines[L.perp !== undefined ? L.perp : L.par]), at = L.at, mm;
+        if (L.perp !== undefined) {
+          if (base.vert) return { m: 0, b: at[1] };
+          if (Math.abs(base.m) < 1e-9) return { vert: true, x: at[0] };
+          mm = -1 / base.m;
+        } else { if (base.vert) return { vert: true, x: at[0] }; mm = base.m; }
+        return { m: mm, b: at[1] - mm * at[0] };
+      }
+      if (L.tan !== undefined) {
+        var ang = val(L.tan) * Math.PI / 180;
+        if (Math.abs(Math.cos(ang)) < 1e-9) return { vert: true, x: L.at ? L.at[0] : 0 };
+        var tm = Math.tan(ang); return { m: tm, b: L.at ? L.at[1] - tm * L.at[0] : (L.b ? val(L.b) : 0) };
+      }
+      var m2 = val(L.m); return { m: m2, b: L.at ? L.at[1] - m2 * L.at[0] : val(L.b) };
+    }
+    function distTo(id, li) {
+      var q = lineOf(spec.lines[li]), p = D[id];
+      return q.vert ? Math.abs(p.x - q.x) : Math.abs(q.m * p.x - p.y + q.b) / Math.sqrt(q.m * q.m + 1);
+    }
+    function footOf(id, li) {
+      var q = lineOf(spec.lines[li]), p = D[id];
+      if (q.vert) return { x: q.x, y: p.y };
+      var t = (p.x + q.m * (p.y - q.b)) / (1 + q.m * q.m); return { x: t, y: q.m * t + q.b };
     }
     function yOn(L, x) { var o = lineOf(L); return o.vert ? NaN : o.m * x + o.b; }
 
@@ -164,6 +187,14 @@
       if (L.name) n = el('text', { 'class': 'svg-name l' + (L.cls || 0) }, gDyn), n.textContent = L.name;
       return { e: e, n: n, L: L };
     });
+    var calc = spec.calc || [], calcEls = {};
+    calc.forEach(function (c) {
+      var ce = el('circle', { r: 5.4, 'class': 'svg-pt calc' }, gDyn), cl = c.t ? el('text', { 'class': 'svg-plab' }, gDyn) : null; if (cl) cl.textContent = c.t;
+      calcEls[c.id] = { c: ce, lab: cl }; D[c.id] = { x: 0, y: 0 };
+    });
+    var feet = (spec.foot || []).map(function (f) {
+      return { f: f, s: el('line', { 'class': 'svg-seg dash' }, gDyn), p: el('circle', { r: 3.6, 'class': 'svg-pt' }, gDyn) };
+    });
     var dragEls = {};
     drags.forEach(function (d) {
       if (d.fixed) {
@@ -178,10 +209,11 @@
 
     /* ---------- readouts ---------- */
     var readBox = document.createElement('div'); readBox.className = 'fig-read'; readBox.setAttribute('aria-live', 'polite');
+    var calcDef = {}; (spec.calc || []).forEach(function (c) { calcDef[c.id] = c; });
     function L(x) { return '<bdi dir="ltr">' + x + '</bdi>'; }
     function readText(o) {
       if (o.k === 'eq') { var q = lineOf(spec.lines[o.line]); return q.vert ? 'הישר אנכי: ' + L('x = ' + fmt(q.x)) + ' (אינו פונקציה)' : L(eqStr(o.name || 'y', q.m, q.b)); }
-      if (o.k === 'pt') { var p = D[o.id]; return L((o.name || (dragDef[o.id] && dragDef[o.id].t) || o.id) + ' = (' + fmt(p.x) + ' ; ' + fmt(p.y) + ')'); }
+      if (o.k === 'pt') { var p = D[o.id]; return L((o.name || (dragDef[o.id] && dragDef[o.id].t) || (calcDef[o.id] && calcDef[o.id].t) || o.id) + ' = (' + fmt(p.x) + ' ; ' + fmt(p.y) + ')'); }
       if (o.k === 'val') { var xv = o.at in Pm ? Pm[o.at] : (D[o.at] ? D[o.at].x : +o.at); return L((o.lab || 'y') + ' = ' + fmt(yOn(spec.lines[o.line], xv))); }
       if (o.k === 'icpt') {
         var iq = lineOf(spec.lines[o.line || 0]);
@@ -190,6 +222,16 @@
       if (o.k === 'area') {
         var aq = lineOf(spec.lines[o.line || 0]);
         return 'שטח המשולש: ' + L(aq.m === 0 ? '0' : fmt(Math.abs(aq.b / aq.m * aq.b) / 2));
+      }
+      if (o.k === 'dist') return 'מרחק מהישר: ' + L(fmt(distTo(o.id, o.line || 0)));
+      if (o.k === 'slopes') {
+        var s1 = lineOf(spec.lines[o.lines[0]]), s2 = lineOf(spec.lines[o.lines[1]]), pre = o.label ? o.label + ' ' + L(o.pair || '') + ': ' : '';
+        if (s1.vert || s2.vert) return pre + 'אחד הישרים אנכי: אין לו שיפוע';
+        return pre + L('m₁ = ' + fmt(s1.m) + '  ;  m₂ = ' + fmt(s2.m) + '  ;  m₁·m₂ = ' + fmt(s1.m * s2.m));
+      }
+      if (o.k === 'tan') {
+        var tq = lineOf(spec.lines[o.line || 0]); if (tq.vert) return L('α = ' + fmt(Pm[o.param]) + '°') + ': ישר אנכי, אין שיפוע';
+        return L('α = ' + fmt(Pm[o.param]) + '°  ;  m = tan α = ' + fmt(tq.m));
       }
       if (o.k === 'len') { var t = vsegInfo(); return 'אורך הקטע: ' + L(fmt(t.len)); }
       if (o.k === 'cmp') { var t2 = vsegInfo(); var a = t2.ya, b = t2.yb; var rel = Math.abs(a - b) < 0.005 ? '=' : (a > b ? '>' : '<'); var nm = spec.cmpNames || ['f', 'g']; return L(nm[0] + '(' + (spec.vseg.x || 'x') + ') ' + rel + ' ' + nm[1] + '(' + (spec.vseg.x || 'x') + ')'); }
@@ -235,6 +277,17 @@
         e.c.setAttribute('cx', sx(p.x)); e.c.setAttribute('cy', sy(p.y));
         if (e.lab) { var oo = OFF[d.pos || 'tr']; e.lab.setAttribute('x', sx(p.x) + oo[0] + (oo[2] === 'start' ? 6 : oo[2] === 'end' ? -6 : 0)); e.lab.setAttribute('y', sy(p.y) + oo[1]); e.lab.setAttribute('text-anchor', oo[2]); }
         e.c.setAttribute('aria-valuetext', '(' + fmt(p.x) + ' ; ' + fmt(p.y) + ')');
+      });
+      calc.forEach(function (c) {
+        var A = D[c.mix[0]], B = D[c.mix[1]], k = val(c.k), n = val(c.n);
+        D[c.id] = { x: (n * A.x + k * B.x) / (n + k), y: (n * A.y + k * B.y) / (n + k) };
+        var e = calcEls[c.id], P = D[c.id]; e.c.setAttribute('cx', sx(P.x)); e.c.setAttribute('cy', sy(P.y));
+        if (e.lab) { var o2 = OFF[c.pos || 'tr']; e.lab.setAttribute('x', sx(P.x) + o2[0] + (o2[2] === 'start' ? 6 : o2[2] === 'end' ? -6 : 0)); e.lab.setAttribute('y', sy(P.y) + o2[1]); e.lab.setAttribute('text-anchor', o2[2]); }
+      });
+      feet.forEach(function (o) {
+        var P = D[o.f.id], F = footOf(o.f.id, o.f.line);
+        o.s.setAttribute('x1', sx(P.x)); o.s.setAttribute('y1', sy(P.y)); o.s.setAttribute('x2', sx(F.x)); o.s.setAttribute('y2', sy(F.y));
+        o.p.setAttribute('cx', sx(F.x)); o.p.setAttribute('cy', sy(F.y));
       });
       readEls.forEach(function (r) { r.s.innerHTML = readText(r.o); });
     }
@@ -314,6 +367,7 @@
       if (g.all) return g.all.every(ok);
       if (g.params) return Object.keys(g.params).every(function (k) { return cmp(Pm[k], g.params[k], (pdef[k].step || 1) / 2 + 1e-9); });
       if (g.line) { var q = lineOf(spec.lines[g.line.i || 0]); if (q.vert) return false; return Math.abs(q.m - g.line.m) < 0.06 && Math.abs(q.b - g.line.b) < 0.06; }
+      if (g.dist) return Math.abs(distTo(g.dist.id, g.dist.line || 0) - g.dist.eq) < (g.dist.tol || 0.06);
       if (g.drag) return Object.keys(g.drag).every(function (id) { var c = g.drag[id]; return (!('x' in c) || Math.abs(D[id].x - c.x) < 0.06) && (!('y' in c) || Math.abs(D[id].y - c.y) < 0.06); });
       return false;
     }

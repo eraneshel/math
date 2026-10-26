@@ -72,8 +72,11 @@ def _mc(id, qs, head='בחרו את התשובה הנכונה בכל סעיף'):
 TAG = {'example': ('t-example', 'דוגמה'), 'guided': ('t-guided', 'מודרך'), 'solo': ('t-solo', 'עצמאי'), 'bagrut': ('t-bagrut', 'בגרות'),
        'quick': ('t-solo', 'תרגול מהיר')}
 
+LEVELS = {'B1': 'קל', 'B2': 'קל', 'B3': 'קל', 'M1': 'בינוני', 'M2': 'בינוני', 'H1': 'מורכב', 'H2': 'מורכב', 'H3': 'מורכב', 'H4': 'מורכב'}
+
 def ex(id, kind, body, keys=None, labels=None, mc=None, answer=None, solution=None, hint_text=None, star=False, act=False):
     cls, name = TAG[kind]
+    name = LEVELS.get(id, name)
     datakind = 'solo' if kind == 'quick' else kind
     head = '<header class="ex-h"><span class="ex-id">%s</span><span class="tag %s">%s</span><span class="ex-state" aria-live="polite"></span></header>' % (id, cls, name)
     b = md(body)

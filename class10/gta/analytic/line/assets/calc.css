@@ -57,3 +57,5 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 
 .minus-btn{min-width:44px;font-size:22px;line-height:1;padding:6px 10px;margin-inline-start:6px}
 .typed label{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+
+.svg-pt.calc{fill:var(--l2)}
