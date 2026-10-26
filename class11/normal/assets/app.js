@@ -387,7 +387,7 @@
       var nextCh = chapterEls().filter(function (c, i, a) { return a[i - 1] === el; })[0];
       bar.hidden = false;
       if (todo.length) { b.textContent = 'הצעד הבא: תרגיל ' + (todo[0].getAttribute('data-id') || ''); b._t = function () { todo[0].scrollIntoView({ behavior: 'smooth', block: 'start' }); }; }
-      else if (nextCh) { b.textContent = 'סיימתם את הפרק. לפרק הבא \u2190'; b._t = function () { go(nextCh.id); }; }
+      else if (nextCh) { b.textContent = $$('.ex', el).length ? 'סיימתם את הפרק. לפרק הבא \u2190' : 'מתחילים: לפרק הראשון \u2190'; b._t = function () { go(nextCh.id); }; }
       else { bar.hidden = true; }
     }
     b.addEventListener('click', function () { if (b._t) b._t(); });
