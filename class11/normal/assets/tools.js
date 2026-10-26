@@ -65,17 +65,36 @@
   /* ---- calculator ---- */
   function initCalc() {
     var p = document.getElementById('pane-calc');
-    p.innerHTML = '<p class="muted">מלאו בדיוק שלושה מתוך ארבעת השדות. השדה הרביעי יחושב.</p>' +
+    p.innerHTML = '<p class="calc-q"><strong>מה רוצים לחשב?</strong></p>' +
+      '<div class="modes" role="radiogroup" aria-label="מה לחשב">' +
+      '<label class="mode"><input type="radio" name="c-mode" value="z" checked><span>ציון תקן z</span></label>' +
+      '<label class="mode"><input type="radio" name="c-mode" value="x"><span>ערך x</span></label>' +
+      '<label class="mode"><input type="radio" name="c-mode" value="m"><span>ממוצע x̄</span></label>' +
+      '<label class="mode"><input type="radio" name="c-mode" value="s"><span>סטיית תקן S</span></label></div>' +
+      '<p class="muted" id="c-help"></p>' +
       '<div class="tool-grid">' + field('c-x', 'x (ערך הנתון)', '78') + field('c-m', 'x̄ (ממוצע)', '70') + field('c-s', 'S (סטיית תקן)', '4') + field('c-z', 'z (ציון תקן)', '') + '</div>' +
       '<div class="tool-out" id="c-out" aria-live="polite"></div>' +
       '<div class="row"><button type="button" class="btn small ghost" id="c-clear">נקה</button></div>';
     var ids = ['c-x', 'c-m', 'c-s', 'c-z'];
+    var names = { z: 'c-z', x: 'c-x', m: 'c-m', s: 'c-s' };
+    var B = function (t) { return '<bdi dir="ltr">' + t + '</bdi>'; };
+    var helps = { z: 'מזינים את ' + B('x') + ' (הערך), את ' + B('x̄') + ' (הממוצע) ואת ' + B('S') + ' (סטיית התקן). התוצאה: ציון התקן.', x: 'מזינים את ' + B('x̄') + ' (הממוצע), את ' + B('S') + ' (סטיית התקן) ואת ' + B('z') + ' (ציון התקן). התוצאה: הערך.', m: 'מזינים את ' + B('x') + ' (הערך), את ' + B('S') + ' (סטיית התקן) ואת ' + B('z') + ' (ציון התקן). התוצאה: הממוצע.', s: 'מזינים את ' + B('x') + ' (הערך), את ' + B('x̄') + ' (הממוצע) ואת ' + B('z') + ' (ציון התקן). התוצאה: סטיית התקן.' };
+    function setMode() {
+      var mode = document.querySelector('input[name="c-mode"]:checked').value;
+      Object.keys(names).forEach(function (k) {
+        var inp = document.getElementById(names[k]), on = k === mode;
+        inp.disabled = on; if (on) { inp.value = ''; inp.placeholder = 'יחושב'; } else inp.placeholder = inp.getAttribute('data-ph') || '';
+        inp.closest('label').classList.toggle('calc-target', on);
+      });
+      document.getElementById('c-help').innerHTML = helps[mode];
+      upd();
+    }
     function upd() {
       var v = ids.map(function (i) { return document.getElementById(i).value.trim(); });
       var filled = v.filter(function (s) { return s !== ''; }).length;
       var out = document.getElementById('c-out');
-      if (filled < 3) { out.textContent = 'מלאו שלושה שדות.'; return; }
-      if (filled > 3) { out.textContent = 'מלאו רק שלושה שדות. השאירו ריק את השדה שרוצים לחשב.'; return; }
+      if (filled < 3) { out.textContent = 'מלאו את שלושת השדות הפתוחים.'; return; }
+      if (filled > 3) { out.textContent = 'השדה המסומן "יחושב" צריך להישאר ריק.'; return; }
       var n = v.map(num), bad = false;
       v.forEach(function (s, i) { if (s !== '' && isNaN(n[i])) bad = true; });
       if (bad) { out.textContent = 'יש להזין מספרים בלבד.'; return; }
@@ -104,8 +123,10 @@
       out.innerHTML = html;
     }
     ids.forEach(function (i) { document.getElementById(i).addEventListener('input', upd); });
-    document.getElementById('c-clear').addEventListener('click', function () { ids.forEach(function (i) { document.getElementById(i).value = ''; }); upd(); });
-    upd();
+    document.getElementById('c-clear').addEventListener('click', function () { ids.forEach(function (i) { var e = document.getElementById(i); if (!e.disabled) e.value = ''; }); upd(); });
+    ids.forEach(function (i) { var e = document.getElementById(i); e.setAttribute('data-ph', e.placeholder); });
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="c-mode"]'), function (r) { r.addEventListener('change', setMode); });
+    setMode();
   }
 
 

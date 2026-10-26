@@ -419,3 +419,10 @@ body{padding-bottom:76px}
 #l-out .calc-l1,#l-out .calc-l2{overflow-x:auto}
 #l-out .calc-l1{color:var(--mut);margin:6px 0 2px;text-align:left}
 #l-out .calc-l2{font-weight:700;text-align:left;margin-bottom:6px}
+
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.mode{cursor:pointer}.mode input{position:absolute;opacity:0;pointer-events:none}
+.mode span{display:inline-block;padding:9px 14px;border:2px solid var(--line);border-radius:12px;background:var(--card);font-weight:700}
+.mode input:checked+span{background:var(--navy,#1b1f3b);color:#fff;border-color:var(--navy,#1b1f3b)}
+.mode input:focus-visible+span{outline:3px solid #7aa2ff}
+.calc-target input{background:#eef1fb;border-style:dashed}
