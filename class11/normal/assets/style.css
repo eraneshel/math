@@ -426,3 +426,5 @@ body{padding-bottom:76px}
 .mode input:checked+span{background:var(--navy,#1b1f3b);color:#fff;border-color:var(--navy,#1b1f3b)}
 .mode input:focus-visible+span{outline:3px solid #7aa2ff}
 .calc-target input{background:#eef1fb;border-style:dashed}
+#b-out .calc-l1{color:var(--mut);margin:6px 0 2px;text-align:left}
+#b-out .calc-l2{font-weight:700;text-align:left;margin-bottom:6px}

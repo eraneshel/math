@@ -211,43 +211,64 @@
   function f2(v) { return show(v, 2).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, ''); }
   function initBell() {
     var p = document.getElementById('pane-bell');
-    p.innerHTML = '<p class="muted">הזינו ממוצע וסטיית תקן. אפשר להוסיף גבולות לצביעת שטח (השאירו ריק לאחד מהם לצביעת זנב).</p>' +
-      '<div class="tool-grid">' + field('b-m', 'x̄ (ממוצע)', '70') + field('b-s', 'S (סטיית תקן)', '10') + field('b-a', 'גבול תחתון', '60') + field('b-b', 'גבול עליון', '85') + '</div>' +
-      '<div class="tool-out" id="b-out"></div>';
+    p.innerHTML = '<p class="calc-q"><strong>איזה שטח לצבוע בפעמון?</strong></p>' +
+      '<div class="modes" role="radiogroup" aria-label="איזה שטח לצבוע">' +
+      '<label class="mode"><input type="radio" name="b-mode" value="between" checked><span>בין שני ערכים</span></label>' +
+      '<label class="mode"><input type="radio" name="b-mode" value="left"><span>משמאל לערך</span></label>' +
+      '<label class="mode"><input type="radio" name="b-mode" value="right"><span>מימין לערך</span></label></div>' +
+      '<p class="muted" id="b-help"></p>' +
+      '<div class="tool-grid">' + field('b-m', 'x̄ (ממוצע)', '70') + field('b-s', 'S (סטיית תקן)', '10') + field('b-a', 'ערך תחתון', '60') + field('b-b', 'ערך עליון', '85') + '</div>' +
+      '<div class="tool-out" id="b-out" aria-live="polite"></div>';
     var ids = ['b-m', 'b-s', 'b-a', 'b-b'];
+    var helps = { between: 'הכלי מצייר פעמון ומצל את השטח בין שני ערכים, ומחשב אותו לפי הטבלה. מזינים ממוצע, סטיית תקן, ערך תחתון וערך עליון.', left: 'הכלי מצייר פעמון ומצל את השטח שמשמאל לערך (הערך העליון), ומחשב אותו לפי הטבלה. מזינים ממוצע, סטיית תקן וערך.', right: 'הכלי מצייר פעמון ומצל את השטח שמימין לערך (הערך התחתון), ומחשב אותו לפי הטבלה. מזינים ממוצע, סטיית תקן וערך.' };
+    function mode() { return document.querySelector('input[name="b-mode"]:checked').value; }
+    function setMode() {
+      var md = mode(), la = document.getElementById('b-a'), lb = document.getElementById('b-b');
+      var offA = md === 'left', offB = md === 'right';
+      la.disabled = offA; lb.disabled = offB;
+      if (offA) { la.value = ''; la.placeholder = 'לא בשימוש'; } else la.placeholder = 'למשל 60';
+      if (offB) { lb.value = ''; lb.placeholder = 'לא בשימוש'; } else lb.placeholder = 'למשל 85';
+      la.closest('label').classList.toggle('calc-target', offA); lb.closest('label').classList.toggle('calc-target', offB);
+      document.getElementById('b-help').textContent = helps[md];
+      upd();
+    }
     function upd() {
-      var out = document.getElementById('b-out');
+      var out = document.getElementById('b-out'), md = mode();
       var m = num(document.getElementById('b-m').value), s = num(document.getElementById('b-s').value);
       var av = document.getElementById('b-a').value.trim(), bv = document.getElementById('b-b').value.trim();
       var a = num(av), b = num(bv);
       out.innerHTML = '';
       if (isNaN(m) || isNaN(s) || s <= 0) { out.textContent = 'הזינו ממוצע וסטיית תקן חיובית.'; return; }
-      var lo = av === '' ? m - 4 * s : a, hi = bv === '' ? m + 4 * s : b;
-      if ((av !== '' && isNaN(a)) || (bv !== '' && isNaN(b))) { out.textContent = 'הגבולות חייבים להיות מספרים.'; return; }
-      if (lo >= hi) { out.textContent = 'הגבול התחתון חייב להיות קטן מהעליון.'; return; }
-      var F = window.Figs, shades = (av === '' && bv === '') ? [] : [[lo, hi]];
+      if (md === 'between' && (av === '' || bv === '')) { out.textContent = 'הזינו גם ערך תחתון וגם ערך עליון.'; return; }
+      if (md === 'left' && bv === '') { out.textContent = 'הזינו את הערך.'; return; }
+      if (md === 'right' && av === '') { out.textContent = 'הזינו את הערך.'; return; }
+      if ((av !== '' && isNaN(a)) || (bv !== '' && isNaN(b))) { out.textContent = 'הערכים חייבים להיות מספרים.'; return; }
+      if (md === 'between' && a >= b) { out.textContent = 'הערך התחתון חייב להיות קטן מהעליון.'; return; }
+      var lo = md === 'left' ? m - 4 * s : a, hi = md === 'right' ? m + 4 * s : b;
+      var F = window.Figs, shades = [[lo, hi]];
       var ticks = [{ x: m, label: F.fmt(m), bold: true }];
-      if (av !== '') ticks.push({ x: a, label: F.fmt(a) });
-      if (bv !== '') ticks.push({ x: b, label: F.fmt(b) });
+      if (md !== 'left') ticks.push({ x: a, label: F.fmt(a) });
+      if (md !== 'right') ticks.push({ x: b, label: F.fmt(b) });
       var svg = F.newSvg('פעמון נורמלי, ממוצע ' + m + ', סטיית תקן ' + s);
       F.drawBells(svg, [{ m: m, s: s }], { shades: shades, ticks: ticks, meanTick: m });
       var wrap = document.createElement('figure'); wrap.className = 'fig'; var d = document.createElement('div'); d.className = 'fig-svg'; d.appendChild(svg); wrap.appendChild(d);
       out.appendChild(wrap);
-      if (shades.length) {
-        var za = (lo - m) / s, zb = (hi - m) / s, out2 = false;
-        function ar(z, isLo) { var k = key(z); if (Math.abs(z) <= 3.09 && k in ZT) return ZT[k]; out2 = true; return z < 0 ? 0 : 1; }
-        var pa = av === '' ? 0 : ar(za), pb = bv === '' ? 1 : ar(zb), pp = document.createElement('div');
-        var zl = '';
-        if (av !== '') zl += '<div class="calc-l1" dir="ltr">z = (' + f2(a) + ' − ' + f2(m) + ') ÷ ' + f2(s) + ' = ' + f2(za) + '</div>';
-        if (bv !== '') zl += '<div class="calc-l1" dir="ltr">z = (' + f2(b) + ' − ' + f2(m) + ') ÷ ' + f2(s) + ' = ' + f2(zb) + '</div>';
-        pp.innerHTML = zl + (out2
-          ? '<p>אחד הגבולות רחוק יותר מ-3 סטיות תקן מהממוצע, ומחוץ לטבלה. שם השטח כמעט 0 משמאל, וכמעט 1 מימין. השטח המוצלל בקירוב: <bdi dir="ltr">' + (pb - pa).toFixed(4) + '</bdi></p>'
-          : '<p>השטח המוצלל (לפי הטבלה): <bdi dir="ltr">' + (pb - pa).toFixed(4) + '</bdi></p>');
-        out.appendChild(pp);
-      }
+      var za = (a - m) / s, zb = (b - m) / s, far = false;
+      function cell(z) { var k = key(z); if (Math.abs(z) <= 3.09 && k in ZT) return ZT[k]; far = true; return z < 0 ? 0 : 1; }
+      function L1(t) { return '<div class="calc-l1" dir="ltr">' + t + '</div>'; }
+      function L2(t) { return '<div class="calc-l2" dir="ltr">' + t + '</div>'; }
+      var h = '', area;
+      if (md !== 'left') h += L1('z₁ = (' + f2(a) + ' − ' + f2(m) + ') ÷ ' + f2(s) + ' = ' + f2(za));
+      if (md !== 'right') h += L1('z₂ = (' + f2(b) + ' − ' + f2(m) + ') ÷ ' + f2(s) + ' = ' + f2(zb));
+      if (md === 'between') { var c1 = cell(za), c2 = cell(zb); area = c2 - c1; h += L1('שטח = P(z₂) − P(z₁)') + L2('שטח = ' + c2.toFixed(4) + ' − ' + c1.toFixed(4) + ' = <span class="big">' + area.toFixed(4) + '</span>'); }
+      else if (md === 'left') { var c3 = cell(zb); area = c3; h += L1('שטח = P(z₂)') + L2('שטח = <span class="big">' + c3.toFixed(4) + '</span>'); }
+      else { var c4 = cell(za); area = 1 - c4; h += L1('שטח = 1 − P(z₁)') + L2('שטח = 1 − ' + c4.toFixed(4) + ' = <span class="big">' + area.toFixed(4) + '</span>'); }
+      h += '<p>כלומר <bdi dir="ltr">' + (Math.round(area * 1000) / 10) + '%</bdi> מהנתונים.' + (far ? ' אחד הערכים רחוק יותר מ-3 סטיות תקן מהממוצע, ומחוץ לטבלה, ולכן התוצאה בקירוב.' : '') + '</p>';
+      var pp = document.createElement('div'); pp.innerHTML = h; out.appendChild(pp);
     }
     ids.forEach(function (i) { document.getElementById(i).addEventListener('input', upd); });
-    upd();
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="b-mode"]'), function (r) { r.addEventListener('change', setMode); });
+    setMode();
   }
 
   function init() {
