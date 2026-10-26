@@ -252,6 +252,14 @@
     }
 
     function update() {
+      drags.forEach(function (d) {
+        if (d.on === undefined || d.lock) return;
+        var Ld = spec.lines[d.on]; if (!Ld || Ld.thru) return;
+        var q0 = lineOf(Ld); if (q0.vert) return;
+        var p0 = D[d.id], yy = q0.m * p0.x + q0.b, lo = yr[0] + 0.3, hi = yr[1] - 0.3;
+        if (q0.m !== 0 && (yy < lo || yy > hi)) { yy = Math.max(lo, Math.min(hi, yy)); p0.x = (yy - q0.b) / q0.m; }
+        p0.y = yy;
+      });
       lineEls.forEach(function (o) {
         var q = lineOf(o.L), c;
         if (q.vert) c = clip(q.x, yr[0], q.x, yr[1], rect);
@@ -283,7 +291,7 @@
         riseEls.run.setAttribute('x1', sx(rp.x)); riseEls.run.setAttribute('y1', sy(rp.y)); riseEls.run.setAttribute('x2', sx(rx2)); riseEls.run.setAttribute('y2', sy(rp.y));
         riseEls.up.setAttribute('x1', sx(rx2)); riseEls.up.setAttribute('y1', sy(rp.y)); riseEls.up.setAttribute('x2', sx(rx2)); riseEls.up.setAttribute('y2', sy(ry2));
         riseEls.end.setAttribute('cx', sx(rx2)); riseEls.end.setAttribute('cy', sy(ry2));
-        riseEls.lr.textContent = 'Δx = ' + fmt(rdx); riseEls.lr.setAttribute('x', sx(rp.x + rdx / 2)); riseEls.lr.setAttribute('y', sy(rp.y) + (rp.y > 0 ? -12 : 24)); riseEls.lr.setAttribute('text-anchor', 'middle');
+        riseEls.lr.textContent = 'Δx = ' + fmt(rdx); riseEls.lr.setAttribute('x', sx(rp.x + rdx / 2)); riseEls.lr.setAttribute('y', sy(rp.y) + (rdy >= 0 ? 24 : -12)); riseEls.lr.setAttribute('text-anchor', 'middle');
         riseEls.lu.textContent = 'Δy = ' + fmt(rdy); riseEls.lu.setAttribute('x', sx(rx2) + (rdx >= 0 ? 8 : -8)); riseEls.lu.setAttribute('y', sy(rp.y + rdy / 2) + 5); riseEls.lu.setAttribute('text-anchor', rdx >= 0 ? 'start' : 'end');
       }
       drags.forEach(function (d) {

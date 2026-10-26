@@ -159,7 +159,7 @@ c.add(fig({'xr': [-6, 6], 'yr': [-8, 8], 'params': {
         'm': {'min': -3, 'max': 3, 'step': 0.5, 'val': 2, 'label': 'm'},
         'b': {'min': -4, 'max': 4, 'step': 1, 'val': 1, 'label': 'b'},
         'dx': {'min': -4, 'max': 4, 'step': 1, 'val': 1, 'label': 'Δx'}},
-    'lines': [{'m': 'm', 'b': 'b', 'cls': 0, 'name': 'f', 'nx': -4.5, 'dx': 18, 'dy': -8}], 'probe': True, 'probeX': 0, 'probeSnap': 1,
+    'lines': [{'m': 'm', 'b': 'b', 'cls': 0, 'name': 'f', 'nx': 5.2, 'dx': 0, 'dy': -14}], 'probe': True, 'probeX': 0, 'probeSnap': 1,
     'rise': {'id': 'Q', 'dx': 'dx', 'line': 0},
     'readout': [{'k': 'eq', 'line': 0, 'name': 'y'}, {'k': 'pt', 'id': 'Q'}, {'k': 'rise'}], 'alt': 'ישר עם שיפוע, חיתוך וגודל צעד משתנים'},
     caption=r'שנו את $m$, את $b$ ואת $\Delta x$, וגררו את $Q$. חשבו את $\Delta y$ לפני שאתם מסתכלים בשרטוט'))
