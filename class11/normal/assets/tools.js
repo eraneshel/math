@@ -52,7 +52,7 @@
 
   /* ---- UI helpers ---- */
   function field(id, label, ph) {
-    return '<label class="field"><span>' + label + '</span><input type="text" inputmode="decimal" autocomplete="off" id="' + id + '" placeholder="' + (ph || '') + '"></label>';
+    return '<label class="field"><span>' + label + '</span><input type="text" inputmode="decimal" autocomplete="off" id="' + id + '" placeholder="' + (ph ? 'למשל ' + ph : '') + '"></label>';
   }
   function gotoAppendix(z) {
     var dlg = document.getElementById('dlg-tools'); if (dlg && dlg.open) dlg.close();
