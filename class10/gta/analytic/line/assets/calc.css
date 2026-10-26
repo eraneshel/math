@@ -54,3 +54,6 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 .act-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
 .act-tip{font-size:14px;color:var(--mut);margin:4px 0 0}
 @media print{.fig-ctl-row,.act-ctl,.fig-read{display:none}}
+
+.minus-btn{min-width:44px;font-size:22px;line-height:1;padding:6px 10px;margin-inline-start:6px}
+.typed label{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
