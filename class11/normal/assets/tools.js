@@ -187,6 +187,7 @@
   }
 
   /* ---- bell drawing ---- */
+  function f2(v) { return show(v, 2).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, ''); }
   function initBell() {
     var p = document.getElementById('pane-bell');
     p.innerHTML = '<p class="muted">הזינו ממוצע וסטיית תקן. אפשר להוסיף גבולות לצביעת שטח (השאירו ריק לאחד מהם לצביעת זנב).</p>' +
@@ -212,12 +213,16 @@
       var wrap = document.createElement('figure'); wrap.className = 'fig'; var d = document.createElement('div'); d.className = 'fig-svg'; d.appendChild(svg); wrap.appendChild(d);
       out.appendChild(wrap);
       if (shades.length) {
-        var za = (lo - m) / s, zb = (hi - m) / s, pa = av === '' ? 0 : areaLeft(za), pb = bv === '' ? 1 : areaLeft(zb);
-        if (pa !== null && pb !== null && Math.abs(za) <= 3 && Math.abs(zb) <= 3 || (av === '' && Math.abs(zb) <= 3) || (bv === '' && Math.abs(za) <= 3)) {
-          var pp = document.createElement('p');
-          pp.innerHTML = 'השטח המוצלל (לפי הטבלה): ' + ltr((pb - pa).toFixed(4));
-          out.appendChild(pp);
-        }
+        var za = (lo - m) / s, zb = (hi - m) / s, out2 = false;
+        function ar(z, isLo) { var k = key(z); if (Math.abs(z) <= 3.09 && k in ZT) return ZT[k]; out2 = true; return z < 0 ? 0 : 1; }
+        var pa = av === '' ? 0 : ar(za), pb = bv === '' ? 1 : ar(zb), pp = document.createElement('div');
+        var zl = '';
+        if (av !== '') zl += '<div class="calc-l1" dir="ltr">z = (' + f2(a) + ' − ' + f2(m) + ') ÷ ' + f2(s) + ' = ' + f2(za) + '</div>';
+        if (bv !== '') zl += '<div class="calc-l1" dir="ltr">z = (' + f2(b) + ' − ' + f2(m) + ') ÷ ' + f2(s) + ' = ' + f2(zb) + '</div>';
+        pp.innerHTML = zl + (out2
+          ? '<p>אחד הגבולות רחוק יותר מ-3 סטיות תקן מהממוצע, ומחוץ לטבלה. שם השטח כמעט 0 משמאל, וכמעט 1 מימין. השטח המוצלל בקירוב: <bdi dir="ltr">' + (pb - pa).toFixed(4) + '</bdi></p>'
+          : '<p>השטח המוצלל (לפי הטבלה): <bdi dir="ltr">' + (pb - pa).toFixed(4) + '</bdi></p>');
+        out.appendChild(pp);
       }
     }
     ids.forEach(function (i) { document.getElementById(i).addEventListener('input', upd); });
