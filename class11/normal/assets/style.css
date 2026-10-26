@@ -377,3 +377,19 @@ fieldset.tl{border:2px solid var(--line);border-radius:12px;margin:0 0 12px;padd
 .negwrap input{flex:1 1 auto;min-width:0}
 .neg{flex:none;width:44px;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--g,#2f5bd8);font:700 20px/1 Rubik,sans-serif;cursor:pointer}
 .neg:active{background:var(--soft)}
+.srccard{border:2px solid var(--line);border-radius:14px;padding:12px 14px;margin:10px 0;background:var(--soft);display:flex;flex-direction:column;gap:8px}
+.src-t{font-weight:700;line-height:1.5}
+.src-q{color:var(--mut)}
+.btn.src-open{align-self:flex-start;min-height:48px;display:inline-flex;align-items:center;text-decoration:none;font-size:17px;padding:0 20px}
+.src-n{font-size:13px;color:var(--mut)}
+
+.chkall{margin:12px 0;display:flex;flex-direction:column;gap:8px}
+.chkall-b,.chkall-n{min-height:48px;font-size:17px;align-self:flex-start;padding:0 22px}
+.chkall-s{font-weight:700;line-height:1.5}.chkall-s.ok{color:#117a3d}.chkall-s.no{color:#a15c00}
+.ex-body{overflow-wrap:anywhere}
+.ex-body .katex-display,.ex-body .fml{overflow-x:auto;overflow-y:hidden;max-width:100%}
+
+.nextbar{position:fixed;inset-inline:0;bottom:0;z-index:15;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:var(--card);border-top:2px solid var(--line);display:flex;justify-content:center}
+.nextbar-b{width:100%;max-width:520px;min-height:50px;font-size:17px}
+body{padding-bottom:76px}
+@media print{.nextbar{display:none}}

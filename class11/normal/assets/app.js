@@ -164,6 +164,30 @@
           inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); run(); } });
           $('.chk', part).addEventListener('click', run);
         });
+        if (ins.length > 1) {
+          var L = ['\u05d0', '\u05d1', '\u05d2', '\u05d3', '\u05d4', '\u05d5', '\u05d6', '\u05d7', '\u05d8', '\u05d9'];
+          var wrap = document.createElement('div'); wrap.className = 'chkall';
+          wrap.innerHTML = '<button type="button" class="btn chkall-b">בדוק הכל</button><div class="chkall-s" aria-live="polite"></div><button type="button" class="btn chkall-n" hidden>המשך \u2190</button>';
+          var anchor = box._parts ? $('.ex-body > ul', box.closest('.ex')) : box;
+          anchor.parentNode.insertBefore(wrap, anchor.nextSibling);
+          var sum = $('.chkall-s', wrap), nxt = $('.chkall-n', wrap);
+          $('.chkall-b', wrap).addEventListener('click', function () {
+            var key = JSON.parse(box.getAttribute('data-key')), bad = [], miss = 0, good = 0;
+            partsOf(box).forEach(function (part, i) {
+              var inp = $('input', part), fb = $('.fb', part);
+              inp.classList.remove('right', 'wrong'); fb.className = 'fb';
+              var g = parseTyped(inp.value);
+              if (!g.length) { miss++; bad.push(L[i]); fb.className = 'fb'; fb.textContent = 'חסר'; return; }
+              var ok = matches(g[0], key[i]); okParts[i] = ok;
+              inp.classList.add(ok ? 'right' : 'wrong'); fb.classList.add(ok ? 'ok' : 'no'); fb.textContent = ok ? '\u2713' : '\u2717';
+              if (ok) good++; else bad.push(L[i]);
+            });
+            var n = key.length;
+            if (good === n) { sum.className = 'chkall-s ok'; sum.textContent = 'כל ' + n + ' הסעיפים נכונים. כל הכבוד!'; nxt.hidden = false; setDone(id, 'ok'); }
+            else { sum.className = 'chkall-s no'; nxt.hidden = true; sum.textContent = good + ' מתוך ' + n + ' נכונים. ' + (bad.length === 1 ? 'נשאר לתקן את סעיף ' : 'נשאר לתקן את סעיפים ') + bad.join(', ') + (miss ? ' (' + miss + ' ללא תשובה)' : '') + '.'; }
+          });
+          nxt.addEventListener('click', function () { var nc = nextCard(box.closest('.ex')); if (nc) nc.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+        }
         return;
       }
       var btn = $('.chk', box);
@@ -178,6 +202,10 @@
     });
   }
 
+  function nextCard(card) {
+    var all = $$('.ex'), i = all.indexOf(card);
+    return i >= 0 ? all[i + 1] : null;
+  }
   function initMC() {
     $$('.mc').forEach(function (box) {
       var id = box.getAttribute('data-mc'), qs = $$('.mc-q', box), ok = {}, sel = [];
@@ -346,6 +374,28 @@
     $('#toc').classList.remove('open'); $('#btn-menu').setAttribute('aria-expanded', 'false');
     document.title = (META.filter(function (c) { return c.id === id; })[0] || { title: 'חוברת' }).title.replace(/\$[^$]*\$/g, '') + ' · התפלגות נורמלית';
   }
+
+  /* ---------- next-step bar ---------- */
+  function initNextBar() {
+    var bar = document.createElement('div'); bar.className = 'nextbar'; bar.hidden = true;
+    bar.innerHTML = '<button type="button" class="btn nextbar-b"></button>';
+    document.body.appendChild(bar);
+    var b = $('.nextbar-b', bar);
+    function update() {
+      var el = $('.chapter.active'); if (!el || el.id === 'mistakes' || el.id === 'appendix') { bar.hidden = true; return; }
+      var todo = $$('.ex', el).filter(function (c) { return !c.classList.contains('diag-item') && state.done[c.getAttribute('data-id')] !== 'ok'; });
+      var nextCh = chapterEls().filter(function (c, i, a) { return a[i - 1] === el; })[0];
+      bar.hidden = false;
+      if (todo.length) { b.textContent = 'הצעד הבא: תרגיל ' + (todo[0].getAttribute('data-id') || ''); b._t = function () { todo[0].scrollIntoView({ behavior: 'smooth', block: 'start' }); }; }
+      else if (nextCh) { b.textContent = 'סיימתם את הפרק. לפרק הבא \u2190'; b._t = function () { go(nextCh.id); }; }
+      else { bar.hidden = true; }
+    }
+    b.addEventListener('click', function () { if (b._t) b._t(); });
+    window.addEventListener('hashchange', function () { setTimeout(update, 50); });
+    document.addEventListener('click', function () { setTimeout(update, 120); });
+    document.addEventListener('input', function () { setTimeout(update, 120); });
+    setTimeout(update, 200);
+  }
   function go(id) { if (location.hash === '#' + id) route({ keepHl: true }); else location.hash = '#' + id; }
 
   /* ---------- theme ---------- */
@@ -397,7 +447,7 @@
     load();
     buildToc(); buildNavs();
     if (window.Figs) window.Figs.renderAll(document);
-    initCards(); initTyped(); initMC(); initSelfCheck(); initDiag(); initTheme(); initPrint(); initDialogs();
+    initCards(); initTyped(); initMC(); initSelfCheck(); initDiag(); initTheme(); initPrint(); initDialogs(); initNextBar();
     if (window.Tools) window.Tools.init();
     $('#btn-menu').addEventListener('click', function () {
       var t = $('#toc'), o = !t.classList.contains('open'); t.classList.toggle('open', o); this.setAttribute('aria-expanded', o ? 'true' : 'false');
