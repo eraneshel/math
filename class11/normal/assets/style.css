@@ -404,3 +404,7 @@ body{padding-bottom:76px}
 .ztable-wrap{direction:ltr;overflow-x:auto}
 .ztable td{padding-inline:8px}
 .ztable tbody th{position:sticky;left:0;z-index:2}
+.ztable{width:100%;font-size:15px}
+.ztable td{padding:7px 4px;text-align:center}
+.ztable tbody th{min-width:3em;padding:7px 6px}
+@media (min-width:560px){.ztable{font-size:16px}}
