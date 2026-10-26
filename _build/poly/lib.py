@@ -33,7 +33,12 @@ def tbl(s):
 def hint(text, label='רמז'):
     return '<details class="hint"><summary>%s</summary><span>%s</span></details>' % (label, md(text, inline=True))
 
+def _plain(t):
+    return t.replace('\\cdot', '·').replace('\\ne', '≠').replace('$', '')
+
 def fig(spec, caption=None):
+    if isinstance(spec.get('goalHint'), str):
+        spec = dict(spec, goalHint=_plain(spec['goalHint']))
     j = html.escape(json.dumps(spec, ensure_ascii=False, separators=(',', ':')), quote=True)
     cap = '<figcaption>%s</figcaption>' % md(caption, inline=True) if caption else ''
     return '<figure class="fig" data-fig="%s"><div class="fig-svg"></div>%s</figure>' % (j, cap)

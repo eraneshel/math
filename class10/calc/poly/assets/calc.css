@@ -67,3 +67,17 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 .fig svg,.fig svg text{-webkit-user-select:none;user-select:none}
 
 .svg-curve{fill:none;stroke-linejoin:round;stroke-linecap:round}
+
+/* --- poly investigation tools --- */
+.svg-sb{fill:none;stroke-width:7;stroke-linecap:butt;opacity:.78}
+.svg-sb.pos{stroke:#2f9e5b}.svg-sb.neg{stroke:#d64545}
+.fig-read .rd-wide{border-radius:12px;padding:6px 10px;overflow-x:auto;max-width:100%}
+.rd-tbl{border-collapse:collapse;direction:ltr;font:600 15px "STIX Two Text","Frank Ruhl Libre",serif}
+.rd-tbl th,.rd-tbl td{border:1px solid var(--line,#d5dce2);padding:2px 8px;text-align:center;white-space:nowrap}
+.rd-tbl th{background:var(--fill);font-style:italic}
+.gal{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:6px 0}
+.gal-p{border:2px solid var(--line,#d5dce2);border-radius:14px;padding:6px 6px 4px;background:var(--card);cursor:pointer;text-align:center;transition:border-color .12s,box-shadow .12s}
+.gal-p:hover{border-color:#8aa0e8}
+.gal-p.sel{border-color:#3a5bdc;box-shadow:0 0 0 3px #3a5bdc33}
+.gal-l{font-weight:800;margin-top:2px}
+.gal-svg{width:100%;max-width:230px;height:auto}

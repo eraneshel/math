@@ -60,6 +60,7 @@
   function build(fig) {
     var host = fig.querySelector('.fig-svg'); if (!host) return;
     var spec; try { spec = JSON.parse(fig.getAttribute('data-fig')); } catch (e) { return; }
+    if (spec.gallery) return buildGallery(fig, host, spec);
     host.innerHTML = '';
     var old = fig.querySelectorAll('.fig-ctl, .fig-read'); Array.prototype.forEach.call(old, function (n) { n.parentNode.removeChild(n); });
 
@@ -127,7 +128,11 @@
       drags.forEach(function (d) { S[d.id + 'x'] = D[d.id].x; S[d.id + 'y'] = D[d.id].y; });
       S.F = cf; S.isEven = function (i) { return parity(i, 1); }; S.isOdd = function (i) { return parity(i, -1); };
       S.abs = Math.abs; S.sqrt = Math.sqrt; S.min = Math.min; S.max = Math.max; S.pow = Math.pow; S.round = Math.round; S.floor = Math.floor; S.PI = Math.PI;
-      S.nroots = function (i) { return realRoots(i).length; }; S.sign = Math.sign; S.rem = function (a, b) { return ((a % b) + b) % b; };
+      S.nroots = function (i) { return realRoots(i).length; };
+      S.ncross = function (i, k) { return ncount(function (x) { return cf(i, x) - k; }); };
+      S.nint = function (i, j) { return ncount(function (x) { return cf(i, x) - cf(j, x); }); };
+      S.nturn = function (i) { return nturn(i); };
+      S.solved = !!(spec.goal && spec.goal.drag && okDrag(spec.goal)); S.sign = Math.sign; S.rem = function (a, b) { return ((a % b) + b) % b; };
       return S;
     }
     function evx(e, x, S) {
@@ -148,6 +153,25 @@
       for (var q = 1; q <= 24; q++) { var t = q * 0.37; var a = cf(i, t), b = cf(i, -t); if (!isFinite(a) || !isFinite(b)) return false; if (Math.abs(a - sgn * b) > 1e-6 * (1 + Math.abs(a))) return false; }
       return true;
     }
+    function ncount(g) {
+      var N = 2400, cnt = 0, prev = null, a1 = null, a2 = null, q, x, v;
+      for (q = 0; q <= N; q++) {
+        x = xr[0] + xs * q / N; v = g(x);
+        if (!isFinite(v)) { prev = null; a1 = a2 = null; continue; }
+        if (Math.abs(v) < 1e-9) { cnt++; prev = 0; a1 = a2 = null; continue; }
+        if (prev === 0) { prev = v; a2 = null; a1 = v; continue; }
+        if (prev !== null && ((prev < 0 && v > 0) || (prev > 0 && v < 0))) cnt++;
+        else if (a1 !== null && a2 !== null && Math.abs(a1) <= Math.abs(a2) && Math.abs(a1) <= Math.abs(v) && Math.abs(a1) < 1e-3 && ((a2 > 0) === (v > 0)) && ((a1 > 0) === (v > 0))) cnt++;
+        a2 = a1; a1 = v; prev = v;
+      }
+      return cnt;
+    }
+    function nturn(i) {
+      var N = 2400, c = 0, lastS = 0, q, d, sg, p0 = cf(i, xr[0]);
+      for (q = 1; q <= N; q++) { var v = cf(i, xr[0] + xs * q / N); d = v - p0; p0 = v; if (!isFinite(d) || Math.abs(d) < 1e-12) continue; sg = d > 0 ? 1 : -1; if (lastS && sg !== lastS) c++; lastS = sg; }
+      return c;
+    }
+    function okDrag(g) { return Object.keys(g.drag).every(function (id) { var c = g.drag[id]; return D[id] && (!('x' in c) || Math.abs(D[id].x - c.x) < 0.06) && (!('y' in c) || Math.abs(D[id].y - c.y) < 0.06); }); }
     function refresh() { SC = scope(); CC = []; }
     function realRoots(i) {
       var k = coefsOf(i).slice(); while (k.length > 1 && Math.abs(k[0]) < 1e-12) k.shift();
@@ -227,7 +251,10 @@
     var gDyn = el('g', {}, svg);
     var clipId = 'cl' + Math.random().toString(36).slice(2, 8);
     var defs = el('defs', {}, svg); var cp = el('clipPath', { id: clipId }, defs); el('rect', { x: ML, y: MT, width: PW, height: PH }, cp);
+    var gSb = el('g', {}, gDyn);
     var gCur = el('g', { 'clip-path': 'url(#' + clipId + ')' }, gDyn);
+    var sbList = spec.signband === undefined ? [] : [].concat(spec.signband);
+    var sbEls = sbList.map(function (i0) { return { i: i0, pos: el('path', { 'class': 'svg-sb pos' }, gSb), neg: el('path', { 'class': 'svg-sb neg' }, gSb) }; });
     var vsegEl = null, vdotA = null, vdotB = null, triEl = null;
     if (spec.tri) triEl = el('polygon', { 'class': 'svg-poly shade' }, gDyn);
     if (spec.vseg) {
@@ -311,12 +338,18 @@
         if (!rts.length) return (o.pre || 'אפסים') + ': אין אפסים ממשיים';
         return (o.pre || 'אפסים') + ': ' + L('x = ' + rts.map(function (r) { return fmt(r.x) + (r.m > 1 ? ' (×' + r.m + ')' : ''); }).join(' ; '));
       }
+      if (o.k === 'tbl') {
+        var fm = function (v) { return !isFinite(v) ? '—' : Math.abs(v) >= 1e7 ? v.toExponential(2).replace('e+', '·10^').replace('-', '−') : fmt(v); };
+        var th = '<table class="rd-tbl" dir="ltr"><tr><th>x</th>' + o.xs.map(function (xx) { return '<td>' + fmt(xx) + '</td>'; }).join('') + '</tr>';
+        o.rows.forEach(function (rw) { th += '<tr><th>' + String(rw.name).replace(/\{([^}]+)\}/g, function (m, e) { return fmt(evx(e, 0)); }) + '</th>' + o.xs.map(function (xx) { return '<td>' + fm(cf(rw.i, xx)) + '</td>'; }).join('') + '</tr>'; });
+        return th + '</table>';
+      }
       if (o.k === 'len') { var t = vsegInfo(); return 'אורך הקטע: ' + L(fmt(t.len)); }
       if (o.k === 'cmp') { var t2 = vsegInfo(); var a = t2.ya, b = t2.yb; var rel = Math.abs(a - b) < 0.005 ? '=' : (a > b ? '>' : '<'); var nm = spec.cmpNames || ['f', 'g']; return L(nm[0] + '(' + (spec.vseg.x || 'x') + ') ' + rel + ' ' + nm[1] + '(' + (spec.vseg.x || 'x') + ')'); }
       if (o.k === 'sign') { var yy = D[o.id].y; return yy > 0.005 ? L('y > 0') + ': הפונקציה חיובית' : yy < -0.005 ? L('y < 0') + ': הפונקציה שלילית' : L('y = 0') + ': אפס הפונקציה'; }
       return '';
     }
-    var readEls = readout.map(function (o) { var s = document.createElement('span'); s.className = 'rd'; readBox.appendChild(s); return { s: s, o: o }; });
+    var readEls = readout.map(function (o) { var s = document.createElement('span'); s.className = 'rd' + (o.k === 'tbl' ? ' rd-wide' : ''); readBox.appendChild(s); return { s: s, o: o }; });
 
     function vsegInfo() {
       var v = spec.vseg, x = val(v.x), a = yOn(spec.lines[v.between[0]], x), b = yOn(spec.lines[v.between[1]], x);
@@ -326,9 +359,11 @@
     function drawCurves() {
       curEls.forEach(function (o, i) {
         var N = 420, d = '', pen = false, q, x, y, big = 3 * ys + Math.abs(yr[0]) + Math.abs(yr[1]);
+        var hid = o.C.hide || (o.C.showIf && !evx(o.C.showIf, 0));
+        o.e.style.display = hid ? 'none' : ''; if (hid) { if (o.n) o.n.style.display = 'none'; return; }
         for (q = 0; q <= N; q++) {
           x = xr[0] + xs * q / N; y = cf(i, x);
-          if (!isFinite(y)) { pen = false; continue; }
+          if (!isFinite(y) || (o.C.dom && (x < o.C.dom[0] - 1e-9 || x > o.C.dom[1] + 1e-9))) { pen = false; continue; }
           y = Math.max(-big, Math.min(big, y));
           d += (pen ? 'L' : 'M') + sx(x).toFixed(1) + ' ' + sy(y).toFixed(1); pen = true;
         }
@@ -342,6 +377,16 @@
           }
           o.n.style.display = ''; o.n.setAttribute('x', sx(nx) + (o.C.dx || 0)); o.n.setAttribute('y', sy(ny) + (o.C.dy !== undefined ? o.C.dy : -12));
         }
+      });
+      sbEls.forEach(function (o) {
+        var N = 600, dp = '', dn = '', run = null, q, x, v, y0 = sy(0);
+        function flush(end) { if (!run) return; var seg = 'M' + sx(run.a).toFixed(1) + ' ' + y0.toFixed(1) + 'H' + sx(end).toFixed(1); if (run.s > 0) dp += seg; else dn += seg; run = null; }
+        for (q = 0; q <= N; q++) {
+          x = xr[0] + xs * q / N; v = cf(o.i, x); var sg = !isFinite(v) || Math.abs(v) < 1e-9 ? 0 : (v > 0 ? 1 : -1);
+          if (run && run.s !== sg) flush(x);
+          if (!run && sg !== 0) run = { a: x, s: sg };
+        }
+        flush(xr[1]); o.pos.setAttribute('d', dp); o.neg.setAttribute('d', dn);
       });
       cptEls.forEach(function (o) {
         var px = typeof o.P.x === 'number' ? o.P.x : evx(o.P.x), py = o.P.y !== undefined ? (typeof o.P.y === 'number' ? o.P.y : evx(o.P.y)) : cf(o.P.curve || 0, px);
@@ -513,6 +558,49 @@
       setParam: function (k, v) { Pm[k] = v; var i2 = fig.querySelector('input[data-param="' + k + '"]'); if (i2) { i2.value = v; i2.nextSibling.textContent = fmt(v); } update(); },
       setDrag: function (id, x, y) { place(dragDef[id], x, y); update(); },
       state: function () { return { params: JSON.parse(JSON.stringify(Pm)), drags: JSON.parse(JSON.stringify(D)) }; },
+      hasGoal: !!spec.goal, hint: spec.goalHint || ''
+    };
+  }
+
+
+  /* ---------- gallery: choose the matching graph ---------- */
+  function buildGallery(fig, host, spec) {
+    host.innerHTML = '';
+    var old = fig.querySelectorAll('.fig-ctl, .fig-read, .fig-ctl-row'); Array.prototype.forEach.call(old, function (n) { n.parentNode.removeChild(n); });
+    var G = spec.gallery, XR = G.xr || [-4, 4], YR = G.yr || [-6, 6], W = 230, H = 176, M = 12, sel = -1;
+    var wrap = document.createElement('div'); wrap.className = 'gal'; wrap.setAttribute('role', 'radiogroup'); wrap.setAttribute('aria-label', spec.alt || 'בחרו גרף');
+    var panels = [];
+    function fnOf(e) { try { return new Function('x', 'with(Math){return (' + String(e).replace(/\^/g, '**') + ');}'); } catch (er) { console.error('bad curve', e); return function () { return NaN; }; } }
+    G.panels.forEach(function (P, idx) {
+      var xr = P.xr || XR, yr = P.yr || YR, sxx = function (x) { return M + (x - xr[0]) / (xr[1] - xr[0]) * (W - 2 * M); }, syy = function (y) { return M + (yr[1] - y) / (yr[1] - yr[0]) * (H - 2 * M); };
+      var box = document.createElement('div'); box.className = 'gal-p'; box.tabIndex = 0; box.setAttribute('role', 'radio'); box.setAttribute('aria-checked', 'false');
+      var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'plot gal-svg', role: 'img', 'aria-label': 'גרף ' + (G.labels ? G.labels[idx] : idx + 1) }, box);
+      var cpid = 'g' + Math.random().toString(36).slice(2, 8), cp = el('clipPath', { id: cpid }, el('defs', {}, svg)); el('rect', { x: M, y: M, width: W - 2 * M, height: H - 2 * M }, cp);
+      el('line', { x1: M, y1: syy(0), x2: W - M, y2: syy(0), 'class': 'svg-axis' }, svg); el('line', { x1: sxx(0), y1: H - M, x2: sxx(0), y2: M, 'class': 'svg-axis' }, svg);
+      el('path', { d: 'M' + (W - M + 6) + ' ' + syy(0) + 'l-8 -4v8z', 'class': 'svg-arrow' }, svg); el('path', { d: 'M' + sxx(0) + ' ' + (M - 6) + 'l-4 8h8z', 'class': 'svg-arrow' }, svg);
+      txt(svg, W - 4, syy(0) + 16, 'x', 'svg-axname', 'end'); txt(svg, sxx(0) - 9, M + 4, 'y', 'svg-axname', 'end');
+      (P.curves || [{ f: P.f, cls: 0 }]).forEach(function (C) {
+        var f = fnOf(C.f), d = '', pen = false, N = 260, q, x, y, big = 4 * (yr[1] - yr[0]);
+        for (q = 0; q <= N; q++) { x = xr[0] + (xr[1] - xr[0]) * q / N; y = f(x); if (!isFinite(y)) { pen = false; continue; } y = Math.max(-big, Math.min(big, y)); d += (pen ? 'L' : 'M') + sxx(x).toFixed(1) + ' ' + syy(y).toFixed(1); pen = true; }
+        el('path', { d: d, 'class': 'svg-line svg-curve l' + (C.cls || 0) + (C.dash ? ' dash' : ''), 'clip-path': 'url(#' + cpid + ')' }, svg);
+      });
+      (P.pts || []).forEach(function (p) { el('circle', { cx: sxx(p[0]), cy: syy(p[1]), r: 3.6, 'class': 'svg-pt' }, svg); });
+      var lb = document.createElement('div'); lb.className = 'gal-l'; lb.textContent = G.labels ? G.labels[idx] : '(' + (idx + 1) + ')'; box.appendChild(lb);
+      function pick() { sel = idx; panels.forEach(function (p2, j) { p2.classList.toggle('sel', j === idx); p2.setAttribute('aria-checked', j === idx ? 'true' : 'false'); }); fig.dispatchEvent(new CustomEvent('figchange', { bubbles: true, detail: { reset: false } })); }
+      box.addEventListener('click', pick);
+      box.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); pick(); } });
+      panels.push(box); wrap.appendChild(box);
+    });
+    host.appendChild(wrap);
+    var rst = document.createElement('button'); rst.type = 'button'; rst.className = 'btn small ghost fig-reset'; rst.textContent = 'איפוס';
+    rst.addEventListener('click', function () { sel = -1; panels.forEach(function (p2) { p2.classList.remove('sel'); p2.setAttribute('aria-checked', 'false'); }); fig.dispatchEvent(new CustomEvent('figchange', { bubbles: true, detail: { reset: true } })); });
+    var tools = document.createElement('div'); tools.className = 'fig-ctl-row'; tools.appendChild(rst); host.appendChild(tools);
+    var layerG = {};
+    fig._api = {
+      check: function () { return spec.goal && spec.goal.pick !== undefined && sel === spec.goal.pick; },
+      reveal: function () { }, hide: function () { }, setParam: function () { }, setDrag: function () { },
+      setPick: function (i) { panels[i].click(); },
+      state: function () { return { pick: sel }; },
       hasGoal: !!spec.goal, hint: spec.goalHint || ''
     };
   }
