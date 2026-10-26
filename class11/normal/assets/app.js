@@ -150,6 +150,29 @@
     });
   }
 
+  function initMC() {
+    $$('.mc').forEach(function (box) {
+      var id = box.getAttribute('data-mc'), qs = $$('.mc-q', box), ok = {}, sel = [];
+      try { sel = JSON.parse(state.myAnswers[id] || '[]'); } catch (e) { sel = []; }
+      var persist = function () { var any = sel.some(function (v) { return v !== null && v !== undefined; }); if (any) state.myAnswers[id] = JSON.stringify(sel); else delete state.myAnswers[id]; save(); };
+      qs.forEach(function (q, i) {
+        var radios = $$('input', q), fb = $('.fb', q), ex = $('.mc-exp', q), c = +q.getAttribute('data-c');
+        if (sel[i] !== null && sel[i] !== undefined && radios[sel[i]]) radios[sel[i]].checked = true;
+        radios.forEach(function (r, k) { r.addEventListener('change', function () { sel[i] = k; persist(); ok[i] = false; fb.className = 'fb'; fb.textContent = ''; ex.hidden = true; $$('.mc-o', q).forEach(function (l) { l.classList.remove('right', 'wrong'); }); }); });
+        $('.mc-chk', q).addEventListener('click', function () {
+          var k = radios.findIndex(function (r) { return r.checked; });
+          $$('.mc-o', q).forEach(function (l) { l.classList.remove('right', 'wrong'); });
+          if (k < 0) { fb.className = 'fb'; fb.textContent = 'בחרו תשובה.'; return; }
+          var good = k === c; ok[i] = good;
+          $$('.mc-o', q)[k].classList.add(good ? 'right' : 'wrong');
+          fb.className = 'fb ' + (good ? 'ok' : 'no'); fb.textContent = good ? 'נכון ✓' : 'לא נכון, נסו שוב';
+          if (good) { ex.innerHTML = q.getAttribute('data-e'); ex.hidden = false; } else ex.hidden = true;
+          if (qs.every(function (_, j) { return ok[j]; })) setDone(id, 'ok');
+        });
+      });
+    });
+  }
+
   /* ---------- card state ---------- */
   function paintCard(card) {
     var id = card.getAttribute('data-id'), v = state.done[id], st = $('.ex-state', card);
@@ -346,7 +369,7 @@
     load();
     buildToc(); buildNavs();
     if (window.Figs) window.Figs.renderAll(document);
-    initCards(); initTyped(); initSelfCheck(); initDiag(); initTheme(); initPrint(); initDialogs();
+    initCards(); initTyped(); initMC(); initSelfCheck(); initDiag(); initTheme(); initPrint(); initDialogs();
     if (window.Tools) window.Tools.init();
     $('#btn-menu').addEventListener('click', function () {
       var t = $('#toc'), o = !t.classList.contains('open'); t.classList.toggle('open', o); this.setAttribute('aria-expanded', o ? 'true' : 'false');

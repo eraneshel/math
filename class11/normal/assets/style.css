@@ -351,3 +351,19 @@ fieldset.tl{border:2px solid var(--line);border-radius:12px;margin:0 0 12px;padd
 .typed .part .chk{align-self:end}
 .typed .part .fb{grid-column:1 / -1;min-height:1.2em;font-size:14px}
 .typed .parts{flex-direction:column;gap:8px}
+
+/* multiple choice */
+.mc{display:flex;flex-direction:column;gap:14px;margin:8px 0}
+.mc-h{font-weight:700;color:var(--gd,#1d3a8f);font-size:.95rem}
+.mc-q{border:1px solid var(--line,#d6dcf0);border-radius:12px;padding:12px 14px;margin:0;min-width:0}
+.mc-q legend{padding:0 6px;font-weight:600;line-height:1.6}
+.mc-l{color:var(--g,#2f5bd8)}
+.mc-opts{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.mc-o{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border:1.5px solid var(--line,#d6dcf0);border-radius:10px;cursor:pointer;line-height:1.6;min-height:44px}
+.mc-o:hover{border-color:var(--g,#2f5bd8)}
+.mc-o input{margin-top:.45em;flex:none}
+.mc-o span{min-width:0;overflow-wrap:anywhere}
+.mc-o.right{border-color:#1f9d55;background:rgba(31,157,85,.12)}
+.mc-o.wrong{border-color:#d64545;background:rgba(214,69,69,.12)}
+.mc-row{display:flex;gap:12px;align-items:center;margin-top:10px}
+.mc-exp{margin-top:8px;padding:8px 12px;border-radius:10px;background:rgba(47,91,216,.08);font-size:.95rem;line-height:1.7}
