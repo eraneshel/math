@@ -129,18 +129,18 @@ text{text-anchor:middle}
 </g>
 <circle id="uP" r="6" fill="#fff"/><circle id="uS" r="5" fill="#5eead4"/><circle id="uK" r="5" fill="#c4b5fd"/>
 <g font-family="STIX Two Text,serif" font-size="15" font-weight="700" fill="#fff"><text x="143" y="108">x</text><text x="86" y="52">y</text><text x="450" y="108">θ</text><text x="182" y="48" fill="#5eead4">sin θ</text><text x="232" y="48" fill="#c4b5fd">cos θ</text></g>
-<g font-family="STIX Two Text,serif" font-size="11" fill="#fff" fill-opacity=".8"><text x="311" y="130" text-anchor="middle">π</text><text x="446" y="130" text-anchor="end">2π</text></g>
-<script>(function(){var s=document.currentScript.parentNode,$=function(i){return s.querySelector('#'+i)},cx=80,cy=115,r=60,x0=175,W=270,T=7200,still=matchMedia('(prefers-reduced-motion:reduce)').matches;
+<g font-family="STIX Two Text,serif" font-size="11" fill="#fff" fill-opacity=".8"><text x="270" y="130" text-anchor="middle">π</text><text x="365" y="130" text-anchor="middle">2π</text><text x="458" y="130" text-anchor="end">3π</text></g>
+<script>(function(){var s=document.currentScript.parentNode,$=function(i){return s.querySelector('#'+i)},cx=80,cy=115,r=60,x0=175,W=285,T=10500,TA=9.4248,still=matchMedia('(prefers-reduced-motion:reduce)').matches;
 function set(e,o){for(var k in o)e.setAttribute(k,o[k])}
-function draw(t){var f=t/T,a=-f*6.2832,px=cx+r*Math.cos(a),py=cy-r*Math.sin(a),gx=x0+W*f,n=Math.max(2,Math.round(f*140)),ds='',dc='',i,u;
-for(i=0;i<=n;i++){u=-i/140*6.2832;ds+=(i?'L':'M')+(x0+W*i/140).toFixed(1)+' '+(cy-r*Math.sin(u)).toFixed(1);dc+=(i?'L':'M')+(x0+W*i/140).toFixed(1)+' '+(cy-r*Math.cos(u)).toFixed(1)}
-var op=f>.93?(1-f)/.07:1;$('uSin').style.opacity=$('uCos').style.opacity=op;
+function draw(t){var f=t/T,a=f*TA,px=cx+r*Math.cos(a),py=cy-r*Math.sin(a),gx=x0+W*f,n=Math.max(2,Math.round(f*140)),ds='',dc='',i,u;
+for(i=0;i<=n;i++){u=i/140*TA;ds+=(i?'L':'M')+(x0+W*i/140).toFixed(1)+' '+(cy-r*Math.sin(u)).toFixed(1);dc+=(i?'L':'M')+(x0+W*i/140).toFixed(1)+' '+(cy-r*Math.cos(u)).toFixed(1)}
+
 set($('uSin'),{d:ds});set($('uCos'),{d:dc});set($('uRad'),{x1:cx,y1:cy,x2:px,y2:py});set($('uP'),{cx:px,cy:py});
 set($('uV'),{x1:px,y1:py,x2:px,y2:cy});set($('uH'),{x1:px,y1:py,x2:cx,y2:py});
 var sy=cy-r*Math.sin(a),ky=cy-r*Math.cos(a);set($('uS'),{cx:gx,cy:sy});set($('uK'),{cx:gx,cy:ky});set($('uC'),{x1:px,y1:py,x2:gx,y2:sy});
-var ar=18,m=Math.min(a,-.02);set($('uArc'),{d:'M'+(cx+ar)+' '+cy+' A'+ar+' '+ar+' 0 '+(m<-3.1416?1:0)+' 1 '+(cx+ar*Math.cos(m)).toFixed(1)+' '+(cy-ar*Math.sin(m)).toFixed(1)})}
-if(still){draw(T*.2);return}
-var t0=performance.now();(function L(n){draw((n-t0)%T);requestAnimationFrame(L)})(t0)})();</script>
+var ar=18,m=Math.max(a,.02);set($('uArc'),{d:'M'+(cx+ar)+' '+cy+' A'+ar+' '+ar+' 0 '+(m%6.2832>3.1416?1:0)+' 0 '+(cx+ar*Math.cos(m)).toFixed(1)+' '+(cy-ar*Math.sin(m)).toFixed(1)})}
+if(still){draw(T);return}
+var t0=performance.now();(function L(n){var e=n-t0;draw(Math.min(e,T));if(T>e)requestAnimationFrame(L)})(t0)})();</script>
 </svg></div></section><h2 class="sec" id="groups">הכיתות והקבוצות</h2><div class="pick">
 <a class="card" style="--cc:#19b5c9" href="class10/" target="_top"><div class="ic" style="font:800 30px Rubik;color:#fff">י׳</div><h3>כיתה י׳ · 5 יחידות</h3><p>שאלון 35571</p><span style="color:var(--gd);font-weight:800;font-size:16px;margin-top:4px">כניסה ←</span></a>
 <div class="card" style="--cc:#ff5c8a"><div class="ic" style="font:800 30px Rubik;color:#fff">י״א</div><h3>כיתה י״א · 4 יחידות</h3><p>שאלון 35471</p><span class="tag soon">התכנים יתווספו בקרוב</span></div></div></div><div style="text-align:center;color:#8a969f;font-size:14px;padding:6px 0 22px">מתמטיקה · לכל בעיה יש פתרון, להנות מהאתגר</div><script>
