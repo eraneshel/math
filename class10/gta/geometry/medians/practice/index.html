@@ -120,7 +120,7 @@ text{text-anchor:middle}
 
 .pr-wrap{max-width:900px;margin:0 auto}
 .pr-top{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-.pr-lv{flex:1;min-width:130px;border:2px solid #d5dcf5;background:#fff;border-radius:16px;padding:10px 12px;font:inherit;font-weight:800;color:#1d3a8f;cursor:pointer;text-align:center;display:flex;flex-direction:column;gap:2px}
+.pr-lv{flex:1;min-width:120px;border:2px solid #d5dcf5;background:#fff;border-radius:16px;padding:10px 12px;font:inherit;font-weight:800;color:#1d3a8f;cursor:pointer;text-align:center;display:flex;flex-direction:column;gap:2px}
 .pr-lv small{font-weight:600;color:#6b7bb0;font-size:13px}
 .pr-lv.on{background:linear-gradient(135deg,#2a39b4,#3a5bdc);color:#fff;border-color:#1a1768}.pr-lv.on small{color:#cdd9ff}
 .pr-lv.lock{opacity:.5;cursor:not-allowed}
@@ -161,29 +161,42 @@ var A=[30,160],B=[290,160],C=[150,20],F=[220,90],E=[90,90],D=[160,160],G=[157,11
 function fig(hl,show){hl=hl||[];show=show||'';
 var med={AF:[A,F],BE:[B,E],CD:[C,D]},s='<svg viewBox="0 0 320 190" xmlns="http://www.w3.org/2000/svg"><polygon points="30,160 290,160 150,20" fill="#e8eeff" stroke="#1d3a8f" stroke-width="3" stroke-linejoin="round"/>';
 for(var k in med){var on=hl.indexOf(k)>=0;s+='<line x1="'+med[k][0][0]+'" y1="'+med[k][0][1]+'" x2="'+med[k][1][0]+'" y2="'+med[k][1][1]+'" stroke="'+(on?'#0d9488':'#8b9bd6')+'" stroke-width="'+(on?4:2.2)+'" '+(on?'':'stroke-dasharray="5 4"')+'/>'}
+if(show.indexOf('de')>=0)s+='<line x1="160" y1="160" x2="90" y2="90" stroke="#ec4899" stroke-width="3.4"/><circle cx="125" cy="125" r="4.5" fill="#ec4899"/><text x="104" y="139" font-family="STIX Two Text,serif" font-size="16" font-weight="700" fill="#be185d">M</text>';
+if(show.indexOf('pq')>=0)s+='<line x1="203" y1="160" x2="110" y2="67" stroke="#ec4899" stroke-width="3.4"/><circle cx="203" cy="160" r="4.5" fill="#ec4899"/><circle cx="110" cy="67" r="4.5" fill="#ec4899"/><text x="206" y="150" font-family="STIX Two Text,serif" font-size="16" font-weight="700" fill="#be185d">P</text><text x="92" y="66" font-family="STIX Two Text,serif" font-size="16" font-weight="700" fill="#be185d">Q</text>';
 s+='<circle cx="157" cy="113" r="5.5" fill="#7a5af8"/>';
 var L={A:[14,172],B:[296,172],C:[145,13],D:[156,181],E:[68,86],F:[228,86],G:[165,106]};
 for(var n in L)s+='<text x="'+L[n][0]+'" y="'+L[n][1]+'" font-family="STIX Two Text,serif" font-size="17" font-weight="700" fill="#14204f">'+n+'</text>';
 return s+'</svg>'}
 function me(t){return '<span class="me">'+t+'</span>'}
 var LV=[
-{name:'רמה 1',sub:'זיהוי',qs:[
+{name:'רמה 1',sub:'זיהוי והבנה',qs:[
 {t:'בכמה נקודות נפגשים שלושת התיכונים במשולש?',h:['AF'],o:['בנקודה אחת','בשתי נקודות','בשלוש נקודות','אין נקודת מפגש קבועה'],c:0,hint:'זה בדיוק מה שמוכיח משפט התיכונים.'},
-{t:'התיכונים '+me('AF')+' ו־'+me('BE')+' נחתכים בנקודה '+me('G')+'. באיזה יחס '+me('G')+' מחלקת את '+me('AF')+' ?',h:['AF','BE'],o:[me('1 : 1'),me('2 : 1')+' מצד הקדקוד '+me('A'),me('1 : 2')+' מצד הקדקוד '+me('A'),me('3 : 1')+' מצד הקדקוד '+me('A')],c:1,hint:'הקטע הארוך יותר הוא מצד הקדקוד.'},
-{t:'איזה קטע במשולש הוא תיכון?',h:['CD'],o:['קטע מקדקוד לאמצע הצלע שמולו','קטע מקדקוד שמאונך לצלע שמולו','קטע שחוצה את הזווית בקדקוד','קטע המחבר אמצעי שתי צלעות'],c:0,hint:'התיכון מגיע אל אמצע הצלע.'},
-{t:'מהו היחס '+me('GF : AG')+' ?',h:['AF'],o:[me('1 : 2'),me('2 : 1'),me('1 : 3'),me('1 : 1')],c:0,hint:'AG גדול פי 2 מ־GF.'}]},
-{name:'רמה 2',sub:'חישוב',qs:[
-{t:'נתון '+me('AG = 8')+'. חשבו את '+me('GF')+'.',h:['AF'],a:4,hint:'GF הוא מחצית AG.'},
-{t:'נתון '+me('GF = 5')+'. חשבו את '+me('AF')+'.',h:['AF'],a:15,hint:'AF = AG + GF = 2GF + GF.'},
-{t:'נתון '+me('BE = 18')+'. חשבו את '+me('BG')+'.',h:['BE'],a:12,hint:'BG הוא ⅔ מהתיכון BE.'},
-{t:'נתון '+me('GE = 3')+'. חשבו את '+me('BE')+'.',h:['BE'],a:9,hint:'BE = 3·GE.'},
-{t:'נתון '+me('CD = 21')+'. חשבו את '+me('CG')+'.',h:['CD'],a:14,hint:'CG = ⅔·CD.'}]},
-{name:'רמה 3',sub:'הוכחה',qs:[
+{t:'מהו היחס '+me('GF : AG')+' ?',h:['AF'],o:[me('1 : 2'),me('2 : 1'),me('1 : 3'),me('1 : 1')],c:0,hint:'AG גדול פי 2 מ־GF.'},
+{t:'נתון '+me('AG = 2·GF')+'. איזו טענה נוספת נכונה בהכרח?',h:['AF','BE'],o:[me('BG = 2·GE'),me('BG = GE'),me('CG = 3·GD'),me('GE = 2·BG')],c:0,hint:'משפט התיכונים תקף לכל תיכון, לא רק ל־AF.'},
+{t:'התיכונים מחלקים את המשולש '+me('ABC')+' לשלושה משולשים סביב '+me('G')+'. איזה חלק משטח '+me('ABC')+' הוא שטח המשולש '+me('AGB')+' ?',h:['AF','BE','CD'],o:[me('⅓'),me('½'),me('¼'),me('⅔')],c:0,hint:'כל תיכון חוצה שטח, והמשולשים סביב G שווי שטח.'},
+{t:me('D')+' ו־'+me('E')+' אמצעי '+me('AB')+' ו־'+me('AC')+'. איזה משפט מאפשר להוכיח '+me('DE ∥ BC')+' ?',h:[],f:'de',o:['משפט קטע האמצעים','משפט התיכונים','משפט תאלס ההפוך בלבד','משפט הפוך למשפט קטע אמצעים'],c:0,hint:'הקטע מחבר אמצעי שתי צלעות.'}]},
+{name:'רמה 2',sub:'חישוב רב־שלבי',qs:[
+{t:'נתון '+me('AG = 3x + 1')+' ו־'+me('GF = x + 2')+'. מצאו את '+me('x')+'.',h:['AF'],a:3,hint:'AG = 2·GF, ופתרו משוואה.'},
+{t:'נתון '+me('BG = 3x')+' ו־'+me('GE = x + 3')+'. חשבו את אורך התיכון '+me('BE')+'.',h:['BE'],a:27,hint:'BG = 2·GE → מצאו x, אחר כך BE = BG + GE.'},
+{t:'נתון '+me('AG = 12')+' ו־'+me('BE = 18')+'. חשבו את '+me('GE + GF')+'.',h:['AF','BE'],a:12,hint:'GF = ½·AG ו־GE = ⅓·BE.'},
+{t:'היקף משולש '+me('ABC')+' הוא 40, ו־'+me('D')+', '+me('E')+' אמצעי '+me('AB')+', '+me('AC')+'. חשבו את היקף המשולש '+me('ADE')+'.',h:[],f:'de',a:20,hint:'DE = ½BC, AD = ½AB, AE = ½AC.'},
+{t:'שטח משולש '+me('ABC')+' הוא 54. חשבו את שטח המשולש '+me('AGE')+'.',h:['AF','BE'],a:9,hint:'BE חוצה את השטח ל־27, ו־GE הוא ⅓ מ־BE.'}]},
+{name:'רמה 3',sub:'שאלות בגרות',qs:[
+{t:'<b>שאלה משולבת א׳.</b> שטח משולש '+me('ABC')+' הוא 72, ו־'+me('G')+' מפגש התיכונים. <b>(א)</b> חשבו את שטח המשולש '+me('AGC')+'.',h:['AF','BE','CD'],a:24,hint:'שלושת המשולשים סביב G שווי שטח.'},
+{t:'<b>(ב)</b> (המשך): חשבו את שטח המשולש '+me('GEC')+'. (בסעיף א התקבל: '+me('S(AGC) = 24')+'.)',h:['BE'],a:12,hint:'GE הוא תיכון במשולש AGC, ולכן חוצה את שטחו.'},
+{t:'<b>(ג)</b> (המשך): חשבו את שטח המרובע '+me('CEGF')+'. (בסעיף ב התקבל: '+me('S(GEC) = 12')+'; בדומה '+me('S(GFC) = 12')+'.)',h:['AF','BE'],a:24,hint:'המרובע מורכב משני המשולשים GEC ו־GFC.'},
+{t:'<b>שאלה משולבת ב׳.</b> '+me('DE')+' קטע אמצעים ב־'+me('ABC')+', והוא חותך את התיכון '+me('AF')+' בנקודה '+me('M')+'. נתון '+me('DE = 9')+'. <b>(א)</b> חשבו את '+me('BC')+'.',h:['AF','BE'],f:'de',a:18,hint:'משפט קטע האמצעים: DE = ½BC.'},
+{t:'<b>(ב)</b> (המשך): נתון '+me('AF = 30')+'. חשבו את '+me('AG')+'.',h:['AF'],f:'de',a:20,hint:'AG = ⅔·AF לפי משפט התיכונים.'},
+{t:'<b>(ג)</b> (המשך): לפי המשפט ההפוך למשפט קטע אמצעים, '+me('M')+' אמצע '+me('AF')+'. חשבו את '+me('GM')+'. (בסעיף ב: '+me('AG = 20')+'.)',h:['AF'],f:'de',a:5,hint:'AM = ½AF = 15, ו־M נמצאת בין A ל־G.'}]},
+{name:'רמה 4',sub:'אתגר: תאלס ותיכונים',qs:[
 {t:'ההוכחה שהתיכונים נפגשים בנקודה אחת: לחצו על השורות <b>לפי הסדר הנכון</b>.',h:['AF','BE','CD'],ord:['מצד אחד: '+me('G')+' היא נקודת החיתוך של התיכונים '+me('AF')+' ו־'+me('BE')+'.','לפי משפט התיכונים: '+me('BG = ⅔·BE')+'.','נסמן ב־'+me('G₁')+' את נקודת החיתוך של התיכונים '+me('BE')+' ו־'+me('CD')+'.','לפי אותו משפט: '+me('BG₁ = ⅔·BE')+'.','שתי הנקודות על '+me('BE')+' באותו מרחק מ־'+me('B')+', לכן '+me('G = G₁')+'.','לכן שלושת התיכונים עוברים דרך '+me('G')+' ∎'],hint:'קודם מגדירים את הנקודות, אחר כך משווים אותן.'},
 {t:'בהוכחה יש <b>שורה אחת שגויה</b>. מצאו אותה.',h:[],bad:2,rows:[me('D')+' ו־'+me('E')+' אמצעי הצלעות '+me('AB')+' ו־'+me('AC')+'.','לפי משפט קטע האמצעים: '+me('DE ∥ BC')+'.','לפי אותו משפט: '+me('DE = ¼BC')+'.','לכן '+me('BC = 4DE')+'.'],hint:'במשפט קטע האמצעים, הקטע שווה למחצית הצלע.'},
-{t:me('AF')+' ו־'+me('BE')+' תיכונים הנפגשים ב־'+me('G')+', ו־'+me('AF = 24')+'. חשבו את '+me('AG')+'.',h:['AF','BE'],a:16,hint:'AG הוא ⅔ מהתיכון AF.'}]}];
-var st={lv:0,i:0,ok:0,done:[0,0,0],best:[0,0,0],mute:false,pick:[],hint:0,ans:0};
-try{var sv=JSON.parse(localStorage.getItem('prm')||'null');if(sv){st.best=sv.best||st.best;st.done=sv.done||st.done}}catch(e){}
+{t:'<b>שאלה משולבת ג׳.</b> דרך '+me('G')+' מעבירים ישר המקביל ל־'+me('BC')+', החותך את '+me('AB')+' ב־'+me('P')+' ואת '+me('AC')+' ב־'+me('Q')+'. נתון '+me('BC = 18')+', '+me('AB = 15')+', '+me('S(ABC) = 81')+'. <b>(א)</b> לפי משפט תאלס המורחב, חשבו את '+me('PQ')+'.',h:['AF'],f:'pq',a:12,hint:'AP : AB = AG : AF = 2 : 3, ולכן גם PQ : BC.'},
+{t:'<b>(ב)</b> (המשך): חשבו את '+me('PB')+'. (בסעיף א: '+me('AP : AB = 2 : 3')+'.)',h:['AF'],f:'pq',a:5,hint:'AP = ⅔·15, ו־PB = AB − AP.'},
+{t:'<b>(ג)</b> (המשך): חשבו את שטח המשולש '+me('APQ')+'. (המשולשים '+me('APQ')+' ו־'+me('ABC')+' דומים ביחס '+me('2 : 3')+'.)',h:['AF'],f:'pq',a:36,hint:'יחס השטחים הוא ריבוע יחס הדמיון: 4/9.'},
+{t:'<b>(ד)</b> (המשך): חשבו את שטח הטרפז '+me('PBCQ')+'. (בסעיף ג: '+me('S(APQ) = 36')+'.)',h:['AF'],f:'pq',a:45,hint:'שטח הטרפז = שטח המשולש הגדול פחות הקטן.'}]}];
+var st={lv:0,i:0,ok:0,done:[0,0,0,0],best:[0,0,0,0],mute:false,pick:[],hint:0,ans:0};
+try{var sv=JSON.parse(localStorage.getItem('prm')||'null');if(sv){for(var z=0;z<4;z++){st.best[z]=(sv.best||[])[z]||0;st.done[z]=(sv.done||[])[z]||0}}}catch(e){}
 function save(){try{localStorage.setItem('prm',JSON.stringify({best:st.best,done:st.done}))}catch(e){}}
 var AC=null;function tone(f,t,d,ty,v){if(st.mute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();var o=AC.createOscillator(),g=AC.createGain();o.type=ty||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,AC.currentTime+t);g.gain.linearRampToValueAtTime(v||.18,AC.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+t+d);o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+d+.05)}catch(e){}}
 function sOK(){[523,659,784,1047].forEach(function(f,i){tone(f,i*.09,.28,'triangle')})}
@@ -203,9 +216,9 @@ function right(el){st.ok+=st.ans?0:1;st.ans=1;sOK();var r=el?rect(el):[innerWidt
 function wrong(){sBAD();st.hint=1}
 function render(){head();st.ans=0;st.pick=[];var L=LV[st.lv],n=L.qs.length,m=document.getElementById('prmain');
 if(st.i>=n){var pct=st.ok/n,stars=pct>=.99?3:pct>=.7?2:pct>=.4?1:0;if(stars>st.best[st.lv])st.best[st.lv]=stars;if(pct>=.6)st.done[st.lv]=1;save();sWIN();conf(160,innerWidth/2,innerHeight/3);head();
-m.innerHTML='<div class="pr-card" style="display:block"><div class="pr-end"><div class="pr-stars">'+'★'.repeat(stars)+'☆'.repeat(3-stars)+'</div><h2>'+(pct>=.6?'סיימת את '+L.name+'!':'כמעט! נסו שוב')+'</h2><p style="font-size:19px">ענית נכון על '+st.ok+' מתוך '+n+'.</p><button class="pr-btn" id="prre">נסו שוב</button> '+(st.lv<2&&st.done[st.lv]?'<button class="pr-btn" id="prgo">לרמה הבאה ←</button>':'')+'</div></div>';
+m.innerHTML='<div class="pr-card" style="display:block"><div class="pr-end"><div class="pr-stars">'+'★'.repeat(stars)+'☆'.repeat(3-stars)+'</div><h2>'+(pct>=.6?'סיימת את '+L.name+'!':'כמעט! נסו שוב')+'</h2><p style="font-size:19px">ענית נכון על '+st.ok+' מתוך '+n+'.</p><button class="pr-btn" id="prre">נסו שוב</button> '+(st.lv<3&&st.done[st.lv]?'<button class="pr-btn" id="prgo">לרמה הבאה ←</button>':'')+'</div></div>';
 document.getElementById('prre').onclick=function(){st.i=0;st.ok=0;render()};var g=document.getElementById('prgo');if(g)g.onclick=function(){st.lv++;st.i=0;st.ok=0;render()};return}
-var q=L.qs[st.i],h='<div class="pr-card"><div class="pr-fig">'+fig(q.h)+'</div><div><p class="pr-q">'+q.t+'</p>';
+var q=L.qs[st.i],h='<div class="pr-card"><div class="pr-fig">'+fig(q.h,q.f)+'</div><div><p class="pr-q">'+q.t+'</p>';
 if(q.o){h+='<div class="pr-opts">';q.o.map(function(t,i){return[t,i]}).sort(function(){return Math.random()-.5}).forEach(function(p){h+='<button class="pr-opt" data-i="'+p[1]+'">'+p[0]+'</button>'});h+='</div>'}
 else if(q.ord){h+='<div class="pr-ord" id="prord">';q.ord.map(function(t,i){return[t,i]}).sort(function(){return Math.random()-.5}).forEach(function(p){h+='<button data-i="'+p[1]+'"><b></b><span>'+p[0]+'</span></button>'});h+='</div>'}
 else if(q.rows){h+='<div class="pr-ord" id="prrow">';q.rows.forEach(function(t,i){h+='<button data-i="'+i+'"><b>'+(i+1)+'</b><span>'+t+'</span></button>'});h+='</div>'}
