@@ -21,6 +21,7 @@ def math_tokens(s):
 
 def md(s, inline=False):
     s = textwrap.dedent(s).strip('\n')
+    s = re.sub(r'\(\$([^$\n]+)\$\)', r'$(\1)$', s)  # parentheses stay inside the LTR math unit, so they never split from it at a line break
     s = math_tokens(s)
     out = _md.markdown(s, extensions=['tables', 'sane_lists'])
     if inline:
