@@ -83,8 +83,8 @@ def MCX(label_q_opts_c_why):
 
 TESTS = {}
 SAMPLES = {}
-def at(id, params=None, drags=None, pick=None):
-    TESTS[id] = {'params': params or {}, 'drags': drags or {}, 'pick': pick}
+def at(id, params=None, drags=None, pick=None, pts=None):
+    TESTS[id] = {'params': params or {}, 'drags': drags or {}, 'pick': pick, 'pts': pts or []}
 
 def FG(xr, yr, curves, caption=None, **kw):
     mys = kw.pop('mystery', None)

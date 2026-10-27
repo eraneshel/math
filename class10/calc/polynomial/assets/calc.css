@@ -150,3 +150,19 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 .sk,.sk *{box-sizing:border-box}.sk{width:100%;max-width:100%;min-width:0}.sk-w{min-width:0}
 .sk-r .negwrap{flex:1;min-width:0;display:flex;gap:6px;direction:ltr}
 .sk-r .negwrap input{width:100%}
+
+/* free anonymous points (sketch products) */
+.svg-fp{fill:var(--l1);stroke:var(--card);stroke-width:2.5px;cursor:grab;touch-action:none;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35));pointer-events:none}
+.svg-fp.idle{fill:var(--card);stroke:var(--l1);stroke-width:2.2px;stroke-dasharray:3 2.5}
+.svg-fp.on{fill:var(--blue)}
+.svg-fp:focus{outline:none;stroke:var(--ink);stroke-width:3px}
+.svg-fphit{fill:transparent;cursor:grab;touch-action:none}
+.svg-curve.ghost{stroke-width:1.3px;opacity:.55;stroke-dasharray:none}
+.sk-tbl{display:grid;gap:6px;margin:4px 0}
+.sk-row{display:flex;align-items:center;gap:6px;direction:ltr}
+.sk-row .negwrap{flex:1;min-width:0;display:flex;gap:4px;direction:ltr}
+.sk-row .negwrap input,.sk-r .negwrap input{flex:1;min-width:0;width:100%}
+.sk-sg{flex:0 0 auto;padding:0 9px;border:2px solid var(--line,#cfd8e3);border-radius:10px;background:var(--card,#fff);color:var(--ink,#1c2733);font:inherit;font-size:16px;cursor:pointer}
+.sk-row input{padding:8px 8px;border:2px solid var(--line,#cfd8e3);border-radius:10px;font:inherit;font-size:16px;background:var(--card,#fff);color:var(--ink,#1c2733);text-align:left}
+.sk-del{flex:0 0 auto;width:38px;height:38px;border:2px solid var(--line,#cfd8e3);border-radius:10px;background:var(--card,#fff);color:var(--ink,#1c2733);font-size:16px;cursor:pointer}
+.sk-head{display:flex;gap:6px;direction:ltr;margin-top:4px;font-family:'STIX Two Text',serif;font-style:italic;font-weight:700}.sk-hc{flex:1;text-align:center}.sk-hs{flex:0 0 38px}
