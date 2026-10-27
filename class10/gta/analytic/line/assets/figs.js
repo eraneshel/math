@@ -206,7 +206,7 @@
       }
       var c = el('circle', { r: 9, 'class': 'svg-drag', tabindex: 0, role: 'slider', 'aria-label': 'נקודה ' + (d.t || d.id) + ' (גררו או השתמשו בחצים)' }, gDyn);
       var lab = d.t ? el('text', { 'class': 'svg-plab' }, gDyn) : null; if (lab) lab.textContent = d.t;
-      var hit = el('circle', { r: 38, 'class': 'svg-hit' }, gDyn);
+      var hit = el('circle', { r: 66, 'class': 'svg-hit' }, gDyn);
       dragEls[d.id] = { c: c, lab: lab, h: hit };
     });
 
