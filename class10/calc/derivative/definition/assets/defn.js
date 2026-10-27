@@ -72,6 +72,7 @@ function text(parent,x,y,str,cls){var t=el('text',{x:x,y:y,'class':cls||'svg-lab
 
 /* ---------- progress ---------- */
 var stages=$$('.stage');
+var hooks=[];
 function refresh(){
   var done=0;
   stages.forEach(function(s){
@@ -85,6 +86,7 @@ function refresh(){
   if(fill)fill.style.width=pct+'%';
   if(txt)txt.textContent=done+' מתוך '+stages.length+' שלבים הושלמו';
   if(pr)pr.setAttribute('aria-valuenow',pct);
+  hooks.forEach(function(h){h(stages)});
 }
 function pass(node){node.classList.add('ok');refresh()}
 
@@ -312,5 +314,6 @@ function f1(x){return x*x*x-3*x}
 /* ---------- self check ---------- */
 $$('.sc-item input').forEach(function(i){i.addEventListener('change',function(){})});
 
+window.DF={el:el,$:$,$$:$$,fmt:fmt,parseNum:parseNum,Plot:Plot,text:text,pass:pass,typed:typed,refresh:refresh,hooks:hooks,minus:MINUS};
 refresh();
 })();

@@ -133,3 +133,16 @@
 .steps3 td.claim{font-size:clamp(.85em,4vw,1.1em);text-align:center}
 @media (min-width:700px){.steps3 .opt,.steps3 td.claim{font-size:1.05em}}
 .steps3 .opts{gap:8px}
+
+/* עמוד כללי גזירה (משתף את הקובץ הזה) */
+.row-in input.wide{width:min(280px,100%);font-size:19px}
+.row-in .q{font-weight:600}
+.stage.locked>*:not(h2){display:none}
+.stage.locked>h2{opacity:.55}
+.stage.locked:after{content:"פתרו נכון את השלב הקודם כדי להמשיך";display:block;color:var(--mut);font-weight:700;margin-top:4px}
+.qrow{margin:12px 0;padding:10px 12px;border:2px solid var(--line);border-radius:14px;background:var(--card)}
+.qrow .fx{font-size:1.08em;margin-bottom:6px}
+.qrow details.hint{margin:6px 0}
+.qrow .sol{margin-top:8px;background:var(--soft);border-radius:12px;padding:8px 14px}
+.cap{font-weight:700;color:var(--ok);margin:4px 0}
+button.chk.btn{margin:6px 0}
