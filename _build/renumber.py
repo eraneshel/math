@@ -15,7 +15,40 @@ def _swap(block, old, new):
         block = re.sub(pat, rep, block)
     return block
 
+TAGSP = re.compile(r'<span class="tag [^"]*">([^<]*)</span>')
+LEGEND = re.compile(r'(<h3>)מקרא(</h3>)(.*?)(?=<h3>)', re.S)
+
+def _legend(m):
+    seg = m.group(3)
+    seg = re.sub(r'<li>(?:(?!</li>).)*?<span class="tag [^"]*">.*?</li>\s*', '', seg, flags=re.S)
+    seg = re.sub(r'<ul>\s*</ul>', '', seg)
+    if 'מספר רץ' not in seg:
+        seg += '<div class="md"><p>כל דוגמה, תרגיל ושאלה ממוספרים במספר רץ אחד בפרק (1.1, 1.2, ...). תרגיל מאתגר מסומן בתג <span class="tag t-bagrut">אתגר</span>.</p></div>\n'
+    return m.group(1) + 'סימון הפריטים' + m.group(2) + seg
+
+def normalize(html):
+    """One tag only: 'אתגר'. Titles describe content; the word 'דוגמה' is a plain lead-in, never a tag."""
+    html = LEGEND.sub(_legend, html)
+    def hdr(m):
+        return re.sub(r'<span class="tag [^"]*">(?!אתגר<)[^<]*</span>', '', m.group(0))
+    html = re.sub(r'<header class="ex-h">.*?</header>', hdr, html, flags=re.S)
+    def inline(m):
+        t = m.group(1)
+        if t == 'אתגר':
+            return m.group(0)
+        if t.startswith('חקירה'):
+            return '<strong>%s:</strong>' % t.rstrip('.')
+        if t == 'דוגמה':
+            return '<strong class="lead">דוגמה.</strong>'
+        if t == 'הסבר':
+            return ''
+        return m.group(0)
+    html = TAGSP.sub(inline, html)
+    html = re.sub(r'(<article class="ex example"[^>]*>.*?<div class="ex-body"><p>)(?!<strong class="lead">)', r'\1<strong class="lead">דוגמה.</strong> ', html, flags=re.S)
+    return html
+
 def renumber(html):
+    html = normalize(html)
     out, pos, mapping = [], 0, {}
     starts = [(m.start(), m.group(1)) for m in CH.finditer(html)]
     starts.append((len(html), None))
@@ -31,8 +64,6 @@ def renumber(html):
             k += 1
             old, new = (m.group(2) or m.group(1)), '%s.%d' % (n, k)
             pieces.append(seg[p:m.start()]); blk = _swap(seg[m.start():e], old, new)
-            if 'diag-item' in seg[m.start():m.end()]:
-                blk = blk.replace('class="ex-id">%s</span>' % new, 'class="ex-id">%s</span><span class="tag t-solo">אבחון</span>' % new, 1)
             pieces.append(blk); p = e
             mapping['%s/%s' % (n, old)] = new
         pieces.append(seg[p:])
