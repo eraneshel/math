@@ -28,6 +28,7 @@
     t.textContent = s; return t;
   }
   function r2(v) { return Math.round(v * 100) / 100; }
+  function fmt3(v) { v = Math.round(v * 1000) / 1000; if (Object.is(v, -0)) v = 0; return String(v).replace('-', '−'); }
   function fmt(v) { v = r2(v); if (Object.is(v, -0)) v = 0; return String(v).replace('-', '−'); }
 
   function clip(x0, y0, x1, y1, r) {
@@ -448,7 +449,7 @@
         var p = D[d.id], e = dragEls[d.id];
         e.c.setAttribute('cx', sx(p.x)); e.c.setAttribute('cy', sy(p.y));
         if (e.h) { e.h.setAttribute('cx', sx(p.x)); e.h.setAttribute('cy', sy(p.y)); }
-        if (e.lab && d.coords) e.lab.textContent = '(' + fmt(p.x) + ' ; ' + fmt(p.y) + ')';
+        if (e.lab && d.coords) e.lab.textContent = '(' + fmt3(p.x) + ' ; ' + fmt3(p.y) + ')';
         if (e.lab) { var oo = OFF[d.pos || 'tr']; e.lab.setAttribute('x', sx(p.x) + oo[0] + (oo[2] === 'start' ? 6 : oo[2] === 'end' ? -6 : 0)); e.lab.setAttribute('y', sy(p.y) + oo[1]); e.lab.setAttribute('text-anchor', oo[2]); }
         e.c.setAttribute('aria-valuetext', '(' + fmt(p.x) + ' ; ' + fmt(p.y) + ')');
       });
