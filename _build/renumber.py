@@ -4,7 +4,7 @@
 import re, sys
 
 CH = re.compile(r'<section class="chapter" id="ch(\d+)"[^>]*data-kind="chapter"[^>]*>')
-ART = re.compile(r'<article class="ex[^"]*" id="ex-([^"]+)" data-id="([^"]+)"')
+ART = re.compile(r'<article class="ex[^"]*" id="ex-([^"]+)"(?: data-id="([^"]+)")?')
 
 def _swap(block, old, new):
     q = re.escape(old)
@@ -29,8 +29,11 @@ def renumber(html):
             if m.start() < p:
                 continue
             k += 1
-            old, new = m.group(2), '%s.%d' % (n, k)
-            pieces.append(seg[p:m.start()]); pieces.append(_swap(seg[m.start():e], old, new)); p = e
+            old, new = (m.group(2) or m.group(1)), '%s.%d' % (n, k)
+            pieces.append(seg[p:m.start()]); blk = _swap(seg[m.start():e], old, new)
+            if 'diag-item' in seg[m.start():m.end()]:
+                blk = blk.replace('class="ex-id">%s</span>' % new, 'class="ex-id">%s</span><span class="tag t-solo">אבחון</span>' % new, 1)
+            pieces.append(blk); p = e
             mapping['%s/%s' % (n, old)] = new
         pieces.append(seg[p:])
         out.append(''.join(pieces))
