@@ -294,7 +294,7 @@
         dragEls[d.id] = { c: fc, lab: fl }; return;
       }
       var c = el('circle', { r: 9, 'class': 'svg-drag', tabindex: 0, role: 'slider', 'aria-label': 'נקודה ' + (d.t || d.id) + ' (גררו או השתמשו בחצים)' }, gDyn);
-      var lab = d.t ? el('text', { 'class': 'svg-plab' }, gDyn) : null; if (lab) lab.textContent = d.t;
+      var lab = (d.t || d.coords) ? el('text', { 'class': 'svg-plab' + (d.coords ? ' live' : '') }, gDyn) : null; if (lab && d.t) lab.textContent = d.t;
       dragEls[d.id] = { c: c, lab: lab };
     });
 
@@ -446,6 +446,7 @@
       drags.forEach(function (d) {
         var p = D[d.id], e = dragEls[d.id];
         e.c.setAttribute('cx', sx(p.x)); e.c.setAttribute('cy', sy(p.y));
+        if (e.lab && d.coords) e.lab.textContent = '(' + fmt(p.x) + ' ; ' + fmt(p.y) + ')';
         if (e.lab) { var oo = OFF[d.pos || 'tr']; e.lab.setAttribute('x', sx(p.x) + oo[0] + (oo[2] === 'start' ? 6 : oo[2] === 'end' ? -6 : 0)); e.lab.setAttribute('y', sy(p.y) + oo[1]); e.lab.setAttribute('text-anchor', oo[2]); }
         e.c.setAttribute('aria-valuetext', '(' + fmt(p.x) + ' ; ' + fmt(p.y) + ')');
       });
