@@ -96,6 +96,9 @@ page = f'''<!doctype html>
 </html>
 '''
 page = lib.render_all(page)
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+from renumber import renumber
+page, _ = renumber(page)
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf8').write(page)
 open(os.path.join(OUT, 'assets', 'meta.js'), 'w', encoding='utf8').write('window.BOOKLET_META=' + json.dumps(meta, ensure_ascii=False) + ';\n')
 print('built', len(page), 'bytes;', len(lib.TEX), 'formulas')
