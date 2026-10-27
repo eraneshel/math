@@ -496,6 +496,7 @@
       h.addEventListener('pointerdown', function (ev) { active = true; try { h.setPointerCapture(ev.pointerId); } catch (e) { } c.classList.add('on'); ev.preventDefault(); });
       h.addEventListener('pointermove', function (ev) { if (!active) return; var q = toData(ev); place(d, q.x, q.y); update(); fireChange(); });
       var stop = function () { active = false; c.classList.remove('on'); };
+      ['touchstart', 'touchmove'].forEach(function (tn) { h.addEventListener(tn, function (ev) { ev.preventDefault(); }, { passive: false }); });
       h.addEventListener('pointerup', stop); h.addEventListener('pointercancel', stop);
       c.addEventListener('keydown', function (ev) {
         var s = d.snap || 0.5, dx = 0, dy = 0;
