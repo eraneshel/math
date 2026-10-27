@@ -154,3 +154,7 @@ button.chk.btn{margin:6px 0}
 .dtab td.dcell input.wide{width:92px;font-size:17px;padding:6px}
 .dtab .lockd{color:var(--mut);font-size:14px}
 @media (max-width:640px){.dtab td.dcell{min-width:130px}.dtab th{font-size:13px}}
+
+/* שורות תשובה אלגבריות (כללי גזירה): "f′(x) = [תיבה]" משמאל לימין, כמו בכתיבה מתמטית */
+.row-in.ans{direction:ltr;justify-content:flex-start}
+.row-in.ans .btn,.row-in.ans .fb{direction:rtl;unicode-bidi:isolate}
