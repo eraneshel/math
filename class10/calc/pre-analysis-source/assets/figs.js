@@ -636,7 +636,7 @@
       var K = spec.sk; skBox = document.createElement('div'); skBox.className = 'sk';
       var mk = function (tag, cls, txt) { var e2 = document.createElement(tag); if (cls) e2.className = cls; if (txt) e2.textContent = txt; return e2; };
       var nmin = K.basis.length;
-      skBox.appendChild(mk('div', 'sk-t', K.intro || ('בנו את הגרף מנקודות. נדרשות לפחות ' + nmin + ' נקודות. כשיש מספיק נקודות מופיע הכפתור "העבר גרף".')));
+      skBox.appendChild(mk('div', 'sk-t', K.intro || ('בנו את הגרף מנקודות. ' + (nmin === 1 ? 'נדרשת לפחות נקודה אחת.' : 'נדרשות לפחות ' + nmin + ' נקודות.') + ' כשיש מספיק נקודות מופיע הכפתור "העבר גרף".')));
       var bt = mk('div', 'sk-w'); bt.appendChild(mk('div', 'sk-wh', 'טבלת ערכים'));
       bt.appendChild(mk('div', 'sk-wd', 'מוסיפים נקודה ומקלידים את x ואת y שלה, או גוררים אותה בשרטוט (נקודה שלא הוזנה מוצגת כעיגול ריק).'));
       var hd = mk('div', 'sk-head'); hd.appendChild(mk('span', 'sk-hc', 'x')); hd.appendChild(mk('span', 'sk-hc', 'y')); hd.appendChild(mk('span', 'sk-hs')); bt.appendChild(hd);
