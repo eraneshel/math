@@ -26,9 +26,17 @@ def _legend(m):
         seg += '<div class="md"><p>כל דוגמה, תרגיל ושאלה ממוספרים במספר רץ אחד בפרק (1.1, 1.2, ...). תרגיל מאתגר מסומן בתג <span class="tag t-bagrut">אתגר</span>.</p></div>\n'
     return m.group(1) + 'סימון הפריטים' + m.group(2) + seg
 
+RESET_NOTE = '<div class="md"><p>הכפתור <strong>איפוס</strong> בכל שרטוט מחזיר אותו למצבו ההתחלתי ומבטל את המשוב של אותו תרגיל. תשובות שהקלדתם נשארות.</p></div>\n'
+
+def _reset_note(html):
+    if 'data-fig' not in html or 'הכפתור <strong>איפוס' in html:
+        return html
+    return html.replace('<h3>סימון הפריטים</h3>', '<h3>סימון הפריטים</h3>\n' + RESET_NOTE, 1)
+
 def normalize(html):
     """One tag only: 'אתגר'. Titles describe content; the word 'דוגמה' is a plain lead-in, never a tag."""
     html = LEGEND.sub(_legend, html)
+    html = _reset_note(html)
     def hdr(m):
         return re.sub(r'<span class="tag [^"]*">(?!אתגר<)[^<]*</span>', '', m.group(0))
     html = re.sub(r'<header class="ex-h">.*?</header>', hdr, html, flags=re.S)

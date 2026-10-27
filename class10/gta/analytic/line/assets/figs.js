@@ -365,7 +365,7 @@
     var rst = document.createElement('button'); rst.type = 'button'; rst.className = 'btn small ghost fig-reset'; rst.textContent = 'איפוס';
     rst.addEventListener('click', function () {
       Object.keys(pdef).forEach(function (k) { Pm[k] = pdef[k].val; var i2 = fig.querySelector('input[data-param="' + k + '"]'); if (i2) { i2.value = pdef[k].val; i2.nextSibling.textContent = fmt(pdef[k].val); } });
-      drags.forEach(function (d) { D[d.id] = { x: d.x, y: d.y }; if (d.on !== undefined || d.lock) place(d, d.x, d.y); });
+      drags.forEach(function (d) { D[d.id] = { x: d.x, y: d.y }; if (d.on !== undefined || d.onc !== undefined || d.lock) place(d, d.x, d.y); });
       update(); fireChange(true);
     });
 
