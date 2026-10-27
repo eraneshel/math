@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   var META = window.BOOKLET_META || [];
-  var KEY = 'poly-booklet-v1';
+  var KEY = window.BOOKLET_KEY || 'poly-booklet-v1';
   var TEACHER = /[?&]teacher=1\b/.test(location.search);
   var state = { done: {}, myAnswers: {}, selfCheck: {}, last: null };
   var $ = function (s, r) { return (r || document).querySelector(s); };

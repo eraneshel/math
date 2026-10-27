@@ -2,9 +2,34 @@
 import json, os, sys, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import lib
-from content import CH, FORMULAS_HTML
+import shutil
+from content import CH, FORMULAS_HTML, P
 
-OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'class10', 'calc', 'poly')
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'class10', 'calc')
+MODE = os.environ.get('MODE', 'source')
+SRC = os.path.join(ROOT, 'pre-analysis-source')
+if MODE == 'source':
+    CH = [c for c in CH if c is not P]
+    OUT = SRC
+    KEYJS = ''
+    T_TITLE, T_K, T_H1, T_P, T_CRUMB = ('פונקציות פולינום · חוברת עבודה אישית', 'חוברת עבודה אישית · כיתה י׳ · 5 יחידות', 'פונקציות <em>פולינום</em>',
+        'קדם אנליזה · חזקות, אפסים וכפילות · מהבסיס ועד רמת בגרות', 'קדם אנליזה (מקור)')
+else:
+    P.id = 'ch1'
+    CH = [P]
+    OUT = os.path.join(ROOT, 'polynomial')
+    KEYJS = "window.BOOKLET_KEY='poly-path-v1';\n"
+    T_TITLE, T_K, T_H1, T_P, T_CRUMB = ('פולינום · מסלול אישי', 'מסלול אישי · כיתה י׳ · 5 יחידות', '<em>פולינום</em>',
+        'משימות רחבות: כל נושאי הפונקציות בכל משימה, ברמה שעולה', 'פולינום')
+    os.makedirs(os.path.join(OUT, 'assets'), exist_ok=True)
+    for f in os.listdir(os.path.join(SRC, 'assets')):
+        if f == 'meta.js':
+            continue
+        src_f = os.path.join(SRC, 'assets', f); dst_f = os.path.join(OUT, 'assets', f)
+        if os.path.isdir(src_f):
+            shutil.rmtree(dst_f, ignore_errors=True); shutil.copytree(src_f, dst_f)
+        else:
+            shutil.copy(src_f, dst_f)
 V = str(int(time.time()))[-8:]
 
 meta = [c.meta() for c in CH]
@@ -29,7 +54,7 @@ page = f'''<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <meta name="color-scheme" content="light dark">
-<title>פונקציות פולינום · חוברת עבודה אישית</title>
+<title>{T_TITLE}</title>
 <link rel="stylesheet" href="assets/katex.min.css?v={V}">
 <link rel="stylesheet" href="assets/style.css?v={V}">
 <link rel="stylesheet" href="assets/calc.css?v={V}">
@@ -40,10 +65,10 @@ page = f'''<!doctype html>
 <section class="hero">
   <svg class="deco" viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="dg"><stop offset="0" stop-color="#67e8f9" stop-opacity="0"/><stop offset=".5" stop-color="#a7f3d0"/><stop offset="1" stop-color="#c4b5fd" stop-opacity="0"/></linearGradient></defs><path class="wv" d="M0 90C100 90 140 30 300 60S500 20 600 30" fill="none" stroke="url(#dg)" stroke-width="2.5"/><path class="wv2" d="M0 110C120 100 200 60 320 80S520 50 600 60" fill="none" stroke="url(#dg)" stroke-width="1.5" opacity=".6"/></svg>
   <div class="t">
-    <div class="crumb"><a href="../../../" target="_top">בית</a> › <a href="../../" target="_top">כיתה י׳</a> › <a href="../" target="_top">חשבון דיפרנציאלי ואינטגרלי</a> › קדם אנליזה: פולינומים</div>
-    <span class="k">חוברת עבודה אישית · כיתה י׳ · 5 יחידות</span>
-    <h1>פונקציות <em>פולינום</em></h1>
-    <p>קדם אנליזה · חזקות, אפסים וכפילות · מהבסיס ועד רמת בגרות</p>
+    <div class="crumb"><a href="../../../" target="_top">בית</a> › <a href="../../" target="_top">כיתה י׳</a> › <a href="../" target="_top">חשבון דיפרנציאלי ואינטגרלי</a> › {T_CRUMB}</div>
+    <span class="k">{T_K}</span>
+    <h1>{T_H1}</h1>
+    <p>{T_P}</p>
   </div>
   <div class="hero-fig" aria-hidden="true">{hero_fig}</div>
 </section>
@@ -100,5 +125,5 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'
 from renumber import renumber
 page, _ = renumber(page)
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf8').write(page)
-open(os.path.join(OUT, 'assets', 'meta.js'), 'w', encoding='utf8').write('window.BOOKLET_META=' + json.dumps(meta, ensure_ascii=False) + ';\n')
+open(os.path.join(OUT, 'assets', 'meta.js'), 'w', encoding='utf8').write(KEYJS + 'window.BOOKLET_META=' + json.dumps(meta, ensure_ascii=False) + ';\n')
 print('built', len(page), 'bytes;', len(lib.TEX), 'formulas')
