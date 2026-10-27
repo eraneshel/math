@@ -468,12 +468,14 @@
 
     /* ---------- dragging ---------- */
     function snapv(v, s) { return s ? Math.round(v / s) * s : v; }
+    /* continuous drag that "sticks" to integers and halves when the finger passes close to them */
+    function magnet(v, d) { var m = Math.round(v * 2) / 2, tol = (Math.abs(m - Math.round(m)) < 1e-9 ? 0.028 : 0.016) * (xr[1] - xr[0]); return Math.abs(v - m) <= tol ? m : v; }
     function place(d, x, y) {
       var p = D[d.id];
       if (d.lock === 'y') { p.x = Math.max(d.min !== undefined ? d.min : xr[0] + 0.3, Math.min(d.max !== undefined ? d.max : xr[1] - 0.3, snapv(x, d.snap))); p.y = d.y; }
       else if (d.lock === 'x') { p.y = Math.max(d.min !== undefined ? d.min : yr[0] + 0.3, Math.min(d.max !== undefined ? d.max : yr[1] - 0.3, snapv(y, d.snap))); p.x = d.x; }
       else if (d.onc !== undefined) {
-        refresh(); var xc = Math.max(xr[0] + 0.2, Math.min(xr[1] - 0.2, snapv(x, d.snap))), yc = cf(d.onc, xc);
+        refresh(); var xc = Math.max(d.min !== undefined ? d.min : xr[0] + 0.2, Math.min(d.max !== undefined ? d.max : xr[1] - 0.2, d.coords ? magnet(x, d) : snapv(x, d.snap))), yc = cf(d.onc, xc);
         if (!isFinite(yc) || yc > yr[1] - 0.2 || yc < yr[0] + 0.2) { return; }
         p.x = xc; p.y = yc;
       }
