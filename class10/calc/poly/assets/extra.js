@@ -209,15 +209,20 @@ document.addEventListener('click', function (e) {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
 
-/* coverage map: a topic lights up once an exercise that touches it was solved */
+/* progress map: per topic, how many of the exercises touching it were solved (not a mastery measure) */
 (function () {
   function upd() {
     var st = window.BookApp && window.BookApp.state; if (!st) return;
-    var cov = {};
+    var tot = {}, ok = {};
     document.querySelectorAll('article[data-topics]').forEach(function (a) {
-      if (st.done[a.getAttribute('data-id')] === 'ok') a.getAttribute('data-topics').split(',').forEach(function (t) { cov[t] = 1; });
+      var d = st.done[a.getAttribute('data-id')] === 'ok';
+      a.getAttribute('data-topics').split(',').forEach(function (k) { tot[k] = (tot[k] || 0) + 1; if (d) ok[k] = (ok[k] || 0) + 1; });
     });
-    document.querySelectorAll('.cover .chip').forEach(function (c) { c.classList.toggle('on', !!cov[c.getAttribute('data-t')]); });
+    document.querySelectorAll('.cover .chip').forEach(function (c) {
+      var k = c.getAttribute('data-t'), n = tot[k] || 0, d = ok[k] || 0, f = n ? Math.round(100 * d / n) : 0;
+      c.querySelector('.cn').textContent = d + '/' + n;
+      c.style.setProperty('--f', f + '%'); c.classList.toggle('on', n > 0 && d === n);
+    });
   }
   document.addEventListener('click', function () { setTimeout(upd, 60); });
   document.addEventListener('input', function () { setTimeout(upd, 400); });

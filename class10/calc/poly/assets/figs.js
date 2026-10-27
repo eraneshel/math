@@ -291,7 +291,7 @@
     drags.forEach(function (d) {
       if (d.fixed) {
         var fc = el('circle', { r: 5, 'class': 'svg-pt' }, gDyn);
-        var fl = d.t ? el('text', { 'class': 'svg-plab' }, gDyn) : null; if (fl) fl.textContent = d.t;
+        var fl = (d.t || d.coords) ? el('text', { 'class': 'svg-plab' + (d.coords ? ' live' : '') }, gDyn) : null; if (fl && d.t) fl.textContent = d.t;
         dragEls[d.id] = { c: fc, lab: fl }; return;
       }
       var c = el('circle', { r: 9, 'class': 'svg-drag', tabindex: 0, role: 'slider', 'aria-label': 'נקודה ' + (d.t || d.id) + ' (גררו או השתמשו בחצים)' }, gDyn);
@@ -401,7 +401,7 @@
     }
     function update() {
       refresh();
-      drags.forEach(function (d) { if (d.onc !== undefined) { var p0 = D[d.id], yy = cf(d.onc, p0.x); if (isFinite(yy)) p0.y = yy; refresh(); } });
+      drags.forEach(function (d) { if (d.onc !== undefined) { var p0 = D[d.id]; if (d.follow && D[d.follow]) p0.x = D[d.follow].x; var yy = cf(d.onc, p0.x); if (isFinite(yy)) p0.y = yy; refresh(); } });
       drawCurves();
       drags.forEach(function (d) {
         if (d.on === undefined || d.lock) return;

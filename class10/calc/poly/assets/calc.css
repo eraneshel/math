@@ -136,5 +136,6 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 .ex-body li > .part.inline:has(.sym) .chk{grid-column:1;justify-self:start;white-space:nowrap;min-width:84px}
 .ex-body li > .part.inline:has(.sym) .fb{grid-column:1/-1}
 .cover{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 18px}
-.cover .chip{padding:4px 12px;border-radius:999px;border:1.5px solid var(--line,#cfd8e3);background:var(--soft,#eef3f9);font-size:14px;color:var(--ink,#1c2733)}
-.cover .chip.on{background:#1f8a5b;border-color:#1f8a5b;color:#fff}
+.cover .chip{padding:4px 12px;border-radius:999px;border:1.5px solid var(--line,#cfd8e3);font-size:14px;color:var(--ink,#1c2733);--f:0%;background:linear-gradient(to left,rgba(31,138,91,.28) var(--f),var(--soft,#eef3f9) var(--f))}
+.cover .chip .cn{font-size:12px;opacity:.75;direction:ltr;display:inline-block}
+.cover .chip.on{border-color:#1f8a5b}
