@@ -83,7 +83,7 @@ hero_fig = ('<svg viewBox="-14 -6 280 228" width="100%"><g fill="none" stroke-li
             '<text x="146" y="214" fill="#ffc83d" font-family="Rubik" font-weight="700" font-size="17" text-anchor="middle" direction="ltr" style="direction:ltr;unicode-bidi:bidi-override">f′(a) = lim Δy/Δx</text>'
             '</g></svg>')
 
-stage_titles = ['שיפוע חותך שמתקרב', 'משני הצדדים', 'ההגדרה בפעולה', 'מיקרוסקופ', 'אתגר: נקודה בלי נגזרת', 'תוצר: מהמשיקים לנגזרת']
+stage_titles = ['שיפוע חותך שמתקרב', 'משני הצדדים', 'ההגדרה בפעולה', 'אתגר: נקודה בלי נגזרת', 'תוצר: מהמשיקים לנגזרת']
 nav = ''.join('<a href="#s%d"><b>%d</b>%s</a>' % (i, i, t.replace('אתגר: ', '')) for i, t in enumerate(stage_titles, 1))
 
 stage1 = f'''
@@ -94,7 +94,7 @@ stage1 = f'''
 <div class="ro"><div><small>{T("הפרש ה־$x$: $h$")}</small><span class="v" id="h1">1</span></div><div><small>{T("הפרש הערכים: $\\Delta y$")}</small><span class="v" id="dy1">—</span></div><div class="big"><small>שיפוע הישר AB</small><span class="v" id="m1">—</span></div></div>
 <p><strong>שאלה.</strong> כשהנקודה B מתקרבת ל־A מכל צד, שיפוע הישר AB שואף למספר. איזה מספר?</p>
 <div class="row-in chk typed" id="g1box"><input type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="?" aria-label="התשובה"><button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div>
-<p id="g1note" hidden><strong>זהו שיפוע המשיק בנקודה A.</strong> המשיק הוא הישר דרך A ששיפועו הוא הערך שאליו שואפים שיפועי החותכים. הוא מסומן עכשיו בגרף.</p>
+<p id="g1note" hidden><strong>זהו שיפוע המשיק בנקודה A.</strong> המשיק הוא הישר דרך A ששיפועו הוא הערך שאליו שואפים שיפועי החותכים. הוא מסומן עכשיו בגרף. קרוב ל־A הגרף כמעט חופף למשיק, וזו הסיבה שיש משמעות לשיפוע בנקודה אחת.</p>
 </section>'''
 
 stage2 = f'''
@@ -120,19 +120,8 @@ stage3 = f'''
 <div class="row-in chk typed" id="g3box" hidden><span>{T("לפי התוצאה, מהו $f'(3)$?")}</span><input type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="?" aria-label="התשובה"><button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div>
 </section>'''
 
-stage4 = f'''
-<section class="stage" id="s4" aria-labelledby="s4t"><h2 id="s4t"><span class="n">4</span>{stage_titles[3]}</h2>
-<p>{T("נחזור ל־$f(x)=x^2$. נבחר נקודה A ונסתכל על חלון קטן סביבה, שרוחבו הוא $h$ לכל צד. כשמקטינים את החלון, הגרף נראה כמעט כמו ישר. בדקו מה קורה לשיפוע של החותך מ־A אל קצה החלון (הנקודה האדומה), ביחס לשיפוע המשיק.")}</p>
-<div class="viz"><svg id="v4" role="img" aria-label="חלון מוגדל סביב נקודה על גרף, עם החותך והמשיק"></svg></div>
-<div class="ctl"><label for="a4">הנקודה {T("$x=a$")}</label><input type="range" id="a4" min="-2" max="2" step="0.05" value="1"></div>
-<div class="ctl"><label for="z4">הקטנת החלון</label><input type="range" id="z4" min="0" max="10" step="0.05" value="0"></div>
-<div class="ro"><div><small>{T("רוחב החצי־חלון $h$")}</small><span class="v" id="w4">2</span></div><div><small>שיפוע החותך מ־A אל הנקודה האדומה</small><span class="v" id="s4v">\u2014</span></div><div><small>שיפוע המשיק בנקודה A</small><span class="v" id="m4">2</span></div><div class="big"><small>ההפרש בין שני השיפועים</small><span class="v" id="d4">\u2014</span></div></div>
-<p id="n4" class="fb" aria-live="polite"></p>
-{mc("כשהחלון קטן מאוד, מה אפשר לומר על שיפוע החותך ועל שיפוע המשיק?", ["שיפוע החותך כמעט שווה לשיפוע המשיק, וההפרש ביניהם שואף ל־0", "שיפוע החותך שואף לאינסוף", "שיפוע החותך נשאר רחוק משיפוע המשיק", "שיפוע המשיק משתנה והופך ל־0"], 0, "החלון הוא ה־$h$ שבהגדרה. כש־$h\\to 0$ שיפוע החותך $\\dfrac{f(a+h)-f(a)}{h}$ שואף לשיפוע המשיק, וזו בדיוק הנגזרת $f'(a)$.")}
-</section>'''
-
 stage5 = f'''
-<section class="stage" id="s5" aria-labelledby="s5t"><h2 id="s5t"><span class="n">5</span>{stage_titles[4]}<span class="dtag">אתגר</span></h2>
+<section class="stage" id="s4" aria-labelledby="s4t"><h2 id="s4t"><span class="n">4</span>{stage_titles[3]}<span class="dtag">אתגר</span></h2>
 <p>{T("נתונה $f(x)=|x|$ והנקודה A ב־$x=0$. גררו את B לימין ולשמאל והשוו את שיפועי החותכים.")}</p>
 <div class="viz"><svg id="v5" role="img" aria-label="גרף ערך מוחלט עם ישר חותך דרך הראשית"></svg></div>
 <div class="ctl"><label for="h5s">מיקום B</label><input type="range" id="h5s" min="-1.8" max="1.8" step="0.05" value="1"></div>
@@ -142,7 +131,7 @@ stage5 = f'''
 
 pin = ''.join('<label>%s<input type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="שיפוע בנקודה x=%s"></label>' % (M('x=%s' % t), t) for t in ('-2', '-1', '0', '1', '2'))
 stage6 = f'''
-<section class="stage" id="s6" aria-labelledby="s6t"><h2 id="s6t"><span class="n">6</span>{stage_titles[5]}</h2>
+<section class="stage" id="s5" aria-labelledby="s5t"><h2 id="s5t"><span class="n">5</span>{stage_titles[4]}</h2>
 <p>{T("בגרף העליון מסומנים משיקים לגרף של $f(x)=x^3-3x$ בחמש נקודות. קראו את השיפוע של כל משיק, והציבו בגרף התחתון נקודה בגובה השיפוע, מעל ה־$x$ המתאים. אפשר לגרור או להקליד.")}</p>
 <div class="viz"><svg id="v6a" role="img" aria-label="גרף הפונקציה עם חמישה משיקים"></svg></div>
 <div class="viz"><svg id="v6b" role="img" aria-label="מישור לסימון שיפועי המשיקים"></svg></div>
@@ -191,7 +180,7 @@ page = f'''<!doctype html>
 </div>
 <main class="dmain" id="main">
 <p class="dintro">{T("מהו שיפוע של גרף **בנקודה אחת**? לשיפוע של קו ישר צריך שתי נקודות. כאן נראה איך שיפוע החותך הופך לשיפוע המשיק, ומזה נגיע להגדרת הנגזרת.")}</p>
-{stage1}{stage2}{stage3}{stage4}{stage5}{stage6}
+{stage1}{stage2}{stage3}{stage5}{stage6}
 <fieldset class="selfcheck"><legend>בדיקה עצמית</legend>{sc}</fieldset>
 </main>
 <div class="foot">מתמטיקה · לכל בעיה יש פתרון, להנות מהאתגר</div>

@@ -228,38 +228,7 @@ function f1(x){return x*x*x-3*x}
 })();
 
 /* ============================================================
-   שלב 4: מיקרוסקופ: חלון שמצטמצם סביב A
-   ============================================================ */
-(function(){
-  var svg=$('#v4');if(!svg)return;
-  function f(x){return x*x}
-  var a=1,zk=0;
-  var as=$('#a4'),zs=$('#z4');
-  function draw(){
-    var w=2*Math.pow(2,-zk),m=2*a,ya=f(a),hh=w*Math.max(Math.abs(m),0.8)*1.3;
-    var P=Plot(svg,{xmin:a-w,xmax:a+w,ymin:ya-hh,ymax:ya+hh,W:640,H:360,nogrid:true,pl:10,pr:10,pt:10,pb:10});
-    el('rect',{x:10,y:10,width:620,height:340,fill:'none',stroke:'var(--line)'},P.top);
-    el('line',{x1:P.X(a),x2:P.X(a),y1:10,y2:350,'class':'svg-grid'},P.top);
-    el('line',{x1:10,x2:630,y1:P.Y(ya),y2:P.Y(ya),'class':'svg-grid'},P.top);
-    P.path(f,a-w,a+w,240,'svg-curve');
-    P.line(a,ya,m,'svg-tan dash');
-    var xb=a+w,yb=f(xb),sec=(yb-ya)/w;
-    P.line(a,ya,sec,'svg-sec');
-    el('circle',{cx:P.X(a),cy:P.Y(ya),r:6,'class':'svg-ptA'},P.top);
-    el('circle',{cx:P.X(xb),cy:P.Y(yb),r:7,'class':'svg-ptB'},P.top);
-    text(P.top,P.X(a)-14,P.Y(ya)+22,'A');
-    $('#w4').textContent=fmt(w,4);$('#s4v').textContent=fmt(sec,4);$('#m4').textContent=fmt(m,2);
-    $('#d4').textContent=fmt(sec-m,4);
-    var n=$('#n4');
-    n.textContent=w>0.5?'החלון גדול: הגרף עדיין מתעקם, והחותך רחוק מהמשיק.':(w>0.05?'הגרף כבר נראה כמעט ישר, והחותך קרוב למשיק.':'החותך והמשיק כמעט חופפים.');
-  }
-  as.addEventListener('input',function(){a=+as.value;draw()});
-  zs.addEventListener('input',function(){zk=+zs.value;draw()});
-  draw();
-})();
-
-/* ============================================================
-   שלב 5: נקודת שבר (אתגר)
+   שלב 4: נקודת שבר (אתגר)
    ============================================================ */
 (function(){
   var svg=$('#v5');if(!svg)return;
