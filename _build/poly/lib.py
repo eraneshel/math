@@ -53,8 +53,8 @@ def A(s):
 
 INPUT = '<input type="text" inputmode="decimal" dir="ltr" autocomplete="off" spellcheck="false" placeholder="?">'
 
-INPUT_T = '<input type="text" inputmode="text" dir="auto" autocomplete="off" spellcheck="false" placeholder="?">'
-SYM = '<span class="sym" aria-label="סימנים">' + ''.join('<button type="button" data-ins="%s">%s</button>' % (a, b) for a, b in [('<', '&lt;'), ('>', '&gt;'), ('≠', '≠'), (' או ', 'או'), ('x', 'x')]) + '</span>'
+INPUT_T = '<input type="text" inputmode="text" dir="ltr" style="text-align:left" autocomplete="off" spellcheck="false" placeholder="?">'
+SYM = '<span class="sym" aria-label="סימנים">' + ''.join('<button type="button" data-ins="%s"%s>%s</button>' % (a, (' dir="ltr"' if b in ('&lt;', '&gt;', '≤', '≥', '≠', 'x') else ''), b) for a, b in [('<', '&lt;'), ('>', '&gt;'), ('≤', '≤'), ('≥', '≥'), ('≠', '≠'), ('x', 'x'), (' או ', 'או'), ('לכל x ', 'לכל x'), ('לאף x ', 'לאף x')]) + '</span>'
 
 def _typed(id, keys, labels=None):
     k = html.escape(json.dumps([str(x) for x in keys], ensure_ascii=False), quote=True)
