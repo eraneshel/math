@@ -65,3 +65,8 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 
 .svg-seg.thick.run{stroke:#1f8a5b}.svg-seg.thick.rise{stroke:#c2410c}.svg-plab.run{fill:#1f8a5b;font-style:normal}.svg-plab.rise{fill:#c2410c;font-style:normal}
 .fig svg,.fig svg text{-webkit-user-select:none;user-select:none}
+
+.svg-hit{fill:transparent;stroke:none;cursor:grab;touch-action:none}
+.svg-drag{pointer-events:none}
+.svg-drag:focus{outline:none}
+@media (pointer:coarse){.svg-drag{r:12px}}

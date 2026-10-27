@@ -86,3 +86,8 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 .sumbox{margin:1.1rem 0;padding:.9rem 1.1rem;border:2px solid var(--accent,#c2410c);border-radius:12px;background:color-mix(in srgb,var(--accent,#c2410c) 7%,transparent)}
 .sumbox p:first-child{margin-top:0}.sumbox ul{margin:.3rem 0}
 .svg-plab.live{font-style:normal;font-size:16px}
+
+.svg-hit{fill:transparent;stroke:none;cursor:grab;touch-action:none}
+.svg-drag{pointer-events:none}
+.svg-drag:focus{outline:none}
+@media (pointer:coarse){.svg-drag{r:12px}}

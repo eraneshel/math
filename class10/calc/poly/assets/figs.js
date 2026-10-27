@@ -295,7 +295,8 @@
       }
       var c = el('circle', { r: 9, 'class': 'svg-drag', tabindex: 0, role: 'slider', 'aria-label': 'נקודה ' + (d.t || d.id) + ' (גררו או השתמשו בחצים)' }, gDyn);
       var lab = (d.t || d.coords) ? el('text', { 'class': 'svg-plab' + (d.coords ? ' live' : '') }, gDyn) : null; if (lab && d.t) lab.textContent = d.t;
-      dragEls[d.id] = { c: c, lab: lab };
+      var hit = el('circle', { r: 38, 'class': 'svg-hit' }, gDyn);
+      dragEls[d.id] = { c: c, lab: lab, h: hit };
     });
 
     /* ---------- readouts ---------- */
@@ -446,6 +447,7 @@
       drags.forEach(function (d) {
         var p = D[d.id], e = dragEls[d.id];
         e.c.setAttribute('cx', sx(p.x)); e.c.setAttribute('cy', sy(p.y));
+        if (e.h) { e.h.setAttribute('cx', sx(p.x)); e.h.setAttribute('cy', sy(p.y)); }
         if (e.lab && d.coords) e.lab.textContent = '(' + fmt(p.x) + ' ; ' + fmt(p.y) + ')';
         if (e.lab) { var oo = OFF[d.pos || 'tr']; e.lab.setAttribute('x', sx(p.x) + oo[0] + (oo[2] === 'start' ? 6 : oo[2] === 'end' ? -6 : 0)); e.lab.setAttribute('y', sy(p.y) + oo[1]); e.lab.setAttribute('text-anchor', oo[2]); }
         e.c.setAttribute('aria-valuetext', '(' + fmt(p.x) + ' ; ' + fmt(p.y) + ')');
@@ -490,11 +492,11 @@
     }
     drags.forEach(function (d) {
       if (d.fixed) return;
-      var c = dragEls[d.id].c, active = false;
-      c.addEventListener('pointerdown', function (ev) { active = true; try { c.setPointerCapture(ev.pointerId); } catch (e) { } c.classList.add('on'); ev.preventDefault(); });
-      c.addEventListener('pointermove', function (ev) { if (!active) return; var q = toData(ev); place(d, q.x, q.y); update(); fireChange(); });
+      var c = dragEls[d.id].c, h = dragEls[d.id].h || c, active = false;
+      h.addEventListener('pointerdown', function (ev) { active = true; try { h.setPointerCapture(ev.pointerId); } catch (e) { } c.classList.add('on'); ev.preventDefault(); });
+      h.addEventListener('pointermove', function (ev) { if (!active) return; var q = toData(ev); place(d, q.x, q.y); update(); fireChange(); });
       var stop = function () { active = false; c.classList.remove('on'); };
-      c.addEventListener('pointerup', stop); c.addEventListener('pointercancel', stop);
+      h.addEventListener('pointerup', stop); h.addEventListener('pointercancel', stop);
       c.addEventListener('keydown', function (ev) {
         var s = d.snap || 0.5, dx = 0, dy = 0;
         if (ev.key === 'ArrowRight') dx = s; else if (ev.key === 'ArrowLeft') dx = -s; else if (ev.key === 'ArrowUp') dy = s; else if (ev.key === 'ArrowDown') dy = -s; else return;
