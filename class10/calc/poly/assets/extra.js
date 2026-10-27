@@ -208,3 +208,18 @@ document.addEventListener('click', function (e) {
   });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
+
+/* coverage map: a topic lights up once an exercise that touches it was solved */
+(function () {
+  function upd() {
+    var st = window.BookApp && window.BookApp.state; if (!st) return;
+    var cov = {};
+    document.querySelectorAll('article[data-topics]').forEach(function (a) {
+      if (st.done[a.getAttribute('data-id')] === 'ok') a.getAttribute('data-topics').split(',').forEach(function (t) { cov[t] = 1; });
+    });
+    document.querySelectorAll('.cover .chip').forEach(function (c) { c.classList.toggle('on', !!cov[c.getAttribute('data-t')]); });
+  }
+  document.addEventListener('click', function () { setTimeout(upd, 60); });
+  document.addEventListener('input', function () { setTimeout(upd, 400); });
+  setTimeout(upd, 300);
+})();
