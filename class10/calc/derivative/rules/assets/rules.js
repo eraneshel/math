@@ -6,7 +6,9 @@ var $=DF.$,$$=DF.$$,el=DF.el,fmt=DF.fmt,pass=DF.pass,Plot=DF.Plot,text=DF.text;
 
 var answerBox=DF.answerBox;
 var T={
-  q1:function(x){return 4*Math.pow(x,3)},
+  d2:function(x){return 2*x},
+  d3:function(x){return 3*x*x},
+  d4:function(x){return 4*Math.pow(x,3)},
   q2:function(x){return 5*Math.pow(x,4)},
   p1:function(x){return 5*Math.pow(x,4)-3},
   p2:function(x){return 6*x*x+8*x-1},
@@ -22,26 +24,41 @@ $$('.ans[data-t]').forEach(function(b){
     var nx=b.getAttribute('data-next');if(nx){var n=$(nx);if(n)n.hidden=false}
     var sol=b.getAttribute('data-sol');if(sol){var s=$(sol);if(s)s.hidden=false;var sb=$('.showsol[data-for="'+sol+'"]');if(sb)sb.hidden=true}
     if(b.getAttribute('data-t')==='t5')drawTangent();
+    if(/^d\d$/.test(b.getAttribute('data-t'))&&$$('.ans[data-t^="d"]').every(function(x){return x.classList.contains('ok')})){var q=$('#q2box');if(q)q.hidden=false}
   });
 });
 /* פתרון מלא אחרי ניסיון */
 $$('.showsol').forEach(function(btn){btn.addEventListener('click',function(){var s=$(btn.getAttribute('data-for'));if(s)s.hidden=false;btn.hidden=true})});
 
-/* ---------- שלב 1: טבלת שיפועים ---------- */
+/* ---------- שלב 1: משיק ← טבלה ---------- */
 (function(){
-  var tb=$('#slopes tbody');if(!tb)return;
-  var F=[
-    {k:'5',f:function(){return 5}},
-    {k:'x',f:function(x){return x}},
-    {k:'x2',f:function(x){return x*x}},
-    {k:'x3',f:function(x){return x*x*x}},
-    {k:'x4',f:function(x){return Math.pow(x,4)}}
-  ];
-  function slope(f,a){var h=1e-4;return (f(a+h)-f(a-h))/(2*h)}
-  $$('tr[data-k]',tb).forEach(function(tr){
-    var d=F.filter(function(o){return o.k===tr.getAttribute('data-k')})[0];
-    $$('td.s',tr).forEach(function(td,i){td.textContent=fmt(slope(d.f,i+1),2)});
+  var svg=$('#v1');if(!svg)return;
+  var n=2,a=1,filled={},R={2:[10,2.5],3:[30,2.5],4:[90,2.5]};
+  function slope(n,a){return n*Math.pow(a,n-1)}
+  function draw(){
+    svg.innerHTML='';
+    var ym=R[n][0],P=Plot(svg,{xmin:-0.5,xmax:3.6,ymin:-ym*0.08,ymax:ym,W:640,H:340,gx:1,gy:ym/5,lx:1,ly:ym/5});
+    P.path(function(x){return Math.pow(x,n)},-0.5,3.6,200,'svg-curve');
+    var m=slope(n,a),y=Math.pow(a,n);
+    P.line(a,y,m,'svg-tan');
+    el('circle',{cx:P.X(a),cy:P.Y(y),r:7,'class':'svg-ptA'},P.top);
+    $('#sl1').textContent=fmt(m,0);
+    $('#add1fb').textContent='';
+  }
+  $$('#fch button').forEach(function(b){b.addEventListener('click',function(){
+    n=+b.getAttribute('data-n');$$('#fch button').forEach(function(o){o.setAttribute('aria-pressed',o===b)});draw()})});
+  $$('#xch button').forEach(function(b){b.addEventListener('click',function(){
+    a=+b.getAttribute('data-a');$$('#xch button').forEach(function(o){o.setAttribute('aria-pressed',o===b)});draw()})});
+  $('#add1').addEventListener('click',function(){
+    var td=$('#slopes tr[data-n="'+n+'"] td[data-a="'+a+'"]');
+    td.textContent=fmt(slope(n,a),0);td.classList.add('filled');
+    filled[n+'_'+a]=1;
+    var row=$('#slopes tr[data-n="'+n+'"]');
+    if([1,2,3].every(function(k){return filled[n+'_'+k]})){
+      var l=$('.lockd',row);if(l)l.hidden=true;$('.ans',row).hidden=false}
+    $('#add1fb').textContent='נוסף';
   });
+  draw();
 })();
 
 /* ---------- שלב 2: חשיפת צעדים ---------- */

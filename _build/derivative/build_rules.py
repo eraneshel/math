@@ -41,21 +41,32 @@ ex2 = (row(1, 'נגזרת של סכום והפרש: גוזרים כל איבר �
        + row(2, 'מקדם קבוע וכלל החזקה. נגזרת של קבוע היא 0', "f'(x)=3\\cdot 4x^3-5\\cdot 2x+2\\cdot 1-0")
        + row(3, 'חישוב', "f'(x)=12x^3-10x+2"))
 
+def chipbtn(attr, val, label, pressed=False):
+    return '<button type="button" data-%s="%s" aria-pressed="%s">%s</button>' % (attr, val, 'true' if pressed else 'false', label)
+
+fchips = ''.join(chipbtn('n', n, M('x^%d' % n), n == 2) for n in (2, 3, 4))
+xchips = ''.join(chipbtn('a', a_, M('x=%d' % a_), a_ == 1) for a_ in (1, 2, 3))
+
+def drow(n):
+    return ('<tr data-n="%d"><th>%s</th><td class="num s" data-a="1"></td><td class="num s" data-a="2"></td><td class="num s" data-a="3"></td>'
+            '<td class="dcell"><span class="lockd">מלאו את השורה</span>'
+            '<div class="row-in chk ans" data-t="d%d" hidden><input type="text" class="wide" autocomplete="off" spellcheck="false" dir="ltr" placeholder="?" aria-label="נגזרת">'
+            '<button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div></td></tr>') % (n, M('x^%d' % n), n)
+
 stage1 = f'''
 <section class="stage" id="s1" aria-labelledby="s1t"><h2 id="s1t"><span class="n">1</span>{titles[0]}</h2>
-<p>בעמוד הקודם חישבנו נגזרת לפי ההגדרה. כאן נחפש כלל שחוסך את החישוב. בטבלה מוצג שיפוע המשיק לגרף של כמה פונקציות, בנקודות {T("$x=1,2,3$")}.</p>
-<table class="dtab" id="slopes"><thead><tr><th>{T("$f(x)$")}</th><th>{T("$x=1$")}</th><th>{T("$x=2$")}</th><th>{T("$x=3$")}</th></tr></thead><tbody>
-<tr data-k="5"><th>{M("5")}</th><td class="num s"></td><td class="num s"></td><td class="num s"></td></tr>
-<tr data-k="x"><th>{M("x")}</th><td class="num s"></td><td class="num s"></td><td class="num s"></td></tr>
-<tr data-k="x2"><th>{M("x^2")}</th><td class="num s"></td><td class="num s"></td><td class="num s"></td></tr>
-<tr data-k="x3"><th>{M("x^3")}</th><td class="num s"></td><td class="num s"></td><td class="num s"></td></tr>
-<tr data-k="x4"><th>{M("x^4")}</th><td class="num s"></td><td class="num s"></td><td class="num s"></td></tr>
-</tbody></table>
-<p>{T("לדוגמה, השיפועים של $x^2$ הם 2, 4, 6, כלומר $f'(x)=2x$. עכשיו אתם:")}</p>
-<div class="qrow"><div class="fx">{T("מהי $f'(x)$ עבור $f(x)=x^4$?")}</div>{hint("השוו את השורות של x², x³ ו־x⁴. מה קורה למעריך, ומה קורה למקדם?")}
-{ans("q1", M("f'(x)="), "4x^3", nxt="#q2box")}</div>
+<p>{T("בעמוד הקודם ראינו שהנגזרת היא שיפוע המשיק. כאן נמלא טבלה של שיפועי משיקים ונחפש כלל. בחרו פונקציה ונקודה, ואז לחצו על הוספה לטבלה.")}</p>
+<div class="chips" id="fch" role="group" aria-label="בחירת פונקציה">{fchips}</div>
+<div class="chips" id="xch" role="group" aria-label="בחירת נקודה">{xchips}</div>
+<div class="viz"><svg id="v1" role="img" aria-label="גרף הפונקציה שנבחרה, הנקודה והמשיק"></svg></div>
+<div class="ro"><div class="big"><small>שיפוע המשיק</small><span class="v" id="sl1">-</span></div></div>
+<div class="ctl"><button type="button" class="btn small" id="add1">הוספה לטבלה</button><span class="fb" id="add1fb" aria-live="polite"></span></div>
+<div class="tw"><table class="dtab" id="slopes"><thead><tr><th>{T("$f(x)$")}</th><th>{T("שיפוע ב־$x=1$")}</th><th>{T("שיפוע ב־$x=2$")}</th><th>{T("שיפוע ב־$x=3$")}</th><th>{T("הנגזרת $f'(x)$")}</th></tr></thead><tbody>
+{drow(2)}{drow(3)}{drow(4)}
+</tbody></table></div>
+{hint("השוו את השיפועים לערכי x, ל־x² ול־x³. מה קורה למעריך, ומה קורה למקדם?")}
 <div class="qrow" id="q2box" hidden><div class="fx">{T("בדקו את ההשערה: מהי $f'(x)$ עבור $f(x)=x^5$?")}</div>
-{ans("q2", M("f'(x)="), "5x^4")}</div>
+{ans("q2", M("f'(x)="), "?")}</div>
 <p class="muted">{T("כתבו חזקה עם ^, למשל x^3, ומקדם צמוד, למשל 4x^3.")}</p>
 <details class="hint"><summary>למה זה נכון לכל n?</summary><span>{T("לפי נוסחת הבינום, $(a+h)^n=a^n+n\\,a^{n-1}h+\\dots+h^n$. לכן $\\dfrac{(a+h)^n-a^n}{h}=n\\,a^{n-1}+(\\text{איברים עם }h)$, וכש־$h\\to 0$ נשאר $n\\,a^{n-1}$.")}</span></details>
 </section>'''
@@ -98,7 +109,7 @@ stage4 = f'''
 <div class="qrow">{T("א) חשבו $f(2)$.")}{ans("t2", M("f(2)="), "?", nxt="#t3box")}</div>
 <div class="qrow" id="t3box" hidden>{T("ב) מצאו את $f'(x)$.")}{ans("t3", M("f'(x)="), "?", nxt="#t4box")}</div>
 <div class="qrow" id="t4box" hidden>{T("ג) חשבו את $f'(2)$, שיפוע המשיק.")}{ans("t4", M("f'(2)="), "?", nxt="#t5box")}</div>
-<div class="qrow" id="t5box" hidden>{T("ד) כתבו את משוואת המשיק בצורה $y=\\dots$")}{hint("הציבו בנוסחה: y − f(2) = f′(2)(x − 2), ופשטו.")}{ans("t5", M("y="), "9x+1")}</div>
+<div class="qrow" id="t5box" hidden>{T("ד) כתבו את משוואת המשיק בצורה $y=\\dots$")}{hint("הציבו בנוסחה: y − f(2) = f′(2)(x − 2), ופשטו.")}{ans("t5", M("y="), "?")}</div>
 </section>'''
 
 sc = ''.join('<label class="sc-item"><input type="checkbox"><span>%s</span></label>' % T(t) for t in [

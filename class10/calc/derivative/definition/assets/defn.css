@@ -146,3 +146,11 @@
 .qrow .sol{margin-top:8px;background:var(--soft);border-radius:12px;padding:8px 14px}
 .cap{font-weight:700;color:var(--ok);margin:4px 0}
 button.chk.btn{margin:6px 0}
+
+/* שלב 1 בכללי גזירה: טבלת שיפועים עם עמודת נגזרת */
+.dtab td.filled{background:var(--okbg)}
+.dtab td.dcell{min-width:150px}
+.dtab td.dcell .row-in{margin:0;gap:6px}
+.dtab td.dcell input.wide{width:92px;font-size:17px;padding:6px}
+.dtab .lockd{color:var(--mut);font-size:14px}
+@media (max-width:640px){.dtab td.dcell{min-width:130px}.dtab th{font-size:13px}}
