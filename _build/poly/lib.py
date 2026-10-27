@@ -87,7 +87,7 @@ TAG = {'example': ('t-example', 'דוגמה'), 'guided': ('t-guided', 'מודר�
 
 LEVELS = {'B1': 'קל', 'B2': 'קל', 'B3': 'קל', 'M1': 'בינוני', 'M2': 'בינוני', 'H1': 'מורכב', 'H2': 'מורכב', 'H3': 'מורכב', 'H4': 'מורכב'}
 
-def ex(id, kind, body, keys=None, labels=None, mc=None, answer=None, solution=None, hint_text=None, star=False, act=False):
+def ex(id, kind, body, keys=None, labels=None, mc=None, answer=None, solution=None, hint_text=None, star=False, act=False, raw_ctl=None):
     cls, name = TAG[kind]
     name = LEVELS.get(id, name)
     datakind = 'solo' if kind == 'quick' else kind
@@ -98,6 +98,9 @@ def ex(id, kind, body, keys=None, labels=None, mc=None, answer=None, solution=No
     if kind == 'example':
         return ('<article class="ex example" id="ex-%s" data-id="%s" data-kind="example">%s<div class="ex-body">%s</div>'
                 '<div class="ex-foot"><button type="button" class="btn small ok-ex">הבנתי</button></div></article>\n') % (id, id, head, b)
+    if raw_ctl is not None:
+        return ('<article class="ex" id="ex-%s" data-id="%s" data-kind="%s">%s<div class="ex-body">%s</div>'
+                '<div class="ex-ctl">%s</div></article>\n') % (id, id, datakind, head, b, raw_ctl)
     if act:
         ctl = '<div class="act-ctl" data-act="%s"><button type="button" class="btn small act-chk">בדיקה</button><span class="fb" aria-live="polite"></span></div>' % id
     else:

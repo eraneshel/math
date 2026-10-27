@@ -30,6 +30,54 @@ def SUMBOX(text):
 def THINK(text):
     return '<div class="think">' + md(text) + '</div>\n'
 
+import json as _json, html as _html
+
+def _thumb(curves, label):
+    """small inline SVG: curves = [(color, fn)] sampled on [-1.2, 1.2]"""
+    def path(fn):
+        pts = []
+        for k in range(61):
+            x = -1.2 + 2.4 * k / 60
+            y = max(-1.3, min(1.3, fn(x)))
+            pts.append('%.1f,%.1f' % (60 + x * 46, 45 - y * 34))
+        return 'M' + ' L'.join(pts)
+    g = '<line x1="6" y1="45" x2="114" y2="45" stroke="#64748b" stroke-width="1.2"/><line x1="60" y1="4" x2="60" y2="86" stroke="#64748b" stroke-width="1.2"/>'
+    for col, fn in curves:
+        g += '<path d="%s" fill="none" stroke="%s" stroke-width="2.6"/>' % (path(fn), col)
+    return '<svg viewBox="0 0 120 90" width="120" height="90" role="img" aria-label="%s">%s</svg>' % (label, g)
+
+BLUE, ORANGE = '#2f5fd0', '#c2410c'
+
+def PRED(pid, feats, graph, conf_q='עד כמה אתם בטוחים בניחושים שלכם?'):
+    """feats = [(question_html, [opts])]; graph = (question_html, [(label, svg)])"""
+    out = '<div class="pred" data-pred="%s">' % pid
+    for qi, (q, opts) in enumerate(feats):
+        out += '<fieldset class="pq" data-q="%d"><legend>%s</legend>' % (qi, md(q, inline=True))
+        for oi, o in enumerate(opts):
+            out += '<label class="mc-o"><input type="radio" name="pred-%s-%d" value="%d"><span>%s</span></label>' % (pid, qi, oi, md(o, inline=True))
+        out += '</fieldset>'
+    gq, gopts = graph
+    gi = len(feats)
+    out += '<fieldset class="pq pg" data-q="%d"><legend>%s</legend><div class="pg-opts">' % (gi, md(gq, inline=True))
+    for oi, (lab, svg) in enumerate(gopts):
+        out += '<label class="pg-o"><input type="radio" name="pred-%s-%d" value="%d"><span class="pg-c">%s<b>%s</b></span></label>' % (pid, gi, oi, svg, lab)
+    out += '</div></fieldset>'
+    out += '<fieldset class="pq pc" data-q="conf"><legend>%s</legend><div class="pc-opts">' % conf_q
+    for oi, lab in enumerate(['נמוכה: זה ניחוש', 'בינונית', 'גבוהה: אני די בטוח/ה']):
+        out += '<label class="mc-o"><input type="radio" name="pred-%s-conf" value="%d"><span>%s</span></label>' % (pid, oi, lab)
+    out += '</div></fieldset>'
+    out += '<div class="pred-row"><button type="button" class="btn pred-lock">אני מתחייב/ת לניחוש</button><span class="fb" aria-live="polite"></span></div></div>'
+    return out
+
+def REVISIT(pid, feats, graph, truths, whys, gtruth, gwhy):
+    """summary block: guesses vs what was found (source strings live in hidden DOM so KaTeX renders normally)"""
+    src = ''
+    for (q, opts), t, w in zip(feats, truths, whys):
+        src += '<div class="rv-f" data-t="%d"><div class="q">%s</div>%s<div class="w">%s</div></div>' % (t, md(q, inline=True), ''.join('<div class="o">%s</div>' % md(o, inline=True) for o in opts), md(w, inline=True))
+    src += '<div class="rv-f rv-g" data-t="%d"><div class="q">%s</div>%s<div class="w">%s</div></div>' % (gtruth, md(graph[0], inline=True), ''.join('<div class="o">%s</div>' % lab for lab, _ in graph[1]), md(gwhy, inline=True))
+    return ('<div class="revisit" data-pred="%s"><div class="rv-h">חזרה לניחוש</div><div class="rv-src" hidden>%s</div><div class="rv-b"></div>'
+            '<label class="rv-note"><span>מה הפתיע אתכם? אפשר לכתוב במילים שלכם (לא נבדק)</span><textarea rows="2" data-rvnote="%s"></textarea></label></div>\n') % (pid, src, pid)
+
 def MCX(label_q_opts_c_why):
     return [dict(label=l, q=q, opts=o, c=cc, why=w) for (l, q, o, cc, w) in label_q_opts_c_why]
 
@@ -141,11 +189,21 @@ def _fig11(**kw):
     alt='גרף y=x^n עם n משתנה',
     caption=r'שנו את $n$. הנקודות המסומנות: $x=-1,0,1$. ירוק: הפונקציה חיובית. אדום: שלילית.', **kw)
 
+FEATS11 = [
+    (r'משמאל לראשית ($x<0$): איך מתנהגים הגרפים של $f(x)=x^2$ ושל $g(x)=x^3$?', [r'שניהם נשארים מעל ציר ה-$x$', r'שניהם יורדים מתחת לציר ה-$x$', r'$x^2$ נשאר מעל ציר ה-$x$ ו-$x^3$ יורד מתחתיו']),
+    (r'סימטריה: הגרף של $x^2$ והגרף של $x^3$', [r'שניהם סימטריים לציר ה-$y$', r'$x^2$ סימטרי לציר ה-$y$ ו-$x^3$ סימטרי לראשית', r'לאף אחד מהם אין סימטריה']),
+    (r'בראשית $(0;0)$:', [r'$x^2$ מינימום, ו-$x^3$ עולה דרך הראשית בלי קיצון', r'בשניהם הראשית היא מינימום', r'בשניהם הגרף עולה דרך הראשית בלי קיצון'])]
+GRAPH11 = (r'איזה זוג גרפים מתאר את $f(x)=x^2$ (כחול) ואת $g(x)=x^3$ (כתום)?', [
+    ('גרף א', _thumb([(BLUE, lambda x: x * x), (ORANGE, lambda x: abs(x) ** 3)], 'שני גרפים מעל הציר')),
+    ('גרף ב', _thumb([(BLUE, lambda x: x * x), (ORANGE, lambda x: -x ** 3)], 'פרבולה וגרף יורד')),
+    ('גרף ג', _thumb([(BLUE, lambda x: x * x), (ORANGE, lambda x: x ** 3)], 'פרבולה וגרף עולה')),
+    ('גרף ד', _thumb([(BLUE, lambda x: x), (ORANGE, lambda x: x ** 3)], 'ישר וגרף עולה'))])
+TRUTH11 = [2, 1, 0]
+WHY11 = [r'$(-2)^2=4>0$ ואילו $(-2)^3=-8<0$.', r'ב-$x^2$ מתקיים $f(-x)=f(x)$, וב-$x^3$ מתקיים $g(-x)=-g(x)$.', r'ב-$x^2$ הראשית היא מינימום, וב-$x^3$ הגרף חוצה את הציר ועולה.']
 i = nid()
 c.add(ex(i, 'solo', r"""
-**ניחוש לפני שבודקים.** לפני שמפעילים את הכלי: מה לדעתכם ההבדל בין הגרף של $f(x)=x^2$ לגרף של $f(x)=x^3$ משמאל לראשית ($x<0$)? בחרו, ובהמשך תבדקו אם צדקתם.
-""", mc=MCX([('', r'משמאל לראשית:', [r'הגרף של $x^2$ נשאר מעל ציר ה-$x$, והגרף של $x^3$ יורד מתחתיו', r'שני הגרפים נשארים מעל ציר ה-$x$', r'שני הגרפים יורדים מתחת לציר ה-$x$'], 0, r'כך זה: $(-2)^2=4>0$ ואילו $(-2)^3=-8<0$. אם ניחשתם אחרת, זה בדיוק מה שבודקים בשלבים הבאים.')]),
-   answer=r'הגרף של $x^2$ נשאר מעל ציר ה-$x$, והגרף של $x^3$ יורד מתחתיו'))
+**ניחוש לפני שבודקים.** לפני שמפעילים את הכלי: ענו על כל השאלות, בחרו רמת ביטחון והתחייבו לניחוש. אי אפשר לשנות אותו אחר כך, ובשלב המסקנה נחזור אליו.
+""", raw_ctl=PRED('poly-even-odd', FEATS11, GRAPH11)))
 i = nid()
 c.add(ex(i, 'guided', r"""
 **שלב א: איסוף נתונים.** בשרטוט מופיעה הפונקציה $f(x)=x^n$, **ו-$n$ אינו נתון**. הנקודה $P$ נגררת לאורך הגרף, ושיעוריה מוצגים לידה.
@@ -191,6 +249,7 @@ c.add(ex(i, 'solo', r"""
     (r'ח. $f(5)=5^0=1$', r'כל מספר שונה מ-$0$ בחזקת $0$ שווה $1$; $f$ קבועה ואינה פונקציית חזקה (בהגדרה $n$ טבעי)'),
     (r'ט. $f$ אינה מוגדרת ב-$x=0$', r'$0^0$ אינו מוגדר')])))
 SAMPLES[i] = ['x<0', 'x>0', 'x≠0', 'אין', '1', '-1', '-1', '1', '0']
+c.add(REVISIT('poly-even-odd', FEATS11, GRAPH11, TRUTH11, WHY11, 2, r'הגרף של $x^3$ עולה כל הזמן, ומשמאל לראשית הוא מתחת לציר ה-$x$.'))
 i = nid()
 c.add(ex(i, 'solo', r"""
 **נסו להפריך.** נתונה הטענה: "לכל מספר טבעי $n$ ולכל $x$ מתקיים $f(x)=x^n\ge0$." מחפשים דוגמה נגדית.

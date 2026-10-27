@@ -153,3 +153,58 @@ document.addEventListener('click', function (e) {
   inp.value = inp.value.slice(0, a) + t + inp.value.slice(z); var c = a + t.length;
   inp.focus(); try { inp.setSelectionRange(c, c); } catch (x) { } inp.dispatchEvent(new Event('input', { bubbles: true }));
 });
+
+/* prediction: commit before investigating, then revisit the guess against what was found */
+(function () {
+  var mem = {};
+  function load(pid) { try { var v = localStorage.getItem('pred:' + pid); if (v) return JSON.parse(v); } catch (e) { } return mem[pid] || null; }
+  function save(pid, o) { mem[pid] = o; try { localStorage.setItem('pred:' + pid, JSON.stringify(o)); } catch (e) { } }
+  function lockUI(box, o) {
+    box.querySelectorAll('fieldset.pq').forEach(function (fs) {
+      var q = fs.getAttribute('data-q'), v = q === 'conf' ? o.c : o.a[+q];
+      fs.querySelectorAll('input').forEach(function (i) { i.checked = String(i.value) === String(v); i.disabled = true; });
+    });
+    var b = box.querySelector('.pred-lock'); b.disabled = true; b.textContent = 'הניחוש נשמר';
+    box.querySelector('.fb').textContent = 'נחזור אליו בשלב המסקנה.'; box.classList.add('locked');
+  }
+  function render(rv) {
+    var pid = rv.getAttribute('data-pred'), o = load(pid), body = rv.querySelector('.rv-b');
+    var items = Array.prototype.slice.call(rv.querySelectorAll('.rv-src > .rv-f'));
+    if (!o) { body.innerHTML = '<p>לא ניחשתם בשלב הניחוש. חזרו אליו (בתחילת הסעיף) והטבלה תתמלא.</p>'; return; }
+    var rows = '', wrong = 0;
+    items.forEach(function (it, i) {
+      var opts = Array.prototype.map.call(it.querySelectorAll('.o'), function (x) { return x.innerHTML; });
+      var t = +it.getAttribute('data-t'), ok = o.a[i] === t; if (!ok) wrong++;
+      rows += '<div class="rv-row ' + (ok ? 'ok' : 'no') + '"><div class="rv-q">' + it.querySelector('.q').innerHTML + '</div><div class="rv-g"><b>הניחוש שלכם:</b> ' + opts[o.a[i]] + ' <span class="rv-m">' + (ok ? '✓' : '✗') + '</span></div>' + (ok ? '' : '<div class="rv-t"><b>מה מצאנו:</b> ' + opts[t] + '</div>') + '<div class="rv-w">' + it.querySelector('.w').innerHTML + '</div></div>';
+    });
+    var msg;
+    if (!wrong) msg = o.c === 0 ? 'כל הניחושים נכונים, ואמרתם שזה ניחוש. כנראה שאתם יודעים יותר ממה שחשבתם.' : 'כל הניחושים נכונים. עכשיו אפשר לנסח למה.';
+    else if (o.c === 2) msg = 'טעיתם בביטחון גבוה. זה הרגע שבו לומדים הכי הרבה: מה בניחוש שלכם נשבר?';
+    else msg = 'טעיתם בחלק מהניחושים, וזה בדיוק מה שהחקירה באה לבדוק.';
+    body.innerHTML = rows + '<p class="rv-msg"><strong>' + msg + '</strong></p>';
+  }
+  function renderAll() { document.querySelectorAll('.revisit').forEach(render); }
+  function init() {
+    document.querySelectorAll('.pred').forEach(function (box) {
+      var o = load(box.getAttribute('data-pred')); if (o) lockUI(box, o);
+    });
+    document.querySelectorAll('.revisit textarea').forEach(function (t) {
+      var k = 'rvnote:' + t.getAttribute('data-rvnote'); try { t.value = localStorage.getItem(k) || ''; } catch (e) { }
+      t.addEventListener('input', function () { try { localStorage.setItem(k, t.value); } catch (e) { } });
+    });
+    renderAll();
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.pred-lock'); if (!b) return;
+    var box = b.closest('.pred'), pid = box.getAttribute('data-pred'), a = [], c = null, miss = false;
+    box.querySelectorAll('fieldset.pq').forEach(function (fs) {
+      var ch = fs.querySelector('input:checked'); if (!ch) { miss = true; return; }
+      if (fs.getAttribute('data-q') === 'conf') c = +ch.value; else a[+fs.getAttribute('data-q')] = +ch.value;
+    });
+    if (miss) { box.querySelector('.fb').textContent = 'ענו על כל השאלות ובחרו רמת ביטחון.'; return; }
+    var o = { a: a, c: c }; save(pid, o); lockUI(box, o);
+    var art = box.closest('.ex'); if (art && window.BookApp) window.BookApp.setDone(art.getAttribute('data-id'), 'ok');
+    renderAll();
+  });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
