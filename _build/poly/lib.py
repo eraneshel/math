@@ -32,6 +32,9 @@ def tbl(s):
     return '<div class="tbl">' + md(s) + '</div>'
 
 def hint(text, label='רמז'):
+    if isinstance(text, (list, tuple)):
+        names = ['רמז 1: כיוון', 'רמז 2: צעד הבא', 'רמז 3: כמעט הפתרון']
+        return '<span class="hints">' + ''.join(hint(t, names[k] if k < 3 else 'רמז %d' % (k + 1)) for k, t in enumerate(text)) + '</span>'
     return '<details class="hint"><summary>%s</summary><span>%s</span></details>' % (label, md(text, inline=True))
 
 def _plain(t):

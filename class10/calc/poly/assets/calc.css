@@ -106,3 +106,7 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 
 .sym{display:inline-flex;gap:4px;margin-inline:6px}
 .sym button{min-width:34px;height:32px;border:1.5px solid var(--line,#cfd8e3);border-radius:8px;background:var(--soft,#eef3f9);font:600 16px "STIX Two Text",serif;cursor:pointer}
+
+.hints{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.think{border:2px dashed var(--blue,#2f5fd0);border-radius:14px;background:var(--soft,#eef3fb);padding:12px 16px;margin:18px 0}
+.think>p:first-child{margin-top:0}.think>p:last-child{margin-bottom:0}
