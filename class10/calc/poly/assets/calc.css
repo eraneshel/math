@@ -91,3 +91,15 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 .svg-drag{pointer-events:none}
 .svg-drag:focus{outline:none}
 @media (pointer:coarse){.svg-drag{r:12px}}
+
+/* comparison tables on phones: stacked cards */
+.rtab .cl{display:none}
+@media (max-width:640px){
+  .rtab,.rtab tbody,.rtab tr,.rtab td{display:block;width:100%;box-sizing:border-box}
+  .rtab thead{display:none}
+  .rtab tr{border:1.5px solid var(--line,#cfd8e3);border-radius:12px;margin:12px 0;overflow:hidden;background:var(--card)}
+  .rtab td{border:0;padding:8px 14px;line-height:1.7}
+  .rtab td:first-child{background:var(--navy,#1f3a5f);color:#fff;font-weight:700}
+  .rtab td+td{border-top:1px solid var(--line,#e1e7ef)}
+  .rtab .cl{display:block;font-size:.82em;font-weight:700;color:var(--muted,#5b6b7c);margin-bottom:2px}
+}

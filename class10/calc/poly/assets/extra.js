@@ -126,3 +126,21 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
+
+/* phones: a table with 3+ columns becomes one card per row, each cell labelled by its column head */
+(function () {
+  function run() {
+    document.querySelectorAll('.tbl table, .md table').forEach(function (t) {
+      if (t.classList.contains('ztable') || t.__rt) return;
+      var hs = t.querySelectorAll('thead th'); if (hs.length < 3) return; if (/^\s*מס/.test(hs[0].textContent)) return;
+      t.__rt = true; t.classList.add('rtab');
+      t.querySelectorAll('tbody tr').forEach(function (tr) {
+        Array.prototype.forEach.call(tr.children, function (td, i) {
+          if (i === 0 || !hs[i] || !hs[i].innerHTML.trim()) return;
+          var l = document.createElement('span'); l.className = 'cl'; l.innerHTML = hs[i].innerHTML; td.insertBefore(l, td.firstChild);
+        });
+      });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
