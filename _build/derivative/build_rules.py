@@ -151,6 +151,7 @@ page = f'''<!doctype html>
 <div class="foot">מתמטיקה · לכל בעיה יש פתרון, להנות מהאתגר</div>
 </div>
 <script src="{SH}defn.js?v={V}"></script>
+<script src="{SH}expr.js?v={V}"></script>
 <script src="assets/rules.js?v={V}"></script>
 <script src="{SH}hero.js?v={V}"></script>
 </body>
