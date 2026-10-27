@@ -81,3 +81,7 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 .gal-p.sel{border-color:#3a5bdc;box-shadow:0 0 0 3px #3a5bdc33}
 .gal-l{font-weight:800;margin-top:2px}
 .gal-svg{width:100%;max-width:230px;height:auto}
+
+/* summary box for investigations */
+.sumbox{margin:1.1rem 0;padding:.9rem 1.1rem;border:2px solid var(--accent,#c2410c);border-radius:12px;background:color-mix(in srgb,var(--accent,#c2410c) 7%,transparent)}
+.sumbox p:first-child{margin-top:0}.sumbox ul{margin:.3rem 0}
