@@ -103,3 +103,6 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
   .rtab td+td{border-top:1px solid var(--line,#e1e7ef)}
   .rtab .cl{display:block;font-size:.82em;font-weight:700;color:var(--muted,#5b6b7c);margin-bottom:2px}
 }
+
+.sym{display:inline-flex;gap:4px;margin-inline:6px}
+.sym button{min-width:34px;height:32px;border:1.5px solid var(--line,#cfd8e3);border-radius:8px;background:var(--soft,#eef3f9);font:600 16px "STIX Two Text",serif;cursor:pointer}

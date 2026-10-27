@@ -144,3 +144,12 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
 })();
+
+/* symbol buttons next to text answers: insert at the cursor */
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.sym button'); if (!b) return;
+  var part = b.closest('.part'), inp = part && part.querySelector('input'); if (!inp) return;
+  var t = b.getAttribute('data-ins'), a = inp.selectionStart == null ? inp.value.length : inp.selectionStart, z = inp.selectionEnd == null ? a : inp.selectionEnd;
+  inp.value = inp.value.slice(0, a) + t + inp.value.slice(z); var c = a + t.length;
+  inp.focus(); try { inp.setSelectionRange(c, c); } catch (x) { } inp.dispatchEvent(new Event('input', { bubbles: true }));
+});

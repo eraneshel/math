@@ -50,6 +50,9 @@ def A(s):
 
 INPUT = '<input type="text" inputmode="decimal" dir="ltr" autocomplete="off" spellcheck="false" placeholder="?">'
 
+INPUT_T = '<input type="text" inputmode="text" dir="auto" autocomplete="off" spellcheck="false" placeholder="?">'
+SYM = '<span class="sym" aria-label="סימנים">' + ''.join('<button type="button" data-ins="%s">%s</button>' % (a, b) for a, b in [('<', '&lt;'), ('>', '&gt;'), ('≠', '≠'), (' או ', 'או'), ('x', 'x')]) + '</span>'
+
 def _typed(id, keys, labels=None):
     k = html.escape(json.dumps([str(x) for x in keys], ensure_ascii=False), quote=True)
     if len(keys) == 1:
@@ -58,8 +61,9 @@ def _typed(id, keys, labels=None):
     parts = ''
     for i in range(len(keys)):
         lab = (labels[i] if labels else 'סעיף ' + LETTERS[i])
-        parts += ('<div class="part"><label><span>%s</span>%s</label><button type="button" class="btn small chk">בדוק</button>'
-                  '<span class="fb" aria-live="polite"></span></div>') % (lab, INPUT)
+        txt = str(keys[i]).startswith('re:')
+        parts += ('<div class="part"><label><span>%s</span>%s</label>%s<button type="button" class="btn small chk">בדוק</button>'
+                  '<span class="fb" aria-live="polite"></span></div>') % (lab, INPUT_T if txt else INPUT, SYM if txt else '')
     return '<div class="typed multi" data-typed="%s" data-key="%s"><div class="parts">%s</div></div>' % (id, k, parts)
 
 def _mc(id, qs, head='בחרו את התשובה הנכונה בכל סעיף'):

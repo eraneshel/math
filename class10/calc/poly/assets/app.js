@@ -80,6 +80,12 @@
     if (pct && Math.abs(a * 100 - b) <= tol) return true;
     return false;
   }
+  /* text answers (domains such as x<0, x≠0): key "re:<regex>" is matched against a normalised answer */
+  function normText(v) {
+    return String(v).toLowerCase().replace(/[\s\u200e\u200f]/g, '').replace(/\u2212|\u2013|\u05be/g, '-').replace(/!=|=\/=|<>|\u2260|\u2262/g, '\u2260').replace(/\u05d0\u05d5|or|\u2228/g, '|').replace(/\u2264/g, '<=').replace(/\u2265/g, '>=');
+  }
+  function isRe(k) { return typeof k === 'string' && k.indexOf('re:') === 0; }
+  function reOk(v, k) { try { return new RegExp(k.slice(3)).test(normText(v)); } catch (e) { return false; } }
   function partsOf(box) { return box._parts || $$('.part', box); }
   function typedInputs(box) { return box._parts ? box._parts.map(function (p) { return $('input', p); }) : $$('input', box); }
   function typedValues(box) {
@@ -95,7 +101,7 @@
     if (!typedFilled(box)) { fb.textContent = 'הקלידו תשובה ואז לחצו בדיקה.'; return null; }
     var ok = 0;
     key.forEach(function (k, i) {
-      var good = got[i] !== null && got[i] !== undefined && matches(got[i], k);
+      var good = isRe(k) ? reOk(ins[i].value, k) : (got[i] !== null && got[i] !== undefined && matches(got[i], k));
       if (good) ok++;
       if (multi) { if (ins[i].value.trim()) ins[i].classList.add(good ? 'right' : 'wrong'); }
     });
@@ -108,9 +114,9 @@
   function checkPart(box, idx) {
     var key = JSON.parse(box.getAttribute('data-key')), part = partsOf(box)[idx], inp = $('input', part), fb = $('.fb', part);
     inp.classList.remove('right', 'wrong'); fb.className = 'fb';
-    var g = parseTyped(inp.value);
-    if (!g.length) { fb.textContent = 'הקלידו תשובה.'; return null; }
-    var ok = matches(g[0], key[idx]);
+    var g = parseTyped(inp.value), re = isRe(key[idx]);
+    if (re ? !inp.value.trim() : !g.length) { fb.textContent = 'הקלידו תשובה.'; return null; }
+    var ok = re ? reOk(inp.value, key[idx]) : matches(g[0], key[idx]);
     inp.classList.add(ok ? 'right' : 'wrong'); fb.classList.add(ok ? 'ok' : 'no'); fb.textContent = ok ? 'נכון ✓' : 'לא נכון, נסו שוב';
     return ok;
   }
