@@ -1,0 +1,168 @@
+/* calc.css — additions on top of style.css for the linear-function booklet */
+:root{--l1:#c2410c;--l2:#0f766e;--pos:#1b8a3a;--neg:#c23a2f}
+:root[data-theme="dark"]{--l1:#ffb36b;--l2:#5fe0d1;--pos:#5fd04a;--neg:#ff8f84}
+@media (prefers-color-scheme:dark){:root[data-theme="auto"]{--l1:#ffb36b;--l2:#5fe0d1;--pos:#5fd04a;--neg:#ff8f84}}
+.hero:before{content:"f(x)  m  b  Δy  Δx  ∞  Σ"}
+.fig svg.plot{width:auto;max-width:100%;height:auto;max-height:420px;margin:0 auto;display:block}
+.svg-grid{stroke:var(--grid);stroke-width:1;opacity:.45}
+.svg-arrow{fill:var(--axis)}
+.svg-axname{fill:var(--ink);font:italic 700 17px Rubik,Arial,sans-serif;text-anchor:middle}
+.svg-num{fill:var(--mut);font:500 13px Rubik,Arial,sans-serif;text-anchor:middle;paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
+.svg-line{stroke:var(--curve);stroke-width:3.4;stroke-linecap:round;fill:none}
+.svg-line.l1{stroke:var(--l1)}.svg-line.l2{stroke:var(--l2)}
+.svg-line.dash{stroke-dasharray:8 6}
+.svg-name{font:italic 700 19px "STIX Two Text","Frank Ruhl Libre",serif;fill:var(--curve);text-anchor:middle;paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
+.svg-name.l1{fill:var(--l1)}.svg-name.l2{fill:var(--l2)}
+.svg-pt{fill:var(--ink);stroke:var(--card);stroke-width:1.5px}
+.svg-pt.open{fill:var(--card);stroke:var(--ink);stroke-width:2.2px}
+.svg-plab{font:italic 700 18px "STIX Two Text","Frank Ruhl Libre",serif;fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
+.svg-seg{stroke:var(--ink);stroke-width:2.4;opacity:.8}.svg-seg.dash{stroke-dasharray:5 5;stroke-width:1.8}
+.svg-seg.thick{stroke-width:5;opacity:.9;stroke:var(--l1)}
+.svg-poly{fill:var(--fill);stroke:none}.svg-poly.shade{fill:var(--shade)}
+.svg-hl{stroke-width:7;stroke-linecap:butt;opacity:.85}.svg-hl.pos{stroke:var(--pos)}.svg-hl.neg{stroke:var(--neg)}.svg-hl.sel{stroke:var(--blue)}
+.fig .legend{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;font-size:15px;margin-top:4px}
+.tbl td,.tbl th{vertical-align:middle}
+.ex-sol .tbl{margin:6px 0}
+.ex-sol .tbl td:first-child,.ex-sol .tbl th:first-child{text-align:center;width:2.6em}
+.ex-sol .tbl .math-expr{white-space:nowrap}
+p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:10px 14px;border-radius:10px}
+.formulas h3{margin-top:18px}
+.math-expr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.math-expr.math-disp{display:block;text-align:center;margin:.3em 0}
+.math-disp .katex-display{margin:.2em 0}
+.fig svg text{direction:ltr;unicode-bidi:bidi-override}
+.ex-id{direction:ltr;unicode-bidi:isolate}
+.chk-all{margin-inline-end:8px}
+.mc > .mc-row{margin-top:8px}
+
+/* ---- dynamic figures ---- */
+.svg-drag{fill:var(--l1);stroke:var(--card);stroke-width:2.5px;cursor:grab;touch-action:none;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))}
+.svg-drag.on{cursor:grabbing;fill:var(--blue)}
+.svg-drag:focus{outline:none;stroke:var(--ink);stroke-width:3px}
+.svg-val{font:600 15px Rubik,Arial,sans-serif;fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px}
+.svg-line.dash{stroke-dasharray:8 6}
+.layer{transition:opacity .35s}
+.layer.is-hidden{display:none}
+.fig-read{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin:6px 0 2px;font:700 17px "STIX Two Text","Frank Ruhl Libre",serif}
+.fig-read .rd{background:var(--fill);padding:3px 12px;border-radius:999px;direction:rtl;unicode-bidi:isolate}
+.fig-ctl-row{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;justify-content:center;margin:8px 0 2px}
+.fig-ctl{display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:center}
+.fig-ctl .sl{display:flex;align-items:center;gap:8px;font-weight:700}
+.fig-ctl .sl-n{font:italic 700 19px "STIX Two Text",serif;min-width:1.4em;text-align:center;direction:ltr}
+.fig-ctl input[type=range]{width:min(210px,40vw);direction:ltr;accent-color:var(--l1)}
+.fig-ctl .sl-v{min-width:3em;text-align:center;direction:ltr;font-variant-numeric:tabular-nums;background:var(--fill);border-radius:8px;padding:2px 6px}
+.act-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
+.act-tip{font-size:14px;color:var(--mut);margin:4px 0 0}
+@media print{.fig-ctl-row,.act-ctl,.fig-read{display:none}}
+
+.negwrap{display:flex;gap:6px;align-items:stretch;min-width:0}
+.negwrap input{flex:1 1 auto;min-width:0}
+.neg{flex:none;width:44px;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--g,#2f5bd8);font:700 20px/1 Rubik,sans-serif;cursor:pointer}
+.neg:active{background:var(--soft)}
+@media print{.neg{display:none}}
+
+.svg-pt.calc{fill:var(--l2)}
+
+.svg-seg.thick.run{stroke:#1f8a5b}.svg-seg.thick.rise{stroke:#c2410c}.svg-plab.run{fill:#1f8a5b;font-style:normal}.svg-plab.rise{fill:#c2410c;font-style:normal}
+.fig svg,.fig svg text{-webkit-user-select:none;user-select:none}
+
+.svg-curve{fill:none;stroke-linejoin:round;stroke-linecap:round}
+
+/* --- poly investigation tools --- */
+.svg-sb{fill:none;stroke-width:7;stroke-linecap:butt;opacity:.78}
+.svg-sb.pos{stroke:#2f9e5b}.svg-sb.neg{stroke:#d64545}
+.fig-read .rd-wide{border-radius:12px;padding:6px 10px;overflow-x:auto;max-width:100%}
+.rd-tbl{border-collapse:collapse;direction:ltr;font:600 15px "STIX Two Text","Frank Ruhl Libre",serif}
+.rd-tbl th,.rd-tbl td{border:1px solid var(--line,#d5dce2);padding:2px 8px;text-align:center;white-space:nowrap}
+.rd-tbl th{background:var(--fill);font-style:italic}
+.gal{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:6px 0}
+.gal-p{border:2px solid var(--line,#d5dce2);border-radius:14px;padding:6px 6px 4px;background:var(--card);cursor:pointer;text-align:center;transition:border-color .12s,box-shadow .12s}
+.gal-p:hover{border-color:#8aa0e8}
+.gal-p.sel{border-color:#3a5bdc;box-shadow:0 0 0 3px #3a5bdc33}
+.gal-l{font-weight:800;margin-top:2px}
+.gal-svg{width:100%;max-width:230px;height:auto}
+
+/* summary box for investigations */
+.sumbox{margin:1.1rem 0;padding:.9rem 1.1rem;border:2px solid var(--accent,#c2410c);border-radius:12px;background:color-mix(in srgb,var(--accent,#c2410c) 7%,transparent)}
+.sumbox p:first-child{margin-top:0}.sumbox ul{margin:.3rem 0}
+.svg-plab.live{font-style:normal;font-size:16px}
+
+.svg-hit{fill:transparent;stroke:none;cursor:grab;touch-action:none}
+.svg-drag{pointer-events:none}
+.svg-drag:focus{outline:none}
+@media (pointer:coarse){.svg-drag{r:12px}}
+
+/* comparison tables on phones: stacked cards */
+.rtab .cl{display:none}
+@media (max-width:640px){
+  .rtab,.rtab tbody,.rtab tr,.rtab td{display:block;width:100%;box-sizing:border-box}
+  .rtab thead{display:none}
+  .rtab tr{border:1.5px solid var(--line,#cfd8e3);border-radius:12px;margin:12px 0;overflow:hidden;background:var(--card)}
+  .rtab td{border:0;padding:8px 14px;line-height:1.7}
+  .rtab td:first-child{background:var(--navy,#1f3a5f);color:#fff;font-weight:700}
+  .rtab td+td{border-top:1px solid var(--line,#e1e7ef)}
+  .rtab .cl{display:block;font-size:.82em;font-weight:700;color:var(--muted,#5b6b7c);margin-bottom:2px}
+}
+
+.sym{display:inline-flex;gap:4px;margin-inline:6px}
+.sym button{min-width:34px;height:32px;border:1.5px solid var(--line,#cfd8e3);border-radius:8px;background:var(--soft,#eef3f9);font:600 16px "STIX Two Text",serif;cursor:pointer}
+
+.hints{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.think{border:2px dashed var(--blue,#2f5fd0);border-radius:14px;background:var(--soft,#eef3fb);padding:12px 16px;margin:18px 0}
+.think>p:first-child{margin-top:0}.think>p:last-child{margin-bottom:0}
+
+/* prediction */
+.pred fieldset.pq{border:1.5px solid var(--line,#d5dde8);border-radius:12px;margin:12px 0;padding:10px 14px}
+.pred legend{font-weight:700;padding:0 6px}
+.pg-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.pg-o{cursor:pointer}.pg-o input{position:absolute;opacity:0}
+.pg-c{display:flex;flex-direction:column;align-items:center;gap:4px;border:2px solid var(--line,#d5dde8);border-radius:12px;padding:8px;background:var(--card)}
+.pg-o input:checked+.pg-c{border-color:var(--blue,#2f5fd0);background:var(--soft,#eef3fb)}
+.pg-o input:focus-visible+.pg-c{outline:3px solid var(--blue,#2f5fd0)}
+.pred.locked{opacity:.85}.pred-row{display:flex;gap:12px;align-items:center;margin-top:8px}
+.revisit{border:2px solid var(--blue,#2f5fd0);border-radius:14px;padding:12px 16px;margin:16px 0;background:var(--card)}
+.rv-h{font-weight:800;font-size:1.05em;margin-bottom:6px}
+.rv-row{border-inline-start:6px solid #1f8a5b;background:var(--soft,#f3f7fb);border-radius:10px;padding:8px 12px;margin:8px 0}
+.rv-row.no{border-inline-start-color:#c2410c}
+.rv-q{font-weight:700}.rv-w{color:var(--muted,#5b6b7c);font-size:.95em;margin-top:2px}
+.rv-m{font-weight:800}
+.rv-note{display:block;margin-top:8px}.rv-note span{display:block;font-weight:600;margin-bottom:4px}
+.rv-note textarea{width:100%;box-sizing:border-box;border:1.5px solid var(--line,#d5dde8);border-radius:10px;padding:8px;font:inherit}
+.sym{flex-wrap:wrap}.sym button{padding:0 8px}
+.ex-body li > .part.inline:has(.sym){grid-template-columns:minmax(0,1fr) auto;max-width:460px}
+.ex-body li > .part.inline:has(.sym) label{grid-column:1/-1}
+.ex-body li > .part.inline:has(.sym) label input{width:100%;box-sizing:border-box;text-align:start}
+.ex-body li > .part.inline:has(.sym) .sym{grid-column:1/-1;display:flex;flex-wrap:wrap;margin:0}
+.ex-body li > .part.inline:has(.sym) .chk{grid-column:1;justify-self:start;white-space:nowrap;min-width:84px}
+.ex-body li > .part.inline:has(.sym) .fb{grid-column:1/-1}
+.cover{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 18px}
+.cover .chip{padding:4px 12px;border-radius:999px;border:1.5px solid var(--line,#cfd8e3);font-size:14px;color:var(--ink,#1c2733);--f:0%;background:linear-gradient(to left,rgba(31,138,91,.28) var(--f),var(--soft,#eef3f9) var(--f))}
+.cover .chip .cn{font-size:12px;opacity:.75;direction:ltr;display:inline-block}
+.cover .chip.on{border-color:#1f8a5b}
+.act-chk[hidden]{display:none}
+.sk{margin:10px 0;display:grid;gap:8px}
+.sk-t{font-size:15px;color:var(--muted,#5b6b7a)}
+.sk-w{border:1.5px solid var(--line,#cfd8e3);border-radius:12px;padding:8px 12px;background:var(--soft,#eef3f9)}
+.sk-wh{font-weight:800;margin-bottom:2px}.sk-wd{font-size:14px;color:var(--muted,#5b6b7a);margin-bottom:4px}
+.sk-r{display:flex;align-items:center;gap:8px;margin:4px 0}.sk-l{min-width:64px;font-family:"STIX Two Text",serif;direction:ltr;text-align:left}
+.sk-r input{flex:1;min-width:0;padding:8px 10px;border:2px solid var(--line,#cfd8e3);border-radius:10px;font:inherit;font-size:16px;background:var(--card,#fff);color:var(--ink,#1c2733);text-align:left}
+.sk-go{margin-top:6px}
+.sk,.sk *{box-sizing:border-box}.sk{width:100%;max-width:100%;min-width:0}.sk-w{min-width:0}
+.sk-r .negwrap{flex:1;min-width:0;display:flex;gap:6px;direction:ltr}
+.sk-r .negwrap input{width:100%}
+
+/* free anonymous points (sketch products) */
+.svg-fp{fill:var(--l1);stroke:var(--card);stroke-width:2.5px;cursor:grab;touch-action:none;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35));pointer-events:none}
+.svg-fp.idle{fill:var(--card);stroke:var(--l1);stroke-width:2.2px;stroke-dasharray:3 2.5}
+.svg-fp.on{fill:var(--blue)}
+.svg-fp:focus{outline:none;stroke:var(--ink);stroke-width:3px}
+.svg-fphit{fill:transparent;cursor:grab;touch-action:none}
+.svg-curve.ghost{stroke-width:1.3px;opacity:.55;stroke-dasharray:none}
+.sk-tbl{display:grid;gap:6px;margin:4px 0}
+.sk-row{display:flex;align-items:center;gap:6px;direction:ltr}
+.sk-row .negwrap{flex:1;min-width:0;display:flex;gap:4px;direction:ltr}
+.sk-row .negwrap input,.sk-r .negwrap input{flex:1;min-width:0;width:100%}
+.sk-sg{flex:0 0 auto;padding:0 9px;border:2px solid var(--line,#cfd8e3);border-radius:10px;background:var(--card,#fff);color:var(--ink,#1c2733);font:inherit;font-size:16px;cursor:pointer}
+.sk-row input{padding:8px 8px;border:2px solid var(--line,#cfd8e3);border-radius:10px;font:inherit;font-size:16px;background:var(--card,#fff);color:var(--ink,#1c2733);text-align:left}
+.sk-del{flex:0 0 auto;width:38px;height:38px;border:2px solid var(--line,#cfd8e3);border-radius:10px;background:var(--card,#fff);color:var(--ink,#1c2733);font-size:16px;cursor:pointer}
+.sk-head{display:flex;gap:6px;direction:ltr;margin-top:4px;font-family:'STIX Two Text',serif;font-style:italic;font-weight:700}.sk-hc{flex:1;text-align:center}.sk-hs{flex:0 0 38px}
