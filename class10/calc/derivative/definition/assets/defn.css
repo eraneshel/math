@@ -114,3 +114,22 @@
   .steps3 .opt{padding:2px 4px;min-height:40px}.steps3 .opt .katex,.steps3 td.claim .katex{font-size:.82em}
   .steps3 td.no{width:30px}.dtab th,.dtab td{padding:5px 4px}
 }
+
+/* שלב 3: פריסה מוערמת, בלי גלישת ביטויים */
+.steps3{display:block;border:0}
+.steps3 tbody{display:flex;flex-direction:column;gap:10px}
+.steps3 tr{display:grid;grid-template-columns:36px minmax(0,1fr);grid-template-areas:"no why" "no claim";gap:4px 10px;border:2px solid var(--line);border-radius:14px;padding:8px 10px;background:var(--card)}
+.steps3 tr.locked{display:none}
+.steps3 td{border:0;padding:0}
+.steps3 td.no{grid-area:no;align-self:center;width:auto;text-align:center;font-size:20px}
+.steps3 td.why{grid-area:why;width:auto;font-size:15px;color:var(--mut)}
+.steps3 .wl{display:inline-block;font-weight:700;color:var(--ink);margin-inline-end:6px}
+.steps3 .wl:after{content:":"}
+.steps3 td.claim{grid-area:claim;min-width:0}
+.steps3 tr.solved{border-color:var(--g);background:var(--okbg)}
+.steps3 tr.solved td.claim{background:none;font-size:1.1em}
+.steps3 td.claim,.steps3 .opt{text-align:center}
+.steps3 .opt{font-size:clamp(.85em,4vw,1.05em)}
+.steps3 td.claim{font-size:clamp(.85em,4vw,1.1em);text-align:center}
+@media (min-width:700px){.steps3 .opt,.steps3 td.claim{font-size:1.05em}}
+.steps3 .opts{gap:8px}

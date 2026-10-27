@@ -24,17 +24,26 @@ def T(s):            # hebrew text with $math$
 def D(tex):          # display math
     return lib.md('$$%s$$' % tex)
 
+def brk(tex):        # allow a line break only at the top-level "=": wrap each side in a group
+    d = 0
+    for i, ch in enumerate(tex):
+        if ch == '{': d += 1
+        elif ch == '}': d -= 1
+        elif ch == '=' and d == 0:
+            return '{%s}={%s}' % (tex[:i], tex[i+1:])
+    return tex
+
 # ---------------- stage 3 data: (claim-correct, [options], correct-index, reason)
 S3 = [
  ('f(a+h)-f(a)=(a+h)^2-a^2',
   ['f(a+h)-f(a)=(a+h)^2+a^2', 'f(a+h)-f(a)=(a+h)^2-a^2', 'f(a+h)-f(a)=a^2+h^2-a^2'], 1,
   'הצבה בפונקציה $f(x)=x^2$'),
- ('(a+h)^2-a^2=a^2+2ah+h^2-a^2',
-  ['(a+h)^2-a^2=a^2+h^2-a^2', '(a+h)^2-a^2=a^2+2h-a^2', '(a+h)^2-a^2=a^2+2ah+h^2-a^2'], 2,
+ ('(a+h)^2=a^2+2ah+h^2',
+  ['(a+h)^2=a^2+h^2', '(a+h)^2=a^2+2ah+h^2', '(a+h)^2=a^2+2h+h^2'], 1,
   'נוסחת הכפל המקוצר: ריבוע סכום'),
- ('a^2+2ah+h^2-a^2=2ah+h^2',
-  ['a^2+2ah+h^2-a^2=h^2', 'a^2+2ah+h^2-a^2=2ah+h^2', 'a^2+2ah+h^2-a^2=2ah-h^2'], 1,
-  'חיסור איברים מנוגדים: $a^2-a^2=0$'),
+ ('f(a+h)-f(a)=2ah+h^2',
+  ['f(a+h)-f(a)=2ah+h^2', 'f(a+h)-f(a)=2ah-h^2', 'f(a+h)-f(a)=h^2'], 0,
+  'הצבת טענה 2 בטענה 1, וחיסור $a^2-a^2=0$'),
  ('\\dfrac{f(a+h)-f(a)}{h}=\\dfrac{2ah+h^2}{h}',
   ['\\dfrac{f(a+h)-f(a)}{h}=\\dfrac{2ah+h^2}{a}', '\\dfrac{f(a+h)-f(a)}{h}=2ah+h', '\\dfrac{f(a+h)-f(a)}{h}=\\dfrac{2ah+h^2}{h}'], 2,
   'הצבת טענה 3 במנת ההפרשים, כש־$h$ שונה מ־0'),
@@ -47,16 +56,16 @@ S3 = [
 ]
 rows3 = ''
 for i, (good, opts, c, why) in enumerate(S3, 1):
-    locked = '' if i == 1 else ' locked'
-    ob = ''.join('<button type="button" class="opt">%s</button>' % M(o) for o in opts)
-    rows3 += ('<tr class="%s" data-c="%d"><td class="no">%d</td><td class="claim"><div class="opts">%s</div></td><td class="why">%s</td></tr>\n'
-              % (locked.strip(), c, i, ob, T(why)))
-rows3 += ('<tr class="locked" data-auto="1"><td class="no">7</td><td class="claim">%s</td><td class="why">%s</td></tr>\n'
-          % (M("f'(a)=2a"), T('הגדרת הנגזרת וטענות 4, 5, 6')))
-
-FUN = [('f(x)=x^3-3x', 'x³ − 3x'), ('f(x)=x^4-2x^2', 'x⁴ − 2x²'), ('f(x)=x^2-2x', 'x² − 2x')]
-chips = ''.join('<button type="button" aria-pressed="%s">%s</button>' % ('true' if i == 0 else 'false', M(t)) for i, (t, _) in enumerate(FUN))
-fforms = ''.join('<span class="fform"%s>%s</span>' % ('' if i == 0 else ' hidden', M(t)) for i, (t, _) in enumerate(FUN))
+    if i == 1:
+        rows3 += ('<tr class="solved given"><td class="no">1</td><td class="why"><span class="wl">נימוק</span> %s</td><td class="claim">%s</td></tr>\n'
+                  % (T(why), M(brk(good))))
+        continue
+    cls = '' if i == 2 else 'locked'
+    ob = ''.join('<button type="button" class="opt">%s</button>' % M(brk(o)) for o in opts)
+    rows3 += ('<tr class="%s" data-c="%d"><td class="no">%d</td><td class="why"><span class="wl">נימוק</span> %s</td><td class="claim"><div class="opts">%s</div></td></tr>\n'
+              % (cls, c, i, T(why), ob))
+rows3 += ('<tr class="locked" data-auto="1"><td class="no">7</td><td class="why"><span class="wl">נימוק</span> %s</td><td class="claim">%s</td></tr>\n'
+          % (T('הגדרת הנגזרת והטענות 4 עד 6'), M(brk("f'(a)=2a"))))
 
 def mc(q, opts, c, exp, reveal=None, extra=''):
     ob = ''.join('<button type="button" class="opt">%s</button>' % T(o) for o in opts)
@@ -105,22 +114,21 @@ stage2 = f'''
 
 stage3 = f'''
 <section class="stage" id="s3" aria-labelledby="s3t"><h2 id="s3t"><span class="n">3</span>{stage_titles[2]}</h2>
-<p>{T("נחשב לפי ההגדרה את הנגזרת של $f(x)=x^2$ בנקודה כללית $x=a$. בכל שורה בחרו את הטענה שמתאימה לנימוק.")}</p>
-<div class="tw"><table class="steps3" id="st3"><thead><tr><th>מס׳</th><th>טענה</th><th>נימוק</th></tr></thead><tbody>
+<p>{T("נגזור לפי ההגדרה את $f(x)=x^2$ בנקודה כללית $x=a$. שורה 1 נתונה. בכל שורה הבאה קראו את הנימוק, ובחרו את הטענה שנובעת מהשורה הקודמת.")}</p>
+<div class="tw"><table class="steps3" id="st3"><tbody>
 {rows3}</tbody></table></div>
 <div class="row-in chk typed" id="g3box" hidden><span>{T("לפי התוצאה, מהו $f'(3)$?")}</span><input type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="?" aria-label="התשובה"><button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div>
 </section>'''
 
 stage4 = f'''
 <section class="stage" id="s4" aria-labelledby="s4t"><h2 id="s4t"><span class="n">4</span>{stage_titles[3]}</h2>
-<p>הגדילו את הגרף סביב הנקודה. כשמתקרבים מספיק, הגרף נראה כמעט כמו ישר, וזה המשיק.</p>
-<div class="chips" id="fchips" role="group" aria-label="בחירת פונקציה">{chips}</div>
-<div class="viz"><svg id="v4" role="img" aria-label="חלון מוגדל סביב נקודה על גרף, עם המשיק"></svg></div>
-<div class="ctl"><label for="a4">נקודה {T("$x=a$")}</label><input type="range" id="a4" min="-2" max="2.2" step="0.05" value="1.5"></div>
-<div class="ctl"><label for="z4">הגדלה</label><input type="range" id="z4" min="0" max="7" step="0.05" value="0"><label class="chk-inline"><input type="checkbox" id="tg4" checked> הצגת המשיק</label></div>
-<div class="ro"><div><small>הנקודה</small><span class="v" id="a4v">1.5</span></div><div><small>רוחב החלון</small><span class="v" id="w4">4</span></div><div><small>הגדלה</small><span class="v" id="zv4">×1</span></div><div><small>שיפוע המשיק</small><span class="v" id="m4">3.75</span></div><div class="big"><small>הפער המרבי בין הגרף למשיק, באחוזים מגובה החלון</small><span class="v" id="g4">—</span></div></div>
-<p class="muted">הפונקציה שנבחרה: {fforms}</p>
-{mc("קרוב מאוד לנקודה, הגרף כמעט חופף ל־", ["לישר החותך הראשון שבחרנו", "למשיק בנקודה", "לציר ה־$x$", "לישר ששיפועו 1"], 1, "ככל שמגדילים, הפער בין הגרף למשיק קטן. זו הסיבה ש־$f'(a)$, שיפוע המשיק, מתאר את קצב השינוי של הפונקציה ליד $a$.")}
+<p>{T("נחזור ל־$f(x)=x^2$. נבחר נקודה A ונסתכל על חלון קטן סביבה, שרוחבו הוא $h$ לכל צד. כשמקטינים את החלון, הגרף נראה כמעט כמו ישר. בדקו מה קורה לשיפוע של החותך מ־A אל קצה החלון (הנקודה האדומה), ביחס לשיפוע המשיק.")}</p>
+<div class="viz"><svg id="v4" role="img" aria-label="חלון מוגדל סביב נקודה על גרף, עם החותך והמשיק"></svg></div>
+<div class="ctl"><label for="a4">הנקודה {T("$x=a$")}</label><input type="range" id="a4" min="-2" max="2" step="0.05" value="1"></div>
+<div class="ctl"><label for="z4">הקטנת החלון</label><input type="range" id="z4" min="0" max="10" step="0.05" value="0"></div>
+<div class="ro"><div><small>{T("רוחב החצי־חלון $h$")}</small><span class="v" id="w4">2</span></div><div><small>שיפוע החותך מ־A אל הנקודה האדומה</small><span class="v" id="s4v">\u2014</span></div><div><small>שיפוע המשיק בנקודה A</small><span class="v" id="m4">2</span></div><div class="big"><small>ההפרש בין שני השיפועים</small><span class="v" id="d4">\u2014</span></div></div>
+<p id="n4" class="fb" aria-live="polite"></p>
+{mc("כשהחלון קטן מאוד, מה אפשר לומר על שיפוע החותך ועל שיפוע המשיק?", ["שיפוע החותך כמעט שווה לשיפוע המשיק, וההפרש ביניהם שואף ל־0", "שיפוע החותך שואף לאינסוף", "שיפוע החותך נשאר רחוק משיפוע המשיק", "שיפוע המשיק משתנה והופך ל־0"], 0, "החלון הוא ה־$h$ שבהגדרה. כש־$h\\to 0$ שיפוע החותך $\\dfrac{f(a+h)-f(a)}{h}$ שואף לשיפוע המשיק, וזו בדיוק הנגזרת $f'(a)$.")}
 </section>'''
 
 stage5 = f'''

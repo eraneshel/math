@@ -228,45 +228,33 @@ function f1(x){return x*x*x-3*x}
 })();
 
 /* ============================================================
-   שלב 4: מיקרוסקופ
+   שלב 4: מיקרוסקופ: חלון שמצטמצם סביב A
    ============================================================ */
 (function(){
   var svg=$('#v4');if(!svg)return;
-  var F=[
-    {c:[0,-3,0,1],a:1.5,lo:-2,hi:2.2},
-    {c:[0,0,-2,0,1],a:1.3,lo:-1.8,hi:1.8},
-    {c:[0,-2,1],a:2,lo:-1,hi:3.2}
-  ];
-  function ev(c,x){var s=0,i;for(i=c.length-1;i>=0;i--)s=s*x+c[i];return s}
-  function dv(c){var d=[],i;for(i=1;i<c.length;i++)d.push(c[i]*i);return d}
-  var cur=0,a=F[0].a,zk=0,tanOn=true;
-  var as=$('#a4'),zs=$('#z4'),tg=$('#tg4');
+  function f(x){return x*x}
+  var a=1,zk=0;
+  var as=$('#a4'),zs=$('#z4');
   function draw(){
-    var fn=F[cur],c=fn.c,m=ev(dv(c),a),ya=ev(c,a);
-    var zoom=Math.pow(2,zk),w=2/zoom,hh=w*Math.max(Math.abs(m),0.7)*1.2;
+    var w=2*Math.pow(2,-zk),m=2*a,ya=f(a),hh=w*Math.max(Math.abs(m),0.8)*1.3;
     var P=Plot(svg,{xmin:a-w,xmax:a+w,ymin:ya-hh,ymax:ya+hh,W:640,H:360,nogrid:true,pl:10,pr:10,pt:10,pb:10});
     el('rect',{x:10,y:10,width:620,height:340,fill:'none',stroke:'var(--line)'},P.top);
     el('line',{x1:P.X(a),x2:P.X(a),y1:10,y2:350,'class':'svg-grid'},P.top);
     el('line',{x1:10,x2:630,y1:P.Y(ya),y2:P.Y(ya),'class':'svg-grid'},P.top);
-    P.path(function(x){return ev(c,x)},a-w,a+w,240,'svg-curve');
-    if(tanOn)P.line(a,ya,m,'svg-tan dash');
+    P.path(f,a-w,a+w,240,'svg-curve');
+    P.line(a,ya,m,'svg-tan dash');
+    var xb=a+w,yb=f(xb),sec=(yb-ya)/w;
+    P.line(a,ya,sec,'svg-sec');
     el('circle',{cx:P.X(a),cy:P.Y(ya),r:6,'class':'svg-ptA'},P.top);
-    var gap=0,i,x;for(i=0;i<=120;i++){x=a-w+2*w*i/120;gap=Math.max(gap,Math.abs(ev(c,x)-(ya+m*(x-a))))}
-    $('#a4v').textContent=fmt(a,2);$('#w4').textContent=fmt(2*w,4);$('#m4').textContent=fmt(m,3);
-    $('#g4').textContent=fmt(gap/(2*hh)*100,2)+'%';
-    $('#zv4').textContent='×'+fmt(zoom,1);
+    el('circle',{cx:P.X(xb),cy:P.Y(yb),r:7,'class':'svg-ptB'},P.top);
+    text(P.top,P.X(a)-14,P.Y(ya)+22,'A');
+    $('#w4').textContent=fmt(w,4);$('#s4v').textContent=fmt(sec,4);$('#m4').textContent=fmt(m,2);
+    $('#d4').textContent=fmt(sec-m,4);
+    var n=$('#n4');
+    n.textContent=w>0.5?'החלון גדול: הגרף עדיין מתעקם, והחותך רחוק מהמשיק.':(w>0.05?'הגרף כבר נראה כמעט ישר, והחותך קרוב למשיק.':'החותך והמשיק כמעט חופפים.');
   }
   as.addEventListener('input',function(){a=+as.value;draw()});
   zs.addEventListener('input',function(){zk=+zs.value;draw()});
-  tg.addEventListener('change',function(){tanOn=tg.checked;draw()});
-  $$('#fchips button').forEach(function(b,i){
-    b.addEventListener('click',function(){
-      cur=i;a=F[i].a;as.min=F[i].lo;as.max=F[i].hi;as.value=a;
-      $$('#fchips button').forEach(function(x,j){x.setAttribute('aria-pressed',j===i?'true':'false')});
-      $$('.fform').forEach(function(x,j){x.hidden=j!==i});
-      draw();
-    });
-  });
   draw();
 })();
 
