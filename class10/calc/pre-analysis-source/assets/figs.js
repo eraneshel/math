@@ -288,6 +288,7 @@
       return { f: f, s: el('line', { 'class': 'svg-seg dash' }, gDyn), p: el('circle', { r: 3.6, 'class': 'svg-pt' }, gDyn) };
     });
     var dragEls = {};
+    var curveHidden = !!spec.hideCurve, prov = {};
     drags.forEach(function (d) {
       if (d.fixed) {
         var fc = el('circle', { r: 5, 'class': 'svg-pt' }, gDyn);
@@ -359,9 +360,10 @@
     }
 
     function drawCurves() {
+      if (typeof syncSk === 'function') syncSk();
       curEls.forEach(function (o, i) {
         var N = 420, d = '', pen = false, q, x, y, big = 3 * ys + Math.abs(yr[0]) + Math.abs(yr[1]);
-        var hid = o.C.hide || (o.C.showIf && !evx(o.C.showIf, 0));
+        var hid = curveHidden || o.C.hide || (o.C.showIf && !evx(o.C.showIf, 0));
         o.e.style.display = hid ? 'none' : ''; if (hid) { if (o.n) o.n.style.display = 'none'; return; }
         for (q = 0; q <= N; q++) {
           x = xr[0] + xs * q / N; y = cf(i, x);
@@ -497,14 +499,14 @@
       if (d.fixed) return;
       var c = dragEls[d.id].c, h = dragEls[d.id].h || c, active = false;
       h.addEventListener('pointerdown', function (ev) { active = true; try { h.setPointerCapture(ev.pointerId); } catch (e) { } c.classList.add('on'); ev.preventDefault(); });
-      h.addEventListener('pointermove', function (ev) { if (!active) return; var q = toData(ev); place(d, q.x, q.y); update(); fireChange(); });
+      h.addEventListener('pointermove', function (ev) { if (!active) return; var q = toData(ev); place(d, q.x, q.y); prov[d.id] = true; update(); fireChange(); });
       var stop = function () { active = false; c.classList.remove('on'); };
       ['touchstart', 'touchmove'].forEach(function (tn) { h.addEventListener(tn, function (ev) { ev.preventDefault(); }, { passive: false }); });
       h.addEventListener('pointerup', stop); h.addEventListener('pointercancel', stop);
       c.addEventListener('keydown', function (ev) {
         var s = d.snap || 0.5, dx = 0, dy = 0;
         if (ev.key === 'ArrowRight') dx = s; else if (ev.key === 'ArrowLeft') dx = -s; else if (ev.key === 'ArrowUp') dy = s; else if (ev.key === 'ArrowDown') dy = -s; else return;
-        ev.preventDefault(); var p = D[d.id]; place(d, p.x + dx, p.y + dy); update(); fireChange();
+        ev.preventDefault(); var p = D[d.id]; place(d, p.x + dx, p.y + dy); prov[d.id] = true; update(); fireChange();
       });
       if (d.on !== undefined || d.onc !== undefined || d.lock) place(d, D[d.id].x, D[d.id].y);
     });
@@ -527,6 +529,7 @@
     rst.addEventListener('click', function () {
       Object.keys(pdef).forEach(function (k) { Pm[k] = pdef[k].val; var i2 = fig.querySelector('input[data-param="' + k + '"]'); if (i2) { i2.value = pdef[k].val; i2.nextSibling.textContent = fmt(pdef[k].val); } });
       drags.forEach(function (d) { D[d.id] = { x: d.x, y: d.y }; if (d.on !== undefined || d.onc !== undefined || d.lock) place(d, d.x, d.y); });
+      prov = {}; curveHidden = !!spec.hideCurve; if (skBox) skBox.querySelectorAll('input').forEach(function (i3) { i3.value = ''; });
       update(); fireChange(true);
     });
 
@@ -535,6 +538,54 @@
     var tools = document.createElement('div'); tools.className = 'fig-ctl-row';
     if (ctl) tools.appendChild(ctl);
     if (ctl || drags.length) { tools.appendChild(rst); host.appendChild(tools); }
+
+    /* ---------- sketch panel: the same data can be entered in several ways ---------- */
+    var skBox = null, skRows = {};
+    function skRaw(id, c, v) {
+      var dd = dragDef[id], p = D[id]; if (!dd || !isFinite(v)) return;
+      if (c === 'x' && dd.lock !== 'x') p.x = Math.max(dd.min !== undefined ? dd.min : xr[0] + 0.2, Math.min(dd.max !== undefined ? dd.max : xr[1] - 0.2, v));
+      else if (c === 'y' && dd.lock !== 'y') p.y = Math.max(dd.min !== undefined ? dd.min : yr[0] + 0.3, Math.min(dd.max !== undefined ? dd.max : yr[1] - 0.3, v));
+      p.x = r2(p.x); p.y = r2(p.y); prov[id] = true; update(); fireChange();
+    }
+    function syncSk() {
+      if (!skBox) return;
+      Object.keys(skRows).forEach(function (id) { var r = skRows[id]; if (document.activeElement !== r.i) r.i.value = prov[id] ? String(D[id][r.c]) : ''; });
+    }
+    if (spec.sk) {
+      var K = spec.sk; skBox = document.createElement('div'); skBox.className = 'sk';
+      var mk = function (tag, cls, txt) { var e2 = document.createElement(tag); if (cls) e2.className = cls; if (txt) e2.textContent = txt; return e2; };
+      skBox.appendChild(mk('div', 'sk-t', 'מזינים את הנתונים באחת הדרכים, או משלבים ביניהן. כשכל הנתונים הוזנו מופיע הכפתור "העבר גרף".'));
+      var b1 = mk('div', 'sk-w'); b1.appendChild(mk('div', 'sk-wh', '1. גרירה')); b1.appendChild(mk('div', 'sk-wd', 'גוררים את הנקודות בשרטוט.')); skBox.appendChild(b1);
+      var b2 = mk('div', 'sk-w'); b2.appendChild(mk('div', 'sk-wh', '2. טבלת נקודות'));
+      K.pts.forEach(function (q) {
+        var lb = mk('label', 'sk-r'); lb.appendChild(mk('span', 'sk-l', q.lab + ' · ' + q.c + ' ='));
+        var i4 = document.createElement('input'); i4.type = 'text'; i4.setAttribute('inputmode', 'decimal'); i4.setAttribute('dir', 'ltr'); i4.placeholder = '?'; i4.autocomplete = 'off';
+        i4.addEventListener('change', function () { var v = parseFloat(i4.value.replace(',', '.')); if (isFinite(v)) skRaw(q.id, q.c, v); });
+        lb.appendChild(i4); b2.appendChild(lb); skRows[q.id] = { i: i4, c: q.c };
+      });
+      skBox.appendChild(b2);
+      if (K.alg) {
+        var b3 = mk('div', 'sk-w'); b3.appendChild(mk('div', 'sk-wh', '3. ביטוי אלגברי')); b3.appendChild(mk('div', 'sk-wd', K.algHead || ''));
+        var av = {};
+        K.alg.forEach(function (a) {
+          var lb2 = mk('label', 'sk-r'); lb2.appendChild(mk('span', 'sk-l', a.lab + ' ='));
+          var i5 = document.createElement('input'); i5.type = 'text'; i5.setAttribute('inputmode', 'decimal'); i5.setAttribute('dir', 'ltr'); i5.placeholder = '?'; i5.autocomplete = 'off';
+          lb2.appendChild(i5); b3.appendChild(lb2); av[a.k] = i5;
+        });
+        var ab = mk('button', 'btn small sk-go', 'הצבה בשרטוט'); ab.type = 'button';
+        ab.addEventListener('click', function () {
+          var keys = Object.keys(av), vals = keys.map(function (k) { return parseFloat(av[k].value.replace(',', '.')); });
+          if (vals.some(function (v) { return !isFinite(v); })) return;
+          Object.keys(K.map).forEach(function (id) {
+            var fn = Function.apply(null, keys.concat(['pow', 'abs', 'sqrt', 'return (' + K.map[id] + ');']));
+            var v = fn.apply(null, vals.concat([Math.pow, Math.abs, Math.sqrt]));
+            var q = K.pts.filter(function (z) { return z.id === id; })[0]; if (q) skRaw(id, q.c, v);
+          });
+        });
+        b3.appendChild(ab); skBox.appendChild(b3);
+      }
+      host.appendChild(skBox);
+    }
     update();
 
     /* ---------- goal + API ---------- */
@@ -563,8 +614,11 @@
       reveal: function (part) { var g = layerG[part]; if (g) g.classList.remove('is-hidden'); },
       hide: function (part) { var g = layerG[part]; if (g) g.classList.add('is-hidden'); },
       setParam: function (k, v) { Pm[k] = v; var i2 = fig.querySelector('input[data-param="' + k + '"]'); if (i2) { i2.value = v; i2.nextSibling.textContent = fmt(v); } update(); },
-      setDrag: function (id, x, y) { place(dragDef[id], x, y); update(); },
+      setDrag: function (id, x, y) { place(dragDef[id], x, y); prov[id] = true; update(); fireChange(); },
       state: function () { return { params: JSON.parse(JSON.stringify(Pm)), drags: JSON.parse(JSON.stringify(D)) }; },
+      ready: function () { return !spec.sk || spec.sk.pts.every(function (q) { return prov[q.id]; }); },
+      missing: function () { return spec.sk ? spec.sk.pts.filter(function (q) { return !prov[q.id]; }).map(function (q) { return q.lab; }) : []; },
+      drawGraph: function () { curveHidden = false; update(); },
       hasGoal: !!spec.goal, hint: spec.goalHint || ''
     };
   }

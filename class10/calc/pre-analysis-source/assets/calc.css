@@ -139,3 +139,14 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 .cover .chip{padding:4px 12px;border-radius:999px;border:1.5px solid var(--line,#cfd8e3);font-size:14px;color:var(--ink,#1c2733);--f:0%;background:linear-gradient(to left,rgba(31,138,91,.28) var(--f),var(--soft,#eef3f9) var(--f))}
 .cover .chip .cn{font-size:12px;opacity:.75;direction:ltr;display:inline-block}
 .cover .chip.on{border-color:#1f8a5b}
+.act-chk[hidden]{display:none}
+.sk{margin:10px 0;display:grid;gap:8px}
+.sk-t{font-size:15px;color:var(--muted,#5b6b7a)}
+.sk-w{border:1.5px solid var(--line,#cfd8e3);border-radius:12px;padding:8px 12px;background:var(--soft,#eef3f9)}
+.sk-wh{font-weight:800;margin-bottom:2px}.sk-wd{font-size:14px;color:var(--muted,#5b6b7a);margin-bottom:4px}
+.sk-r{display:flex;align-items:center;gap:8px;margin:4px 0}.sk-l{min-width:64px;font-family:"STIX Two Text",serif;direction:ltr;text-align:left}
+.sk-r input{flex:1;min-width:0;padding:8px 10px;border:2px solid var(--line,#cfd8e3);border-radius:10px;font:inherit;font-size:16px;background:var(--card,#fff);color:var(--ink,#1c2733);text-align:left}
+.sk-go{margin-top:6px}
+.sk,.sk *{box-sizing:border-box}.sk{width:100%;max-width:100%;min-width:0}.sk-w{min-width:0}
+.sk-r .negwrap{flex:1;min-width:0;display:flex;gap:6px;direction:ltr}
+.sk-r .negwrap input{width:100%}

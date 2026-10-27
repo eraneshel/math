@@ -48,6 +48,8 @@
     if (b) {
       var card = b.closest('.ex'), f = figOf(card), fb = card.querySelector('.act-ctl .fb'); if (!f) return;
       fb.className = 'fb';
+      if (f._api.ready && !f._api.ready()) { fb.classList.add('no'); fb.textContent = 'חסרים נתונים: ' + f._api.missing().join(', '); return; }
+      if (f._api.drawGraph) f._api.drawGraph();
       if (f._api.check()) {
         fb.classList.add('ok'); fb.textContent = 'נכון ✓';
         var id = card.getAttribute('data-id');
@@ -227,4 +229,15 @@ document.addEventListener('click', function (e) {
   document.addEventListener('click', function () { setTimeout(upd, 60); });
   document.addEventListener('input', function () { setTimeout(upd, 400); });
   setTimeout(upd, 300);
+})();
+
+/* sketch exercises: the "draw the graph" button appears only once all required data was entered */
+(function () {
+  function sync(f) {
+    var card = f.closest && f.closest('.ex'), b = card && card.querySelector('.act-chk');
+    if (b && f._api && f._api.ready) b.hidden = !f._api.ready();
+  }
+  document.addEventListener('figchange', function (e) { var f = e.target; if (f && f._api) sync(f); });
+  function init() { document.querySelectorAll('.fig[data-fig]').forEach(function (f) { if (f._api && f._api.ready && f.querySelector('.sk')) sync(f); }); }
+  setTimeout(init, 400); setTimeout(init, 1500);
 })();
