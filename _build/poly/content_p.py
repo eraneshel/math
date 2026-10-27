@@ -25,16 +25,16 @@ P.add('<div class="cover" data-cover aria-label="מפת התקדמות">' + ''.j
 
 # ---------------------------------------------------------------- mission 1
 
-def _sketch(xr, yr, f, drags, goal, hint, alt, ystep=2, sk=None):
+def _sketch(xr, yr, f, drags, goal, hint, alt, ystep=2, sk=None, name='f'):
     """product exercise: the graph is built live from handle points the student places"""
-    return FG(xr, yr, [{'f': f, 'cls': 0, 'name': 'f'}], params={}, ystep=ystep, signband=0,
+    return FG(xr, yr, [{'f': f, 'cls': 0, 'name': name, 'nx': 2.4, 'dx': 14, 'dy': 4}], params={}, ystep=ystep, signband=0,
               drags=drags, goal={'expr': goal}, goalHint=hint, alt=alt, hideCurve=True, sk=sk, caption=r'הגרף יופיע אחרי לחיצה על "העבר גרף". הוא נבנה מהנתונים שהוזנו.')
 
 def _lockx(id, x, y, pos='tr', snap=0.25):
     return {'id': id, 'x': x, 'y': y, 'lock': 'x', 'snap': snap, 'coords': True, 'pos': pos}
 
-def _locky(id, x, t, pos='tr', lo=-4.5, hi=4.5):
-    return {'id': id, 'x': x, 'y': 0, 'lock': 'y', 'snap': 1, 't': t, 'pos': pos, 'min': lo, 'max': hi}
+def _locky(id, x, t, pos='tr', lo=-4.5, hi=4.5, snap=1):
+    return {'id': id, 'x': x, 'y': 0, 'lock': 'y', 'snap': snap, 't': t, 'pos': pos, 'min': lo, 'max': hi}
 
 P.sec('משימה 1: הפונקציה החבויה')
 P.text(r"""
@@ -122,14 +122,18 @@ assert 4*4 - 4 - 12 == 0
 # ---------------------------------------------------------------- mission 2
 i = pid()
 P.add(TOP(ex(i, 'guided', r"""
-**תוצר: שרטוט הגרף של $f(x)=x^4$.** הנקודות $A$ ו-$B$ נמצאות על הישרים $x=1.5$ ו-$x=-1.5$. הזינו את גובה הנקודות לפי מה שחישבתם: בגרירה, בטבלה או כביטוי אלגברי. אחר כך לחצו "העבר גרף". הגרף נבנה מהנתונים, ו-$B$ צריכה להיות עליו.
+**תוצר: פונקציה חדשה מתוך $f$.** מצאתם ש-$f(x)=x^4$. נגדיר $g(x)=-f(x)+2$. שרטטו את הגרף של $g$: הזינו את נקודת הקיצון $M$ ואת שתי נקודות האפס $Z_1$ ו-$Z_2$ בגרירה, בטבלה או כביטוי אלגברי. אחר כך לחצו "העבר גרף".
 
-""" + _sketch([-3, 3], [-2, 10], 'Ay*pow(x/1.5,4)', [_lockx('A', 1.5, 1, 'tr'), _lockx('B', -1.5, 1, 'tl')],
-              'abs(Ay-5.0625)<0.3 && abs(By-Ay)<0.3', r'חשבו $f(1.5)=1.5^4$. $B$ צריכה להיות באותו גובה, כי הפונקציה זוגית.', 'בניית הגרף של x^4 מנקודות', 2, sk={'pts': [{'id': 'A', 'c': 'y', 'lab': 'A'}, {'id': 'B', 'c': 'y', 'lab': 'B'}], 'algHead': 'f(x) = a·x⁴. כתבו את a:', 'alg': [{'k': 'a', 'lab': 'a'}], 'map': {'A': 'a*pow(1.5,4)', 'B': 'a*pow(1.5,4)'}}) + r"""
-""", act=True, answer=r'$A$ ו-$B$ בגובה $\approx5.06$', solution=steps([
-    (r'$f(1.5)=1.5^4=5.0625$', r'הצבה ($A$ בגובה $5$ בקירוב)'),
-    (r'$f(-1.5)=f(1.5)$, ולכן $B$ באותו גובה', r'הפונקציה זוגית ($n=4$)')])), 'val,sym'))
-at(i, drags={'A': [1.5, 5.0], 'B': [-1.5, 5.0]})
+""" + _sketch([-3, 3], [-6, 4], 'My*(1-pow(x/Z2x,4))', [_lockx('M', 0, 0, 'tr', 0.5), _locky('Z1', -2.5, 'Z₁', 'tl', -2.8, 0, 0.05), _locky('Z2', 2.5, 'Z₂', 'tr', 0, 2.8, 0.05)],
+              'abs(My-2)<0.1 && abs(Z1x+1.19)<0.07 && abs(Z2x-1.19)<0.07', r'$g(x)=-x^4+2$. בנקודת הקיצון $x=0$. נקודות האפס: $x^4=2$, כלומר $x=\pm\sqrt[4]{2}$ (חשבו עם מחשבון).', 'בניית הגרף של -f(x)+2 מנקודות', 2, name='g',
+              sk={'pts': [{'id': 'M', 'c': 'y', 'lab': 'M'}, {'id': 'Z1', 'c': 'x', 'lab': 'Z₁'}, {'id': 'Z2', 'c': 'x', 'lab': 'Z₂'}], 'algHead': 'g(x) = a·x⁴ + q. כתבו את a ואת q:', 'alg': [{'k': 'a', 'lab': 'a'}, {'k': 'q', 'lab': 'q'}], 'map': {'M': 'q', 'Z1': '-pow(-q/a,0.25)', 'Z2': 'pow(-q/a,0.25)'}}) + r"""
+""", act=True, answer=r'$M=(0;2)$, $Z_{1,2}=(\pm1.19;0)$', solution=steps([
+    (r'$g(x)=-f(x)+2=-x^4+2$', r'הצבת $f(x)=x^4$'),
+    (r'$g$ היא שיקוף של $f$ סביב ציר ה-$x$, מוזז ב-$2$ כלפי מעלה', r'$-f$ משקף, ו-$+2$ מעלה את הגרף'),
+    (r'נקודת מקסימום ב-$M=(0;2)$', r'ב-$f$ הראשית היא מינימום (טענה קודמת); השיקוף והזזה נותנים מקסימום ב-$y=2$'),
+    (r'$-x^4+2=0\Rightarrow x^4=2\Rightarrow x=\pm\sqrt[4]{2}\approx\pm1.19$', r'פתרון המשוואה $g(x)=0$ (שני פתרונות כי $f$ זוגית)')])), 'shift,zero,ext,sym,val'))
+at(i, drags={'M': [0, 2], 'Z1': [-1.2, 0], 'Z2': [1.2, 0]})
+assert abs(2**0.25 - 1.19) < 0.01
 P.sec('משימה 2: מה משנה המקדם?')
 P.text(r"""
 בשרטוט מסתתרות הפונקציה $f(x)=a\cdot x^n$ והפונקציה $g(x)=x^n$ (מקווקווה), **ו-$a$ ו-$n$ אינם נתונים**. הנקודה $P$ נגררת לאורך הגרף של $f$, והנקודה $Q$ על הגרף של $g$ זזה איתה באותו $x$. מהקשר בין שני הגרפים אפשר לגלות את $a$.
