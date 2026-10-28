@@ -4,7 +4,7 @@
   var META = window.BOOKLET_META || [];
   var KEY = window.BOOKLET_KEY || 'poly-booklet-v1';
   var TEACHER = /[?&]teacher=1\b/.test(location.search);
-  var state = { done: {}, myAnswers: {}, selfCheck: {}, last: null };
+  var state = { done: {}, myAnswers: {}, selfCheck: {}, last: null, cele: {} };
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
@@ -12,7 +12,7 @@
     if (TEACHER) return;
     try {
       var raw = localStorage.getItem(KEY);
-      if (raw) { var o = JSON.parse(raw); state.done = o.done || {}; state.myAnswers = o.myAnswers || {}; state.selfCheck = o.selfCheck || {}; state.last = o.last || null; }
+      if (raw) { var o = JSON.parse(raw); state.done = o.done || {}; state.myAnswers = o.myAnswers || {}; state.selfCheck = o.selfCheck || {}; state.last = o.last || null; state.cele = o.cele || {}; }
     } catch (e) { /* storage unavailable: keep in memory */ }
   }
   function save() {
@@ -204,7 +204,49 @@
     if (v === null) delete state.done[id]; else state.done[id] = v;
     save();
     $$('#main .ex[data-id="' + id + '"]').forEach(paintCard);
-    updateProgress(); renderMistakes();
+    updateProgress(); renderMistakes(); missionCheck(true);
+  }
+  /* ---------- mission completion feedback ---------- */
+  function missionGroups(ch) {
+    var groups = [], cur = null;
+    Array.prototype.slice.call(ch.children).forEach(function (el) {
+      if (el.tagName === 'H2') { cur = { h: el, cards: [], learned: null }; groups.push(cur); return; }
+      if (!cur) return;
+      if (el.classList.contains('ex') && el.getAttribute('data-kind') && el.getAttribute('data-kind') !== 'example') cur.cards.push(el);
+      if (el.classList.contains('learned')) cur.learned = el;
+    });
+    return groups;
+  }
+  function isChallenge(card) { var b = $('.ex-body', card); return !!b && /^\s*אתגר/.test(b.textContent); }
+  function showCele(ch, groups, i) {
+    var g = groups[i], old = $('#cele'); if (old) old.remove();
+    var title = g.h.textContent.replace(/^משימה\s*\d+\s*:\s*/, ''), n = i + 1;
+    var d = document.createElement('div'); d.id = 'cele'; d.className = 'cele'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-labelledby', 'cele-h');
+    var conf = ''; for (var k = 0; k < 14; k++) conf += '<i style="--a:' + (k * 26 + 7) + 'deg;--d:' + (60 + (k % 4) * 18) + 'px;--c:' + (k % 3) + '"></i>';
+    var next = groups[i + 1];
+    d.innerHTML = '<div class="cele-box"><div class="cele-burst" aria-hidden="true">' + conf + '</div><div class="cele-ok" aria-hidden="true">✓</div>' +
+      '<h3 id="cele-h">סיימתם את משימה ' + n + '!</h3><p class="cele-sub">' + title + '</p>' +
+      '<div class="cele-l"><b>מה למדתם:</b>' + (g.learned ? g.learned.innerHTML : '') + '</div>' +
+      '<div class="cele-btns">' + (next ? '<button type="button" class="btn" data-next>למשימה הבאה</button>' : '') + '<button type="button" class="btn ghost" data-x>סגירה</button></div></div>';
+    document.body.appendChild(d);
+    $('[data-x]', d).addEventListener('click', function () { d.remove(); });
+    var nb = $('[data-next]', d);
+    if (nb) nb.addEventListener('click', function () { d.remove(); next.h.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    $('[data-x]', d).focus();
+  }
+  function missionCheck(announce) {
+    if (TEACHER) return;
+    $$('.chapter').forEach(function (ch) {
+      var groups = missionGroups(ch);
+      groups.forEach(function (g, i) {
+        if (!g.learned) return;
+        var key = ch.id + ':' + i, req = g.cards.filter(function (c) { return !isChallenge(c); });
+        if (!req.length || state.cele[key]) return;
+        if (!req.every(function (c) { return state.done[c.getAttribute('data-id')] === 'ok'; })) return;
+        state.cele[key] = 1; save();
+        if (announce && !window.__NOCELE) showCele(ch, groups, i);
+      });
+    });
   }
   function initCards() {
     $$('.ex[data-id]').forEach(function (card) {
@@ -396,7 +438,7 @@
     $('#btn-continue').addEventListener('click', function () { if (state.last) location.hash = '#' + state.last; else go(META[0].id); });
     $('#btn-mistakes').addEventListener('click', function () { go('mistakes'); });
     if (TEACHER) { var n = $('#notice'); n.hidden = false; n.textContent = 'מצב מורה: כל התשובות והפתרונות פתוחים, וההתקדמות אינה נשמרת.'; }
-    updateProgress(); renderMistakes();
+    updateProgress(); renderMistakes(); missionCheck(false);
     window.addEventListener('hashchange', function () { route(); });
     var tick = null;
     window.addEventListener('scroll', function () {
@@ -413,6 +455,6 @@
     route({ initial: true });
     if (TEACHER) { var nn = $('#notice'); nn.hidden = false; }
   }
-  window.BookApp = { go: go, state: state, setDone: setDone };
+  window.BookApp = { go: go, state: state, setDone: setDone, missionCheck: missionCheck };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();

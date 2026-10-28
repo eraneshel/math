@@ -186,3 +186,22 @@ li:has(.mfrac),p:has(.mfrac){line-height:2.7 !important}
 .sk-st{font-size:15px;font-weight:600;min-height:1.4em;color:var(--muted,#5b6b7a)}.sk-st.ok{color:#1a7f4b}.sk-st.no{color:#b42318}
 .svg-draw{fill:rgba(122,90,248,.05);cursor:crosshair;touch-action:none}.svg-stroke{fill:none;stroke:#7a5af8;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
 svg.plot.drawing{outline:2px dashed #7a5af8;outline-offset:2px}
+
+.goal{margin:.6rem 0 1rem;padding:.7rem 1rem;border-radius:12px;background:color-mix(in srgb,var(--accent,#c2410c) 9%,transparent);border-inline-start:5px solid var(--accent,#c2410c)}
+.goal p{margin:.2rem 0}
+.learned{display:none}
+.cele{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);padding:16px;animation:celeIn .25s ease}
+.cele-box{position:relative;max-width:440px;width:100%;max-height:90vh;overflow:auto;background:var(--bg,#fff);color:inherit;border-radius:18px;padding:1.4rem 1.3rem 1.1rem;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.cele-box h3{margin:.4rem 0 .1rem;font-size:1.35rem}
+.cele-sub{margin:0 0 .6rem;opacity:.8}
+.cele-ok{width:64px;height:64px;margin:0 auto;border-radius:50%;background:#16a34a;color:#fff;font-size:2.2rem;line-height:64px;animation:celePop .5s cubic-bezier(.2,1.6,.4,1)}
+.cele-l{text-align:start;margin:.6rem 0}
+.cele-l ul{margin:.3rem 0;padding-inline-start:1.2rem}
+.cele-btns{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:.6rem}
+.cele-burst{position:absolute;top:50px;left:50%;width:0;height:0;pointer-events:none}
+.cele-burst i{position:absolute;width:8px;height:8px;border-radius:2px;background:#f59e0b;opacity:0;animation:celeConf .9s ease-out .15s forwards}
+.cele-burst i:nth-child(3n+1){background:#2563eb}.cele-burst i:nth-child(3n+2){background:#db2777}
+@keyframes celeIn{from{opacity:0}to{opacity:1}}
+@keyframes celePop{0%{transform:scale(0)}100%{transform:scale(1)}}
+@keyframes celeConf{0%{opacity:1;transform:rotate(var(--a)) translateY(0)}100%{opacity:0;transform:rotate(var(--a)) translateY(calc(-1 * var(--d) - 40px))}}
+@media (prefers-reduced-motion:reduce){.cele,.cele-ok,.cele-burst i{animation:none}.cele-burst{display:none}}
