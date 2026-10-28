@@ -17,7 +17,7 @@ def T(s): return lib.md(s, inline=True)
 def hint(txt): return '<details class="hint"><summary>רמז</summary><span>%s</span></details>' % T(txt)
 
 # שלבים: מקדמי הפולינום מהנמוך לגבוה, והנקודה a
-LEVELS = [([0, 3, 1], 2), ([0, 0, 0, 1], 1), ([0, -1, 2], 3)]
+LEVELS = [([0, 3, 1], 2), ([0, 0, 0, 1], 1), ([0, -1, 2], 3), ([0, -3, 0, 1], 2), ([0, 0, 0, 0, 1], 1), ([0, 0, 1, 1], -1)]
 
 def ptex(c, var='x'):
     out = ''
@@ -44,7 +44,9 @@ def val(c, x): return sum(ck * x ** k for k, ck in enumerate(c))
 def dval(c, x): return sum(k * ck * x ** (k - 1) for k, ck in enumerate(c) if k)
 
 titles = ['שלב %d' % (i + 1) for i in range(len(LEVELS))]
-nav = ''.join('<a href="#s%d"><b>%d</b>%s</a>' % (i, i, t) for i, t in enumerate(titles, 1))
+NL = len(LEVELS)
+nav_titles = titles + ['אתגר', 'גשר']
+nav = ''.join('<a href="#s%d"><b>%d</b>%s</a>' % (i, i, t) for i, t in enumerate(nav_titles, 1))
 
 def stage(k, c, a):
     sh = shift(c, a)
@@ -88,7 +90,53 @@ def stage(k, c, a):
 <p class="win" id="win{k}" hidden>השלב הושלם</p>
 </section>'''
 
-stages = ''.join(stage(i + 1, c, a) for i, (c, a) in enumerate(LEVELS))
+
+def brk(tex):
+    d = 0
+    for i, ch in enumerate(tex):
+        if ch == '{': d += 1
+        elif ch == '}': d -= 1
+        elif ch == '=' and d == 0:
+            return '{%s}={%s}' % (tex[:i], tex[i+1:])
+    return tex
+
+def mc(q, opts, c, exp='', reveal=None, extra=''):
+    ob = ''.join('<button type="button" class="opt">%s</button>' % o for o in opts)
+    rv = ' data-reveal="%s"' % reveal if reveal else ''
+    return ('<div class="mc chk" data-c="%d"%s%s><div class="mc-q">%s</div><div class="opts">%s</div>'
+            '<span class="fb" aria-live="polite"></span>%s</div>') % (c, rv, extra, q, ob, ('<div class="mc-exp" hidden>%s</div>' % exp) if exp else '')
+
+def numq(id_, label, ans, reveal=None, hidden=False):
+    rv = ' data-reveal="%s"' % reveal if reveal else ''
+    return ('<div class="row-in chk mnum" id="%s" data-ans="%s"%s%s><span class="q">%s</span><button type="button" class="pm" aria-label="הפיכת סימן">±</button>'
+            '<input type="text" class="num" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" placeholder="?" aria-label="תשובה">'
+            '<button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div>') % (id_, ans, rv, ' hidden' if hidden else '', label)
+
+boss_rows = ["f(3+h)-f(3)=(3+h)^2-2(3+h)-3",
+             "f(3+h)-f(3)=9+6h+h^2-6+2h-3",
+             "f(3+h)-f(3)=8h+h^2",
+             "f'(3)=\\lim_{h\\to 0}\\dfrac{8h+h^2}{h}=\\lim_{h\\to 0}(8+h)=8"]
+boss_html = ''.join('<div class="brow"><b class="bn">%d</b><span class="fx">%s</span></div>' % (i + 1, M(brk(r))) for i, r in enumerate(boss_rows))
+boss = f'''
+<section class="stage" id="s{NL+1}" aria-labelledby="s{NL+1}t"><h2 id="s{NL+1}t"><span class="n">{NL+1}</span>מצאו את הטעות<span class="dtag">אתגר</span></h2>
+<p>{T("בפתרון הבא של $f'(3)$ עבור $f(x)=x^2-2x$ יש טעות אחת.")}</p>
+<div class="boss">{boss_html}</div>
+{mc("באיזו שורה הטעות?", ["שורה 1", "שורה 2", "שורה 3", "שורה 4"], 1, T("בשורה 2 הוצב סימן שגוי: $-2(3+h)=-6-2h$."), "#bq2")}
+<div id="bq2" hidden>{mc("מהי שורה 2 הנכונה?", [M("9+6h+h^2-6-2h+3"), M("9+3h+h^2-6-2h-3"), M("9+6h+h^2-6-2h-3")], 2, "", "#bq3")}</div>
+<div id="bq3" hidden>{numq("bnum", M("f'(3)="), 4)}</div>
+</section>'''
+
+bridge = f'''
+<section class="stage" id="s{NL+2}" aria-labelledby="s{NL+2}t"><h2 id="s{NL+2}t"><span class="n">{NL+2}</span>גשר לכללי גזירה</h2>
+<p>{T("בשלבים 2 ו־5 חישבתם נגזרת ב־$x=1$, והנה התוצאות יחד עם $x^2$ מעמוד ההגדרה:")}</p>
+<div class="tw"><table class="dtab"><thead><tr><th>{T("$f(x)$")}</th><th>{T("$f'(1)$")}</th></tr></thead><tbody>
+<tr><th>{M("x^2")}</th><td class="num">2</td></tr><tr><th>{M("x^3")}</th><td class="num">3</td></tr><tr><th>{M("x^4")}</th><td class="num">4</td></tr></tbody></table></div>
+<p>{T("נחשו לפי התבנית. עבור $f(x)=x^5$:")}</p>
+{numq("brg", M("f'(1)="), 5, "#bgo")}
+<div id="bgo" hidden><p class="win">{T("בכללי גזירה נבדוק את התבנית הזו בכל נקודה.")}</p><p><a class="btn" href="../rules/" target="_top">כללי גזירה ←</a></p></div>
+</section>'''
+
+stages = ''.join(stage(i + 1, c, a) for i, (c, a) in enumerate(LEVELS)) + boss + bridge
 lv_json = json.dumps([{'c': c, 'a': a} for c, a in LEVELS])
 
 hero_fig = ('<svg viewBox="-14 -6 280 228" width="100%"><g fill="none" stroke-linecap="round" stroke-linejoin="round">'

@@ -6,10 +6,10 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="color-scheme" content="light dark">
 <title>כללי גזירה</title>
-<link rel="stylesheet" href="../definition/assets/katex.min.css?v=93160300">
-<link rel="stylesheet" href="../definition/assets/style.css?v=93160300">
-<link rel="stylesheet" href="../definition/assets/calc.css?v=93160300">
-<link rel="stylesheet" href="../definition/assets/defn.css?v=93160300">
+<link rel="stylesheet" href="../definition/assets/katex.min.css?v=93162647">
+<link rel="stylesheet" href="../definition/assets/style.css?v=93162647">
+<link rel="stylesheet" href="../definition/assets/calc.css?v=93162647">
+<link rel="stylesheet" href="../definition/assets/defn.css?v=93162647">
 </head>
 <body>
 <div class="wrap">
@@ -31,7 +31,7 @@
 <p class="dintro">חישוב נגזרת לפי ההגדרה ארוך. כאן נגלה כלל שחוסך אותו, נלמד אותו, ונשתמש בו לגזירת פולינומים ולמציאת משיק.</p>
 
 <section class="stage" id="s1" aria-labelledby="s1t"><h2 id="s1t"><span class="n">1</span>גלו: נגזרת של חזקה</h2>
-<p>בעמוד הקודם ראינו שהנגזרת היא שיפוע המשיק. כאן נמלא טבלה של שיפועי משיקים ונחפש כלל. בחרו פונקציה ונקודה, ואז לחצו על הוספה לטבלה. את הנגזרת בונים מאיברים: מקדם וחזקה, ואיבר חופשי.</p>
+<p>במכונת הגבול חישבתם נגזרות בנקודה. כאן נמלא טבלה של שיפועי משיקים ונחפש כלל. בחרו פונקציה ונקודה, ואז לחצו על הוספה לטבלה. את הנגזרת בונים מאיברים: מקדם וחזקה, ואיבר חופשי.</p>
 <div class="chips" id="fch" role="group" aria-label="בחירת פונקציה"><button type="button" data-n="2" aria-pressed="true"><span class="math-expr" dir="ltr"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle scriptlevel="0" displaystyle="true"><msup><mi>x</mi><mn>2</mn></msup></mstyle></mrow><annotation encoding="application/x-tex">\displaystyle x^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></button><button type="button" data-n="3" aria-pressed="false"><span class="math-expr" dir="ltr"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle scriptlevel="0" displaystyle="true"><msup><mi>x</mi><mn>3</mn></msup></mstyle></mrow><annotation encoding="application/x-tex">\displaystyle x^3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span></span></span></span></span></button><button type="button" data-n="4" aria-pressed="false"><span class="math-expr" dir="ltr"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle scriptlevel="0" displaystyle="true"><msup><mi>x</mi><mn>4</mn></msup></mstyle></mrow><annotation encoding="application/x-tex">\displaystyle x^4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">4</span></span></span></span></span></span></span></span></span></span></span></span></button></div>
 <div class="chips" id="xch" role="group" aria-label="בחירת נקודה"><button type="button" data-a="1" aria-pressed="true"><span class="math-expr" dir="ltr"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle scriptlevel="0" displaystyle="true"><mi>x</mi><mo>=</mo><mn>1</mn></mstyle></mrow><annotation encoding="application/x-tex">\displaystyle x=1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span></span></button><button type="button" data-a="2" aria-pressed="false"><span class="math-expr" dir="ltr"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle scriptlevel="0" displaystyle="true"><mi>x</mi><mo>=</mo><mn>2</mn></mstyle></mrow><annotation encoding="application/x-tex">\displaystyle x=2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span></span></button><button type="button" data-a="3" aria-pressed="false"><span class="math-expr" dir="ltr"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle scriptlevel="0" displaystyle="true"><mi>x</mi><mo>=</mo><mn>3</mn></mstyle></mrow><annotation encoding="application/x-tex">\displaystyle x=3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">3</span></span></span></span></span></button></div>
 <div class="viz"><svg id="rv1" role="img" aria-label="גרף הפונקציה שנבחרה, הנקודה והמשיק"></svg></div>
@@ -80,9 +80,9 @@
 </main>
 <div class="foot">מתמטיקה · לכל בעיה יש פתרון, להנות מהאתגר</div>
 </div>
-<script src="../definition/assets/defn.js?v=93160300"></script>
-<script src="../definition/assets/expr.js?v=93160300"></script>
-<script src="assets/rules.js?v=93160300"></script>
-<script src="../definition/assets/hero.js?v=93160300"></script>
+<script src="../definition/assets/defn.js?v=93162647"></script>
+<script src="../definition/assets/expr.js?v=93162647"></script>
+<script src="assets/rules.js?v=93162647"></script>
+<script src="../definition/assets/hero.js?v=93162647"></script>
 </body>
 </html>

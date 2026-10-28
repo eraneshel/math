@@ -128,6 +128,22 @@ LV.forEach(function(L,idx){
   });
 });
 
+
+/* שאלות מספר (אתגר וגשר) */
+$$('.mnum').forEach(function(box){
+  var inp=$('input',box),btn=$('.btn',box),fb=$('.fb',box),ans=+box.getAttribute('data-ans');
+  function go(){
+    if(box.classList.contains('ok'))return;
+    var g=parseExpr(inp.value),v=g?g(0):NaN;
+    if(isNaN(v)){fb.textContent='הקלידו מספר';fb.className='fb no';inp.classList.add('wrong');return}
+    var ok=Math.abs(v-ans)<1e-9;
+    inp.classList.toggle('right',ok);inp.classList.toggle('wrong',!ok);
+    if(ok){fb.textContent='נכון';fb.className='fb ok';var rv=box.getAttribute('data-reveal');if(rv){var r=$(rv);if(r)r.hidden=false}pass(box)}
+    else{fb.textContent='לא מדויק, בדקו שוב';fb.className='fb no'}
+  }
+  btn.addEventListener('click',go);inp.addEventListener('keydown',function(e){if(e.key==='Enter')go()});
+});
+
 /* נעילת שלבים: הבא נפתח אחרי שהקודם הושלם */
 DF.hooks.push(function(stages){
   stages.forEach(function(s,i){
