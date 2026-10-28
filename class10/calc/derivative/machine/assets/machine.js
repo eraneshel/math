@@ -59,7 +59,7 @@ function approach(stage,k,sp){
   P.path(f,x0,x1,200,'svg-curve');
   var tan=P.line(a,fa,ans,'svg-tan dash');tan.style.display='none';
   var sec=P.line(a,fa,0,'svg-sec'),hCur=2;
-  var Ac=el('circle',{cx:P.X(a),cy:P.Y(fa),r:7,'class':'svg-ptA'},P.top);
+  var Ac=el('circle',{cx:P.X(a),cy:P.Y(fa),r:9,"class":"svg-ptA"},P.top);
   text(P.top,P.X(a)-14,P.Y(fa)-12,'A');
   var B=el('circle',{r:7,'class':'svg-ptB'},P.top),tB=text(P.top,0,0,'B');
   function place(h){
@@ -131,7 +131,7 @@ function dataStage(stage,k,sp){
   var x0=Math.min.apply(null,xs)-0.3,x1=Math.max.apply(null,xs)+0.3,ymin=Math.min.apply(null,ys),ymax=Math.max.apply(null,ys),pad=(ymax-ymin)*0.18||1;
   ymin-=pad;ymax+=pad;var gy=niceStep(ymax-ymin);
   var P=Plot($('#mv'+k),{xmin:x0,xmax:x1,ymin:ymin,ymax:ymax,W:640,H:340,gx:0.5,gy:gy,lx:0.5,ly:gy});
-  var Ac=el('circle',{cx:P.X(a),cy:P.Y(fa),r:7,'class':'svg-ptA'},P.top);text(P.top,P.X(a)-14,P.Y(fa)-12,'A');
+  var Ac=el('circle',{cx:P.X(a),cy:P.Y(fa),r:9,"class":"svg-ptA"},P.top);text(P.top,P.X(a)-14,P.Y(fa)-12,'A');
   var Bs=[];
   pts.forEach(function(p,i){
     Bs.push(el('circle',{cx:P.X(p.x),cy:P.Y(p.y),r:8,'class':'svg-ptB svg-click'},P.top));
