@@ -20,7 +20,7 @@ var T={
   t5:function(x){return 9*x-16}
 };
 $$('.ans[data-t]').forEach(function(b){
-  (b.classList.contains('tb')?DF.termBox:answerBox)(b,T[b.getAttribute('data-t')],function(){
+  answerBox(b,T[b.getAttribute('data-t')],function(){
     var nx=b.getAttribute('data-next');if(nx){var n=$(nx);if(n)n.hidden=false}
     var sol=b.getAttribute('data-sol');if(sol){var s=$(sol);if(s)s.hidden=false;var sb=$('.showsol[data-for="'+sol+'"]');if(sb)sb.hidden=true}
     if(b.getAttribute('data-t')==='t5')drawTangent();

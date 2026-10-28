@@ -68,90 +68,93 @@ function same(f,g){
 }
 
 /* ---------- תיבת תשובה (ביטוי או מספר) ---------- */
-function answerBox(box,fn,onok){
-  var inp=$('input',box),btn=$('.btn',box),fb=$('.fb',box);
-  function go(){
-    var g=parseExpr(inp.value);
-    if(!g){fb.textContent='לא הצלחתי לקרוא את הביטוי. כתבו למשל 3x^2-6x';fb.className='fb no';inp.classList.add('wrong');return}
-    var ok=same(g,fn);
-    inp.classList.toggle('right',ok);inp.classList.toggle('wrong',!ok);
-    if(ok){fb.textContent='נכון';fb.className='fb ok';if(!box.classList.contains('ok')){pass(box);if(onok)onok(box)}}
-    else{fb.textContent='לא מדויק, בדקו שוב';fb.className='fb no'}
+/* שדה הזנה במקלדת מובנית בדף (בלי מקלדת מערכת): ספרות, משתנה, ^, +, −, מחיקה */
+var openKF=null;
+function keyField(box){
+  if(box._kf)return box._kf;
+  var mode=box.getAttribute('data-mode')||'num',vr=box.getAttribute('data-var')||'x';
+  var fld=$('.kfield',box),s='',panel=null,enter=null;
+  fld.setAttribute('tabindex','0');fld.setAttribute('role','textbox');fld.setAttribute('aria-label','תשובה');
+  function render(){
+    if(!s){fld.innerHTML='<span class="ph">לחצו להזנה</span>';return}
+    fld.innerHTML=s.replace(/\^(\d*)/g,function(m,d){return d?'<sup>'+d+'</sup>':'<sup class="ph">□</sup>'}).replace(/-/g,'−');
   }
-  btn.addEventListener('click',go);
-  inp.addEventListener('keydown',function(e){if(e.key==='Enter')go()});
+  function press(k){
+    if(k==='del'){s=s.slice(0,-1)}
+    else{
+      if(s.length>=24)return;
+      if(k==='^'&&(!s||/[+\-^]$/.test(s)))return;
+      if(mode==='num'&&k==='-'){s=s.charAt(0)==='-'?s.slice(1):'-'+s;render();return}
+      s+=k;
+    }
+    render();fld.classList.remove('right','wrong');
+  }
+  function build(){
+    var keys=mode==='expr'?['7','8','9','4','5','6','1','2','3','0',vr,'^','+','-','del']:['7','8','9','4','5','6','1','2','3','-','0','del'];
+    panel=document.createElement('div');panel.className='kpad kp-'+mode;panel.hidden=true;
+    keys.forEach(function(k){
+      var b=document.createElement('button');b.type='button';b.className='key'+(k==='del'?' del':'');b.setAttribute('data-k',k);
+      b.textContent=k==='del'?'⌫':k==='-'?'−':k==='^'?'חזקה ▫':k;
+      b.addEventListener('click',function(){press(k);fld.focus()});
+      panel.appendChild(b);
+    });
+    box.appendChild(panel);
+  }
+  function open(){
+    if(box.classList.contains('ok'))return;
+    if(openKF&&openKF!==api)openKF.close();
+    if(!panel)build();
+    panel.hidden=false;fld.classList.add('open');openKF=api;
+  }
+  function close(){if(panel)panel.hidden=true;fld.classList.remove('open');if(openKF===api)openKF=null}
+  fld.addEventListener('click',function(){if(panel&&!panel.hidden)close();else open()});
+  fld.addEventListener('keydown',function(e){
+    var k=e.key;
+    if(k==='Enter'){if(enter)enter();e.preventDefault();return}
+    if(k==='Backspace'){press('del');e.preventDefault();return}
+    if(k===' '){open();e.preventDefault();return}
+    if(/^\d$/.test(k)||k==='^'||k==='+'||k==='-'){press(k);e.preventDefault();return}
+    if(mode==='expr'&&(k==='x'||k==='h'||k==='X'||k==='H')){press(vr);e.preventDefault()}
+  });
+  var api={
+    val:function(){return s},
+    mark:function(ok){fld.classList.toggle('right',ok===true);fld.classList.toggle('wrong',ok===false)},
+    onEnter:function(f){enter=f},
+    open:open,close:close
+  };
+  render();box._kf=api;return api;
 }
 
-/* תיבה של שני מספרים (קבוצה, בלי חשיבות לסדר) */
-function setBox(box,vals,onok){
-  var ins=Array.prototype.slice.call(box.querySelectorAll('input')),btn=$('.btn',box),fb=$('.fb',box);
-  function go(){
-    var v=ins.map(function(i){var g=parseExpr(i.value);return g?g(0):NaN});
-    if(v.some(isNaN)){fb.textContent='הקלידו מספרים בכל התיבות';fb.className='fb no';return}
-    var a=v.slice().sort(function(x,y){return x-y}),b=vals.slice().sort(function(x,y){return x-y});
-    var ok=a.length===b.length&&a.every(function(x,i){return Math.abs(x-b[i])<1e-6});
-    ins.forEach(function(i){i.classList.toggle('right',ok);i.classList.toggle('wrong',!ok)});
-    if(ok){fb.textContent='נכון';fb.className='fb ok';if(!box.classList.contains('ok')){pass(box);if(onok)onok(box)}}
-    else{fb.textContent='לא מדויק, בדקו שוב';fb.className='fb no'}
+/* ביטוי עם שני איברים באותה חזקה אינו מצומצם */
+function dupPower(norm){
+  var seen={},parts=norm.replace(/-/g,'+-').split('+').filter(Boolean),i,m,e;
+  for(i=0;i<parts.length;i++){
+    m=/^-?(\d*)(x)?(?:\^(\d+))?$/.exec(parts[i]);
+    if(!m)return false;
+    e=m[2]?(m[3]?+m[3]:1):0;
+    if(seen[e])return true;seen[e]=1;
   }
-  btn.addEventListener('click',go);
-  ins.forEach(function(i){i.addEventListener('keydown',function(e){if(e.key==='Enter')go()})});
+  return false;
 }
 
-/* כפתור ± ליד שדה מספר (במקלדות בטלפון אין מינוס) */
-document.addEventListener('click',function(e){
-  var b=e.target;if(!b.classList||!b.classList.contains('pm'))return;
-  var inp=b.nextElementSibling;while(inp&&inp.tagName!=='INPUT')inp=inp.nextElementSibling;
-  if(!inp)return;
-  inp.value=inp.value.charAt(0)==='-'?inp.value.slice(1):'-'+inp.value;
-  inp.focus();
-});
-
-/* בונה איברים: [±][מקדם]·x^[חזקה] + ... + [איבר חופשי]. בלי הקלדת נוסחאות (טלפון) */
-function termBox(box,fn,onok,onwrong){
-  var vr=box.getAttribute('data-var')||'x',body=$('.tbody',box),fb=$('.fb',box),btn=$('.btn',box);
-  body.innerHTML='<span class="tl"></span><button type="button" class="btn small ghost tadd">+ איבר</button>'+
-    '<span class="tk"><span class="tp">+</span><button type="button" class="pm" aria-label="הפיכת סימן">±</button><input class="tf" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="איבר חופשי" aria-label="איבר חופשי"></span>';
-  var tl=$('.tl',body),add=$('.tadd',body),n=0;
-  function addTerm(){
-    if(n>=5)return;n++;
-    var t=document.createElement('span');t.className='term';
-    t.innerHTML=(n>1?'<span class="tp">+</span>':'')+'<button type="button" class="pm" aria-label="הפיכת סימן">±</button>'+
-      '<input class="tc" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="מקדם" aria-label="מקדם">'+
-      '<span class="tv">'+vr+'</span><span class="tx">^</span>'+
-      '<input class="te" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="חזקה" aria-label="חזקה">'+
-      (n>1?'<button type="button" class="tdel" aria-label="מחיקת איבר">✕</button>':'');
-    tl.appendChild(t);
-    var d=$('.tdel',t);if(d)d.addEventListener('click',function(){tl.removeChild(t);n--;add.hidden=false});
-    if(n>=5)add.hidden=true;
-  }
-  add.addEventListener('click',addTerm);addTerm();
-  function bad(msg){fb.textContent=msg;fb.className='fb no';if(onwrong)onwrong()}
-  function num(str){var g=parseExpr(str);var v=g?g(0):NaN;return v}
+/* תיבת תשובה: מספר (data-mode=num) או ביטוי (expr), נבדקים בהצבת ערכים */
+function answerBox(box,fn,onok,onwrong){
+  var kf=keyField(box),btn=$('.btn',box),fb=$('.fb',box),vr=box.getAttribute('data-var')||'x',mode=box.getAttribute('data-mode')||'num';
+  function bad(msg){fb.textContent=msg;fb.className='fb no';kf.mark(false);if(onwrong)onwrong()}
   function go(){
     if(box.classList.contains('ok'))return;
-    var T=[],seen={},k=0,ks=$('.tf',body).value.trim(),i,ts=$$('.term',tl),err='';
-    for(i=0;i<ts.length;i++){
-      var cs=$('.tc',ts[i]).value.trim(),es=$('.te',ts[i]).value.trim();
-      if(!cs&&!es)continue;
-      var c=num(cs),e=Number(es);
-      if(!cs||!es||isNaN(c)||!/^\d+$/.test(es)||e<1){err='בכל איבר מלאו מקדם וחזקה (מספר שלם, 1 ומעלה). איבר בלי '+vr+' כתבו בשדה האיבר החופשי';break}
-      if(seen[e]){err='יש שני איברים עם אותה חזקה. אחדו אותם';break}
-      seen[e]=1;T.push([c,e]);
-    }
-    if(!err){
-      if(ks){k=num(ks);if(isNaN(k))err='באיבר החופשי כתבו מספר'}
-      else if(!T.length)err='הוסיפו איבר'
-    }
-    if(err){bad(err);return}
-    var g=function(x){var s=k;for(var j=0;j<T.length;j++)s+=T[j][0]*Math.pow(x,T[j][1]);return s};
+    var raw=kf.val();
+    if(!raw){bad(mode==='num'?'הזינו מספר':'הזינו ביטוי');return}
+    var norm=vr==='h'?raw.replace(/h/g,'x'):raw,g=parseExpr(norm);
+    if(!g){bad(mode==='num'?'הזינו מספר':'הביטוי לא שלם');return}
+    if(mode==='expr'&&dupPower(norm)){bad('יש שני איברים עם אותה חזקה. אחדו אותם');return}
     var ok=same(g,fn);
-    $$('input',body).forEach(function(q){q.classList.toggle('right',ok);q.classList.toggle('wrong',!ok)});
-    if(ok){fb.textContent='נכון';fb.className='fb ok';pass(box);if(onok)onok(box)}
+    kf.mark(ok);
+    if(ok){fb.textContent='נכון';fb.className='fb ok';kf.close();pass(box);if(onok)onok(box)}
     else bad('לא מדויק, בדקו שוב');
   }
-  btn.addEventListener('click',go);
-  body.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.tagName==='INPUT')go()});
+  btn.addEventListener('click',go);kf.onEnter(go);
 }
-DF.termBox=termBox;DF.parseExpr=parseExpr;DF.same=same;DF.answerBox=answerBox;DF.setBox=setBox;
+
+DF.keyField=keyField;DF.parseExpr=parseExpr;DF.same=same;DF.answerBox=answerBox;
 })();

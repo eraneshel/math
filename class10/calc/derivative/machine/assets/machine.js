@@ -82,20 +82,20 @@ LV.forEach(function(L,idx){
   /* נעילת שיפוע */
   var lock=$('.mlock',stage),alg=$('#alg'+k);
   (function(){
-    var inp=$('input',lock),btn=$('.btn',lock),fb=$('.fb',lock);
+    var kf=DF.keyField(lock),btn=$('.btn',lock),fb=$('.fb',lock);
     function go(){
       if(lock.classList.contains('ok'))return;
-      var g=parseExpr(inp.value),v=g?g(0):NaN;
-      if(isNaN(v)){fb.textContent='הקלידו מספר';fb.className='fb no';return}
+      var g=parseExpr(kf.val()),v=g?g(0):NaN;
+      if(isNaN(v)){fb.textContent='הזינו מספר';fb.className='fb no';kf.mark(false);return}
       if(Math.abs(v-ans)<1e-9){
-        inp.classList.add('right');inp.classList.remove('wrong');fb.textContent='ננעל!';fb.className='fb ok';
+        kf.mark(true);kf.close();fb.textContent='ננעל!';fb.className='fb ok';
         tan.style.display='';animateTo(0.001);setStars(1);burst();alg.hidden=false;pass(lock);
       }else{
-        wrong++;inp.classList.add('wrong');fb.className='fb no';
+        wrong++;kf.mark(false);fb.className='fb no';
         fb.textContent=Math.abs(v-ans)<0.05?'קרוב מאוד. לאיזה מספר מתייצבת המנה?':'לא מדויק. קרבו את B עוד והסתכלו בטבלה';
       }
     }
-    btn.addEventListener('click',go);inp.addEventListener('keydown',function(e){if(e.key==='Enter')go()});
+    btn.addEventListener('click',go);kf.onEnter(go);
   })();
   /* הוכחה אלגברית: ביטוי ב-h, נבדק בהצבת ערכים */
   function g1(h){return f(a+h)-fa}
@@ -110,38 +110,38 @@ LV.forEach(function(L,idx){
     }
   }
   $$('.mrow',stage).forEach(function(box,ri){
-    if(box.classList.contains('tb')){
-      DF.termBox(box,T3[ri],function(b){solved(b,ri)},function(){wrong++});
+    if(box.getAttribute('data-mode')==='expr'){
+      DF.answerBox(box,T3[ri],function(b){solved(b,ri)},function(){wrong++});
       return;
     }
-    var inp=$('input',box),btn=$('.btn',box),fb=$('.fb',box);
+    var kf=DF.keyField(box),btn=$('.btn',box),fb=$('.fb',box);
     function go(){
       if(box.classList.contains('ok'))return;
-      var g=parseExpr(inp.value),v=g?g(0):NaN;
-      if(isNaN(v)){fb.textContent='הקלידו מספר';fb.className='fb no';inp.classList.add('wrong');return}
+      var g=parseExpr(kf.val()),v=g?g(0):NaN;
+      if(isNaN(v)){fb.textContent='הזינו מספר';fb.className='fb no';kf.mark(false);return}
       var ok=Math.abs(v-ans)<1e-9;
-      inp.classList.toggle('right',ok);inp.classList.toggle('wrong',!ok);
-      if(ok){fb.textContent='נכון';fb.className='fb ok';pass(box);solved(box,ri)}
+      kf.mark(ok);
+      if(ok){fb.textContent='נכון';fb.className='fb ok';kf.close();pass(box);solved(box,ri)}
       else{wrong++;fb.textContent='לא מדויק, בדקו שוב';fb.className='fb no'}
     }
-    btn.addEventListener('click',go);inp.addEventListener('keydown',function(e){if(e.key==='Enter')go()});
+    btn.addEventListener('click',go);kf.onEnter(go);
   });
 });
 
 
 /* שאלות מספר (אתגר וגשר) */
 $$('.mnum').forEach(function(box){
-  var inp=$('input',box),btn=$('.btn',box),fb=$('.fb',box),ans=+box.getAttribute('data-ans');
+  var kf=DF.keyField(box),btn=$('.btn',box),fb=$('.fb',box),ans=+box.getAttribute('data-ans');
   function go(){
     if(box.classList.contains('ok'))return;
-    var g=parseExpr(inp.value),v=g?g(0):NaN;
-    if(isNaN(v)){fb.textContent='הקלידו מספר';fb.className='fb no';inp.classList.add('wrong');return}
+    var g=parseExpr(kf.val()),v=g?g(0):NaN;
+    if(isNaN(v)){fb.textContent='הזינו מספר';fb.className='fb no';kf.mark(false);return}
     var ok=Math.abs(v-ans)<1e-9;
-    inp.classList.toggle('right',ok);inp.classList.toggle('wrong',!ok);
-    if(ok){fb.textContent='נכון';fb.className='fb ok';var rv=box.getAttribute('data-reveal');if(rv){var r=$(rv);if(r)r.hidden=false}pass(box)}
+    kf.mark(ok);
+    if(ok){fb.textContent='נכון';fb.className='fb ok';kf.close();var rv=box.getAttribute('data-reveal');if(rv){var r=$(rv);if(r)r.hidden=false}pass(box)}
     else{fb.textContent='לא מדויק, בדקו שוב';fb.className='fb no'}
   }
-  btn.addEventListener('click',go);inp.addEventListener('keydown',function(e){if(e.key==='Enter')go()});
+  btn.addEventListener('click',go);kf.onEnter(go);
 });
 
 /* נעילת שלבים: הבא נפתח אחרי שהקודם הושלם */

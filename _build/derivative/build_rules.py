@@ -26,13 +26,10 @@ def brk(tex):
 def hint(txt): return '<details class="hint"><summary>רמז</summary><span>%s</span></details>' % T(txt)
 
 def ans(t, label, ph='?', nxt=None, sol=None, hidden=False, tb=False, var='x'):
-    """tb=True: בונה איברים (ביטוי). אחרת שדה מספר עם ±"""
+    """tb=True: ביטוי (מקלדת מובנית). אחרת מספר. אין הקלדה במקלדת מערכת"""
     extra = (' data-next="%s"' % nxt if nxt else '') + (' data-sol="%s"' % sol if sol else '')
-    if tb:
-        return ('<div class="row-in chk ans tb" data-t="%s" data-var="%s"%s%s><span class="q">%s</span><div class="tbody"></div>'
-                '<button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div>') % (t, var, extra, ' hidden' if hidden else '', label)
-    return ('<div class="row-in chk ans" data-t="%s"%s%s><span class="q">%s</span><button type="button" class="pm" aria-label="הפיכת סימן">±</button><input type="text" class="num" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" placeholder="%s" aria-label="תשובה">'
-            '<button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div>') % (t, extra, ' hidden' if hidden else '', label, ph)
+    return ('<div class="row-in chk ans kp" data-t="%s" data-mode="%s" data-var="%s"%s%s><span class="q">%s</span><div class="kfield"></div>'
+            '<button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div>') % (t, 'expr' if tb else 'num', var, extra, ' hidden' if hidden else '', label)
 
 titles = ['גלו: נגזרת של חזקה', 'הכללים ודוגמה', 'נסו בעצמכם', 'משוואת משיק']
 nav = ''.join('<a href="#s%d"><b>%d</b>%s</a>' % (i, i, t.split(': ')[-1]) for i, t in enumerate(titles, 1))
@@ -54,12 +51,12 @@ xchips = ''.join(chipbtn('a', a_, M('x=%d' % a_), a_ == 1) for a_ in (1, 2, 3))
 def drow(n):
     return ('<tr data-n="%d"><th>%s</th><td class="num s" data-a="1" data-l="x = 1"></td><td class="num s" data-a="2" data-l="x = 2"></td><td class="num s" data-a="3" data-l="x = 3"></td>'
             '<td class="dcell"><span class="lockd">מלאו את השורה</span>'
-            '<div class="row-in chk ans tb" data-t="d%d" data-var="x" hidden><div class="tbody"></div>'
+            '<div class="row-in chk ans kp" data-t="d%d" data-mode="expr" data-var="x" hidden><div class="kfield"></div>'
             '<button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div></td></tr>') % (n, M('x^%d' % n), n)
 
 stage1 = f'''
 <section class="stage" id="s1" aria-labelledby="s1t"><h2 id="s1t"><span class="n">1</span>{titles[0]}</h2>
-<p>{T("במכונת הגבול חישבתם נגזרות בנקודה. כאן נמלא טבלה של שיפועי משיקים ונחפש כלל. בחרו פונקציה ונקודה, ואז לחצו על הוספה לטבלה. את הנגזרת בונים מאיברים: מקדם וחזקה, ואיבר חופשי.")}</p>
+<p>{T("במכונת הגבול חישבתם נגזרות בנקודה. כאן נמלא טבלה של שיפועי משיקים ונחפש כלל. בחרו פונקציה ונקודה, ואז לחצו על הוספה לטבלה. את הנגזרת מזינים בכפתורי התווים.")}</p>
 <div class="chips" id="fch" role="group" aria-label="בחירת פונקציה">{fchips}</div>
 <div class="chips" id="xch" role="group" aria-label="בחירת נקודה">{xchips}</div>
 <div class="viz"><svg id="rv1" role="img" aria-label="גרף הפונקציה שנבחרה, הנקודה והמשיק"></svg></div>

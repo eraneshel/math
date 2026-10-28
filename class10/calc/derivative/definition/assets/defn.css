@@ -186,3 +186,18 @@ button.chk.btn{margin:6px 0}
   #slopes td[data-l]:before{content:attr(data-l);display:block;color:var(--mut);font:600 12px Rubik,Arial,sans-serif;direction:ltr}
   #slopes td.dcell{grid-column:1/-1}
 }
+
+/* מקלדת מובנית */
+.kfield{display:inline-flex;align-items:center;min-width:150px;min-height:46px;max-width:100%;padding:6px 14px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:700 22px Rubik,Arial,sans-serif;direction:ltr;text-align:left;cursor:pointer;user-select:none;-webkit-user-select:none;overflow-x:auto;white-space:nowrap}
+.kfield.open{border-color:var(--blue);box-shadow:0 0 0 3px #1d4e8922}
+.kfield.right{border-color:var(--g);background:var(--okbg)}
+.kfield.wrong{border-color:var(--bad);background:var(--badbg)}
+.kfield .ph{color:var(--mut);font-weight:600;font-size:14px;font-family:Rubik,Arial,sans-serif}
+.kfield sup{font-size:.72em;vertical-align:super;line-height:1;margin-inline-start:1px}
+.kpad{flex:0 0 100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;max-width:320px;margin:4px 0 2px;direction:ltr}
+.kpad .key{font:700 20px Rubik,Arial,sans-serif;min-height:46px;border:2px solid var(--line);border-radius:12px;background:var(--soft);color:var(--ink);cursor:pointer;touch-action:manipulation}
+.kpad .key:active{background:var(--card);border-color:var(--blue)}
+.kpad .key.del{background:var(--badbg);border-color:var(--bad)}
+.kpad[hidden]{display:none}
+.row-in.kp{direction:ltr;justify-content:flex-start;align-items:center}
+.row-in.kp .btn,.row-in.kp .fb{direction:rtl;unicode-bidi:isolate}
