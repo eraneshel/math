@@ -210,9 +210,11 @@ function awardStars(stage){
   var w=$('.win',stage);if(w&&!w.id.indexOf('win'))w.hidden=false;
 }
 
+/* נעילת שלבים כבויה זמנית לפי בקשת המורה; להחזרה: LOCKS=true */
+var LOCKS=false;
 DF.hooks.push(function(stages){
   stages.forEach(function(s,i){
-    s.classList.toggle('locked',i>0&&!stages[i-1].classList.contains('done'));
+    s.classList.toggle('locked',LOCKS&&i>0&&!stages[i-1].classList.contains('done'));
     if(s.classList.contains('done'))awardStars(s);
   });
 });

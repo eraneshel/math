@@ -89,10 +89,11 @@ var drawTangent=function(){};
   };
 })();
 
-/* ---------- נעילת שלבים: הבא נפתח אחרי הקודם ---------- */
+/* ---------- נעילת שלבים: הבא נפתח אחרי הקודם. כבוי זמנית לפי בקשת המורה; להחזרה: LOCKS=true ---------- */
+var LOCKS=false;
 DF.hooks.push(function(stages){
   stages.forEach(function(s,i){
-    var lock=i>0&&!stages[i-1].classList.contains('done');
+    var lock=LOCKS&&i>0&&!stages[i-1].classList.contains('done');
     s.classList.toggle('locked',lock);
   });
 });
