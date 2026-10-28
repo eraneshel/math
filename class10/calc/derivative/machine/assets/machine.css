@@ -42,3 +42,6 @@
 .mdata .pl .btn{padding:6px 10px}
 .row-in.mlock2.pl{direction:ltr;justify-content:flex-start}
 .row-in.mlock2.pl .btn,.row-in.mlock2.pl .fb{direction:rtl;unicode-bidi:isolate}
+.svg-tri{fill:rgba(255,200,61,.15);stroke:#ffc83d;stroke-width:2;stroke-dasharray:5 4}
+.tri{display:block;margin:4px auto 0;font:inherit;font-size:12px;padding:3px 8px;border-radius:8px;border:1px solid #888;background:transparent;color:inherit;cursor:pointer}
+.tri.on{background:#ffc83d;color:#222;border-color:#ffc83d}

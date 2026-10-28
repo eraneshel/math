@@ -136,6 +136,15 @@ function dataStage(stage,k,sp){
     el('circle',{cx:P.X(p.x),cy:P.Y(p.y),r:6,'class':'svg-ptB'},P.top);
     var tt=text(P.top,P.X(p.x)+(p.h<0?-10:10),P.Y(p.y)-12,'B'+(i+1)+' ('+fmt(p.x,3)+', '+fmt(p.y,3)+')');tt.setAttribute('text-anchor',p.h<0?'end':'start');
   });
+  var triN=[];
+  function clearTri(){triN.forEach(function(n){if(n.parentNode)n.parentNode.removeChild(n)});triN=[]}
+  $$('.tri',stage).forEach(function(b){b.addEventListener('click',function(){
+    var on=b.classList.contains('on');$$('.tri',stage).forEach(function(x){x.classList.remove('on')});clearTri();if(on)return;
+    b.classList.add('on');var p=pts[+b.getAttribute('data-i')];
+    triN.push(el('polyline',{points:P.X(a)+','+P.Y(fa)+' '+P.X(p.x)+','+P.Y(fa)+' '+P.X(p.x)+','+P.Y(p.y)+' '+P.X(a)+','+P.Y(fa),'class':'svg-tri'},P.top));
+    var tx=text(P.top,(P.X(a)+P.X(p.x))/2,P.Y(fa)+(p.y>fa?16:-8),'Δx');tx.setAttribute('text-anchor','middle');triN.push(tx);
+    var ty=text(P.top,P.X(p.x)+(p.h<0?-8:8),(P.Y(fa)+P.Y(p.y))/2,'Δy');ty.setAttribute('text-anchor',p.h<0?'end':'start');triN.push(ty);
+  })});
   var qs=$$('.mq',stage),done=0,fin=$('#dfin'+k),lock=$('.mlock2',stage);
   qs.forEach(function(box){
     var kf=plainField(box),btn=$('.btn',box),fb=$('.fb',box),want=+box.getAttribute('data-q');

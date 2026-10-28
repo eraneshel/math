@@ -116,14 +116,14 @@ def data(k, S):
         x = a + h; y = val(c, x)
         q = (y - fa) / h
         side = 'מימין' if h > 0 else 'משמאל'
-        rows += ('<tr><td class="num"><b>B%d</b><small>%s</small></td><td class="num">%s</td><td class="num">(%s, %s)</td><td class="qc">%s</td></tr>' % (
-            n, side, num(h), num(x), num(y), pf('mq', '', ' data-q="%s"' % repr(round(q, 9)))))
+        rows += ('<tr><td class="num"><b>B%d</b><small>%s</small><button type="button" class="tri" data-i="%d">בגרף</button></td><td class="num">%s</td><td class="qc">%s</td></tr>' % (
+            n, side, n - 1, num(h), pf('mq', '', ' data-q="%s"' % repr(round(q, 9)))))
     pts = [{'h': h, 'x': a + h, 'y': val(c, a + h)} for h in hs]
-    intro = T("בקופסה שחורה פונקציה שנוסחתה חסויה. נמדדו ערכים משני צדי הנקודה A: מימין לנקודה A (כש־$h>0$) ומשמאל לנקודה A (כש־$h<0$). הנקודות B1 עד B4 מסומנות בגרף ובטבלה. חשבו את שיפוע החותך AB בכל שורה.")
+    intro = T("בקופסה שחורה פונקציה שנוסחתה חסויה. נמדדו ערכים משני צדי הנקודה A: מימין לנקודה A (כש־$h>0$) ומשמאל לנקודה A (כש־$h<0$). הנקודות B1 עד B4 מסומנות בגרף. הכפתור בגרף בכל שורה מציג את Δx ואת Δy של המשולש בין A ל־B. חשבו את שיפוע החותך AB בכל שורה.")
     return (head(k, S['title']) + '<p class="lvl">%s</p><p>%s</p>' % (T("הנקודה A היא $(%s,\\,%s)$" % (num(a), num(fa))), intro) + viz(k) +
-            '<div class="tw"><table class="dtab mdata" id="dt%d"><thead><tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr></thead><tbody>%s</tbody></table></div>' % (
-                k, T("נקודה"), T("$h\\ /\\ \\Delta x$"), T("הנקודה B"), T("שיפוע AB"), rows) +
-            '<div id="dfin%d" hidden><p>%s</p>%s</div>' % (k, T("השיפועים מימין לנקודה A והשיפועים משמאל לנקודה A מתקרבים לאותו מספר: הגבול מימין והגבול משמאל שווים. מהו שיפוע המשיק ב־A?"), pf('mlock2', M("f'(%s)=" % num(a)), ' data-ans="%s"' % num(dval(c, a)))) +
+            '<div class="tw"><table class="dtab mdata" id="dt%d"><thead><tr><th>%s</th><th>%s</th><th>%s</th></tr></thead><tbody>%s</tbody></table></div>' % (
+                k, T("נקודה"), T("$\\Delta x$"), T("$\\dfrac{\\Delta y}{\\Delta x}$"), rows) +
+            '<div id="dfin%d" hidden><p>%s</p>%s</div>' % (k, T("השיפועים מימין לנקודה A והשיפועים משמאל לנקודה A מתקרבים לאותו מספר: הגבול מימין והגבול משמאל שווים. מהו שיפוע המשיק ב־A?"), pf('mlock2', M("\\lim_{\\Delta x\\to 0^{+}}\\dfrac{\\Delta y}{\\Delta x}=\\lim_{\\Delta x\\to 0^{-}}\\dfrac{\\Delta y}{\\Delta x}=f'(%s)=" % num(a)), ' data-ans="%s"' % num(dval(c, a)))) +
             '<div id="drev%d" hidden><p class="win">%s</p></div>' % (k, T("הפונקציה בקופסה הייתה $f(x)=%s$. כשהגבול מימין והגבול משמאל שווים, הערך המשותף הוא הנגזרת בנקודה." % ptex(c))) +
             '</section>')
 
