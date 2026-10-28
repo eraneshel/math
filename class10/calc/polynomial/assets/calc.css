@@ -169,3 +169,15 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 
 /* lines that contain a stacked fraction need more room so neighbouring lines do not overlap */
 li:has(.mfrac),p:has(.mfrac){line-height:2.7 !important}
+
+/* triple matching: graph - formula - reason */
+.mt{display:grid;gap:12px;margin:10px 0}
+.mt-row{display:grid;grid-template-columns:minmax(0,230px) 1fr;gap:12px;align-items:center;border:2px solid var(--line,#cfd8e3);border-radius:14px;padding:8px 10px;background:var(--card,#fff)}
+.mt-row.ok{border-color:#2e9a57;background:rgba(46,154,87,.07)}.mt-row.no{border-color:#d4483b;background:rgba(212,72,59,.07)}
+.mt-n{grid-column:1/-1;font-weight:800}
+.mt-svg{width:100%;height:auto;max-width:230px}
+.mt-sel{display:grid;gap:8px}.mt-sel label{display:grid;gap:3px;font-weight:700;font-size:15px}
+.mt-sel select{width:100%;padding:9px 10px;border:2px solid var(--line,#cfd8e3);border-radius:10px;font:inherit;font-size:16px;background:var(--card,#fff);color:var(--ink,#1c2733)}
+.mt-f{direction:ltr;text-align:left}
+@media (max-width:520px){.mt-row{grid-template-columns:1fr}.mt-svg{max-width:100%}}
+.mt-svg text{direction:ltr;unicode-bidi:isolate}

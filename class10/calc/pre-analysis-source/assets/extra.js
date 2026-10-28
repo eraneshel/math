@@ -46,6 +46,25 @@
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('.act-chk');
     if (b) {
+      var mcard = b.closest('.ex'), mt = mcard && mcard.querySelector('.mt');
+      if (mt) {
+        var mfb = mcard.querySelector('.act-ctl .fb'), rows = mt.querySelectorAll('.mt-row'), good = 0, empty = false;
+        mfb.className = 'fb';
+        Array.prototype.forEach.call(rows, function (r) {
+          var sf = r.querySelector('.mt-f'), sr = r.querySelector('.mt-r');
+          r.classList.remove('ok', 'no');
+          if (sf.value === '' || sr.value === '') { empty = true; return; }
+          var okr = sf.value === sf.getAttribute('data-c') && sr.value === sr.getAttribute('data-c');
+          r.classList.add(okr ? 'ok' : 'no'); if (okr) good++;
+        });
+        if (empty) { mfb.classList.add('no'); mfb.textContent = 'בחרו נוסחה ונימוק לכל גרף.'; return; }
+        if (good === rows.length) {
+          mfb.classList.add('ok'); mfb.textContent = 'נכון ✓';
+          if (window.BookApp) window.BookApp.setDone(mcard.getAttribute('data-id'), 'ok');
+          chime();
+        } else { mfb.classList.add('no'); mfb.textContent = good + ' מתוך ' + rows.length + ' נכונים. בדקו את השורות המסומנות באדום: גם הנוסחה וגם הנימוק צריכים להתאים.'; }
+        return;
+      }
       var card = b.closest('.ex'), f = figOf(card), fb = card.querySelector('.act-ctl .fb'); if (!f) return;
       fb.className = 'fb';
       if (f._api.ready && !f._api.ready()) { fb.classList.add('no'); fb.textContent = 'חסרים נתונים: ' + f._api.missing().join(', '); return; }

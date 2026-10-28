@@ -83,8 +83,8 @@ def MCX(label_q_opts_c_why):
 
 TESTS = {}
 SAMPLES = {}
-def at(id, params=None, drags=None, pick=None, pts=None):
-    TESTS[id] = {'params': params or {}, 'drags': drags or {}, 'pick': pick, 'pts': pts or []}
+def at(id, params=None, drags=None, pick=None, pts=None, match=False):
+    TESTS[id] = {'params': params or {}, 'drags': drags or {}, 'pick': pick, 'pts': pts or [], 'match': match}
 
 def FG(xr, yr, curves, caption=None, **kw):
     mys = kw.pop('mystery', None)
@@ -2078,6 +2078,44 @@ def _sketch(xr, yr, basis, target, hint, alt, ystep=2, name='f', ghost=None, min
               goal={'fit': {'target': target}}, goalHint=hint, alt=alt, hideCurve=True, sk=sk,
               caption=r'הגרף יופיע אחרי לחיצה על "העבר גרף". הוא נבנה מהנקודות שהוזנו.')
 
+
+def _mn(v):
+    return ('\u2212%d' % -v) if v < 0 else str(v)
+
+def _thumb(f, label):
+    """small static graph (same look as the site figures) of y=f(x) on [-3,3] x [-5,5]"""
+    W, H, ML, MT, PW, PH = 230, 190, 26, 10, 190, 160
+    sx = lambda x: ML + (x + 3) / 6 * PW
+    sy = lambda y: MT + (5 - y) / 10 * PH
+    g = ''
+    for i in range(-3, 4):
+        g += '<line x1="%.1f" y1="%d" x2="%.1f" y2="%d" class="svg-grid"/>' % (sx(i), MT, sx(i), MT + PH)
+    for j in range(-5, 6):
+        g += '<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" class="svg-grid"/>' % (ML, sy(j), ML + PW, sy(j))
+    g += '<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" class="svg-axis"/><line x1="%.1f" y1="%d" x2="%.1f" y2="%d" class="svg-axis"/>' % (ML, sy(0), ML + PW, sy(0), sx(0), MT, sx(0), MT + PH)
+    for i in (-3, -2, -1, 1, 2, 3):
+        g += '<text x="%.1f" y="%.1f" class="svg-num" text-anchor="middle">%s</text>' % (sx(i), sy(0) + 14, _mn(i)) if i != 0 else ''
+    for j in (-4, -2, 2, 4):
+        g += '<text x="%.1f" y="%.1f" class="svg-num" text-anchor="end">%s</text>' % (sx(0) - 4, sy(j) + 4, _mn(j))
+    d = ''
+    for k in range(0, 241):
+        x = -3 + 6 * k / 240; y = f(x)
+        d += ('L' if d else 'M') + '%.1f %.1f' % (sx(x), sy(max(-9, min(9, y))))
+    cid = 'mt%d' % abs(hash(label))
+    return ('<svg viewBox="0 0 %d %d" class="plot mt-svg" role="img" aria-label="%s"><defs><clipPath id="%s"><rect x="%d" y="%d" width="%d" height="%d"/></clipPath></defs>%s'
+            '<path d="%s" class="svg-line svg-curve l0" clip-path="url(#%s)"/></svg>') % (W, H, label, cid, ML, MT, PW, PH, g, d, cid)
+
+def _match(rows, formulas, reasons):
+    """triple matching: graph -> formula -> reason. rows = [(thumb_svg, formula_index, reason_index)]; selects carry data-c"""
+    fo = ''.join('<option value="%d">%s</option>' % (i, f) for i, f in enumerate(formulas))
+    ro = ''.join('<option value="%d">%s</option>' % (i, 'אבגד'[i]) for i in range(len(reasons)))
+    h = '<div class="mt" data-n="%d">' % len(rows)
+    for n, (svg, fi, ri) in enumerate(rows, 1):
+        h += ('<div class="mt-row"><div class="mt-n">גרף %d</div>%s<div class="mt-sel">'
+              '<label>נוסחה<select class="mt-f" data-c="%d"><option value="">בחרו</option>%s</select></label>'
+              '<label>נימוק<select class="mt-r" data-c="%d"><option value="">בחרו</option>%s</select></label></div></div>') % (n, svg, fi, fo, ri, ro)
+    return h + '</div>'
+
 P.sec('משימה 1: הפונקציה החבויה')
 P.text(r"""
 בשרטוט מסתתרת פונקציה מהצורה $f(x)=x^n$, **ו-$n$ אינו נתון**. המספר $n$ נקרא **המעריך**, והוא **דרגת** הפולינום. תחילה אוספים נתונים, אחר כך חוקרים את הפונקציה, ולבסוף פותרים בעזרתה משוואות.
@@ -2249,6 +2287,23 @@ P.add(TOP(ex(i, 'solo', r"""
     (r'ד. נקודת אפס אחת', r'$q=0$: $h=f$, נקודת אפס יחידה $x=0$'),
     (r'ה. אין נקודות אפס', r'$h(x)\le q=-1<0$ לכל $x$')])), 'shift,zero,par'))
 assert round(6**0.25, 2) == 1.57
+i = pid()
+P.add(TOP(ex(i, 'guided', r"""
+**התאמה: גרף, נוסחה ונימוק.** הנוסחאות $y=a\cdot x^4+q$ מוצגות ברשימה. לכל גרף בחרו את הנוסחה שלו ואת הנימוק המתאים. נוסחה אחת ונימוק אחד אינם מתאימים לאף גרף.
+
+- **א.** הגרף נפתח כלפי מטה, ולכן המקדם $a$ שלילי. המקסימום בגובה $3$, ולכן $q=3$.
+- **ב.** הגרף נפתח כלפי מטה, ולכן המקדם $a$ שלילי. המקסימום בגובה $-1$, ולכן $q=-1$ ואין נקודות אפס.
+- **ג.** הגרף נפתח כלפי מעלה, ולכן המקדם $a$ חיובי. המינימום בגובה $-3$, ולכן $q=-3$.
+- **ד.** הגרף נפתח כלפי מעלה, ולכן המקדם $a$ חיובי. המינימום בגובה $1$, ולכן $q=1$ ואין נקודות אפס.
+
+""" + _match([(_thumb(lambda x: 0.5 * x**4 - 3, 'גרף 1'), 1, 2), (_thumb(lambda x: -0.5 * x**4 + 3, 'גרף 2'), 3, 0), (_thumb(lambda x: -0.5 * x**4 - 1, 'גרף 3'), 0, 1)],
+        ['y = −0.5x⁴ − 1', 'y = 0.5x⁴ − 3', 'y = 0.5x⁴ + 1', 'y = −0.5x⁴ + 3'], ['', '', '', '']) + r"""
+""", act=True, answer=r'גרף 1: $y=0.5x^4-3$ (ג). גרף 2: $y=-0.5x^4+3$ (א). גרף 3: $y=-0.5x^4-1$ (ב)', solution=steps([
+    (r'גרף 1: $y=0.5x^4-3$', r'**ג:** הגרף נפתח כלפי מעלה ($a$ חיובי), והמינימום בגובה $-3$ ($q=-3$)'),
+    (r'גרף 2: $y=-0.5x^4+3$', r'**א:** הגרף נפתח כלפי מטה ($a$ שלילי), והמקסימום בגובה $3$ ($q=3$)'),
+    (r'גרף 3: $y=-0.5x^4-1$', r'**ב:** הגרף נפתח כלפי מטה ($a$ שלילי), והמקסימום בגובה $-1$ ($q=-1$), ולכן אין נקודות אפס'),
+    (r'הנוסחה $y=0.5x^4+1$ והנימוק ד אינם שייכים לאף גרף', r'המינימום בגובה $1$ (מעל ציר ה-$x$) אינו מופיע באף גרף')])), 'shift,zero,ext,sign,par'))
+at(i, match=True)
 i = pid()
 P.add(TOP(ex(i, 'guided', r"""
 **תוצר: פונקציה חדשה מתוך $f$.** נתונה $f(x)=x^4$ (הגרף שלה מוצג בקו דק). נגדיר $g(x)=-f(x)+2$. שרטטו את הגרף של $g$: הוסיפו לשרטוט נקודות של $g$ (נקודת הקיצון ונקודות האפס, למשל) בטבלת ערכים או בגרירה. כשיש מספיק נקודות, לחצו "העבר גרף".
