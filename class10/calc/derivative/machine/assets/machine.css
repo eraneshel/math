@@ -53,3 +53,4 @@
 .mdata tr.limrow .pl{justify-content:center;flex-wrap:wrap}
 .mdata tr.grp th{overflow:hidden}.mdata tr.grp .katex,.mdata tr.grp .katex *{pointer-events:none}
 .svg-ptA{fill:#ffc83d;stroke:#a24a00;stroke-width:3}
+.mdata .limcap{display:inline-block;margin-top:6px;padding:2px 14px;border:2px solid #7a5af8;border-radius:12px;font-weight:700}.mdata tr.limrow td{text-align:center}

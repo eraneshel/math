@@ -122,9 +122,9 @@ def data(k, S):
             q = (y - fa) / h
             rows += ('<tr><td class="num"><b>B%d</b><button type="button" class="tri" data-i="%d">בגרף</button></td><td class="num">%s</td><td class="qc">%s</td></tr>' % (
                 n, n - 1, num(h), pf('mq', '', ' data-q="%s" data-side="%s"' % (repr(round(q, 9)), sd))))
-        lab = M("\\lim_{\\Delta x\\to 0^{%s}}\\dfrac{\\Delta y}{\\Delta x}=" % sign)
-        rows += '<tr class="limrow" id="lim%d%s" hidden><td colspan="3">%s</td></tr>' % (k, sd, pf('mlock2', lab, ' data-ans="%s"' % ans))
-    intro = T("בקופסה שחורה פונקציה שנוסחתה חסויה. נמדדו ערכים משני צדי הנקודה A, והנקודות B1 עד B4 מסומנות בגרף. המרחק האופקי בין A ל־B נקרא $h$, והוא גם $\\Delta x$ (כלומר $h$ ו־$\\Delta x$ הם אותו מספר). לחיצה על נקודה B בגרף (או על הכפתור בגרף בטבלה) מציגה את המשולש בין A ל־B עם Δx ו־Δy. חשבו את שיפוע החותך AB בכל שורה. החץ $\\Delta x\\to 0$ אומר ש־$\\Delta x$ מתקרב ל־0, והסימן $0^{+}$ או $0^{-}$ אומר מאיזה צד. כשהשיפועים בצד אחד מתקרבים למספר, המספר הזה הוא הגבול, ונכתב בסימון $\\lim$.")
+    lab = M("\\lim_{\\Delta x\\to 0}\\dfrac{\\Delta y}{\\Delta x}=")
+    rows += '<tr class="limrow" id="lim%d" hidden><td colspan="3">%s<div class="limcap">%s</div></td></tr>' % (k, pf('mlock2', lab, ' data-ans="%s"' % ans), T("הגבול"))
+    intro = T("בקופסה שחורה פונקציה שנוסחתה חסויה. נמדדו ערכים משני צדי הנקודה A, והנקודות B1 עד B4 מסומנות בגרף. המרחק האופקי בין A ל־B נקרא $h$, והוא גם $\\Delta x$ (כלומר $h$ ו־$\\Delta x$ הם אותו מספר). לחיצה על נקודה B בגרף (או על הכפתור בגרף בטבלה) מציגה את המשולש בין A ל־B עם Δx ו־Δy. חשבו את שיפוע החותך AB בכל שורה. החץ $\\Delta x\\to 0$ אומר ש־$\\Delta x$ מתקרב ל־0, והסימן $0^{+}$ או $0^{-}$ אומר מאיזה צד. כשהשיפועים משני הצדדים מתקרבים לאותו מספר, המספר הזה הוא הגבול, ונכתב בסימון $\\lim$.")
     return (head(k, S['title']) + '<p class="lvl">%s</p><p>%s</p>' % (T("הנקודה A היא $(%s,\\,%s)$" % (num(a), num(fa))), intro) + viz(k) +
             '<div class="tw"><table class="dtab mdata" id="dt%d"><thead><tr><th>%s</th><th>%s</th><th>%s</th></tr></thead><tbody>%s</tbody></table></div>' % (
                 k, T("נקודה"), T("$h=\\Delta x$"), T("$\\dfrac{\\Delta y}{\\Delta x}$"), rows) +

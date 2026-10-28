@@ -162,7 +162,7 @@ function dataStage(stage,k,sp){
       var v=numVal(kf);
       if(isNaN(v)){fb.textContent='הזינו מספר';fb.className='fb no';kf.mark(false);return}
       var ok=Math.abs(v-want)<1e-6;kf.mark(ok);
-      if(ok){fb.textContent='נכון';fb.className='fb ok';kf.close();pass(box);cnt[sd]++;if(cnt[sd]===need[sd]){var lr=$('#lim'+k+sd);if(lr)lr.hidden=false}}
+      if(ok){fb.textContent='נכון';fb.className='fb ok';kf.close();pass(box);cnt[sd]++;if(cnt.r===need.r&&cnt.l===need.l){var lr=$('#lim'+k);if(lr)lr.hidden=false}}
       else{S.wrong++;fb.textContent='לא מדויק. שיפוע AB = Δy ÷ Δx';fb.className='fb no'}
     }
     btn.addEventListener('click',go);kf.onEnter(go);
