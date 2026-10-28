@@ -158,3 +158,31 @@ button.chk.btn{margin:6px 0}
 /* שורות תשובה אלגבריות (כללי גזירה): "f′(x) = [תיבה]" משמאל לימין, כמו בכתיבה מתמטית */
 .row-in.ans{direction:ltr;justify-content:flex-start}
 .row-in.ans .btn,.row-in.ans .fb{direction:rtl;unicode-bidi:isolate}
+
+/* בונה איברים ושדות מספר עם ± */
+.pm{font:700 16px Rubik,Arial,sans-serif;min-width:34px;min-height:40px;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer}
+.row-in .pm+input{margin-inline-start:0}
+.row-in.tb{align-items:center}
+.tbody{display:flex;flex-wrap:wrap;align-items:center;gap:8px 6px;direction:ltr}
+.tl{display:contents}
+.term,.tk{display:inline-flex;align-items:center;gap:4px}
+.tp{font-weight:800;font-size:18px;color:var(--mut)}
+.tv{font:700 20px Rubik,Arial,sans-serif}
+.tx{font:700 18px Rubik,Arial,sans-serif;color:var(--mut)}
+.row-in .tbody input[type=text]{font:700 17px Rubik,Arial,sans-serif;text-align:center;direction:ltr;padding:9px 2px;min-height:40px;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);min-width:0}
+.row-in .tbody input.tc{width:60px}.row-in .tbody input.te{width:54px}.row-in .tbody input.tf{width:96px}
+.row-in .tbody input::placeholder{font-size:13px;font-weight:600}
+.row-in .tbody input.right{border-color:var(--g);background:var(--okbg)}
+.row-in .tbody input.wrong{border-color:var(--bad);background:var(--badbg)}
+.tdel{border:0;background:none;color:var(--mut);font-size:16px;cursor:pointer;min-width:32px;min-height:36px}
+.tadd{min-height:40px}
+.row-in input.num{width:120px;text-align:center}
+@media (max-width:640px){
+  #slopes,#slopes tbody{display:block}
+  #slopes thead{display:none}
+  #slopes tr{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:12px;margin:10px 0;overflow:hidden}
+  #slopes th{grid-column:1/-1;border:0;background:var(--soft);font-size:18px}
+  #slopes td{border:0;border-top:1px solid var(--line)}
+  #slopes td[data-l]:before{content:attr(data-l);display:block;color:var(--mut);font:600 12px Rubik,Arial,sans-serif;direction:ltr}
+  #slopes td.dcell{grid-column:1/-1}
+}

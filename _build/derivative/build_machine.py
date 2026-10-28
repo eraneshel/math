@@ -59,13 +59,16 @@ def stage(k, c, a):
     intro = ''
     if first:
         intro = '<p>%s</p>' % T("לחצו על קירוב כדי להזיז את B אל A. הטבלה מראה לאן מתייצב שיפוע החותך. הקלידו את שיפוע המשיק ב־A ונעלו אותו.")
-    def inrow(cls, label, extra=''):
-        return ('<div class="row-in chk %s" data-k="%d"%s><span class="q">%s</span><input type="text" class="wide" autocomplete="off" spellcheck="false" dir="ltr" placeholder="?" aria-label="תשובה">'
+    def inrow(cls, label, extra='', tb=False):
+        if tb:
+            return ('<div class="row-in chk %s tb" data-k="%d" data-var="h"%s><span class="q">%s</span><div class="tbody"></div>'
+                    '<button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div>') % (cls, k, extra, label)
+        return ('<div class="row-in chk %s" data-k="%d"%s><span class="q">%s</span><button type="button" class="pm" aria-label="הפיכת סימן">±</button><input type="text" class="num" inputmode="decimal" autocomplete="off" spellcheck="false" dir="ltr" placeholder="?" aria-label="תשובה">'
                 '<button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div>') % (cls, k, extra, label)
     rows = (
-        '<div class="qrow mr" data-r="1">' + inrow('mrow', lab1, ' data-r="1"') + hint("פתחו סוגריים: $f(%d+h)=%s$." % (a, ptex(sh, 'h'))) +
+        '<div class="qrow mr" data-r="1">' + inrow('mrow', lab1, ' data-r="1"', True) + hint("פתחו סוגריים: $f(%d+h)=%s$." % (a, ptex(sh, 'h'))) +
         '<div class="sol" hidden>%s</div></div>' % T("$f(%d+h)-f(%d)=%s$" % (a, a, ptex(g1, 'h'))) +
-        '<div class="qrow mr" data-r="2" hidden>' + inrow('mrow', lab2, ' data-r="2"') + hint("הוציאו את $h$ כגורם משותף במונה וצמצמו. כתבו ללא שבר.") +
+        '<div class="qrow mr" data-r="2" hidden>' + inrow('mrow', lab2, ' data-r="2"', True) + hint("הוציאו את $h$ כגורם משותף במונה וצמצמו. כתבו ללא שבר.") +
         '<div class="sol" hidden>%s</div></div>' % T("$%s$, כש־$h$ שונה מ־0." % ptex(g2, 'h')) +
         '<div class="qrow mr" data-r="3" hidden>' + inrow('mrow', lab3, ' data-r="3"') + hint("כש־$h$ שואף ל־0, כל איבר שמכיל את $h$ שואף ל־0.") +
         '<div class="sol" hidden>%s</div></div>' % T("$f'(%d)=\\lim_{h\\to 0}\\left(%s\\right)=%d$" % (a, ptex(g2, 'h'), d))
@@ -79,7 +82,7 @@ def stage(k, c, a):
 <div class="tw"><table class="dtab mlog" id="log{k}"><thead><tr><th>{T("$h$")}</th><th>{T("שיפוע החותך AB")}</th></tr></thead><tbody></tbody></table></div>
 {inrow('mlock', lab3.replace('f&#39;', "f'"), ' data-lock="1"')}
 <div class="malg" id="alg{k}" hidden>
-<p class="lead">{T("עכשיו מוכיחים. כתבו עם $h$, למשל 7h+h^2.")}</p>
+<p class="lead">{T("עכשיו מוכיחים. בנו כל ביטוי מאיברים של $h$: מקדם וחזקה, ואיבר חופשי.")}</p>
 {rows}
 </div>
 <p class="win" id="win{k}" hidden>השלב הושלם</p>

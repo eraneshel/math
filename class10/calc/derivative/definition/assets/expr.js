@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 var DF=window.DF;if(!DF)return;
-var $=DF.$,pass=DF.pass;
+var $=DF.$,$$=DF.$$,pass=DF.pass;
 
 function tokenize(s){
   s=String(s).replace(/[−–‒]/g,'-').replace(/[×·⋅]/g,'*').replace(/÷/g,'/')
@@ -97,5 +97,61 @@ function setBox(box,vals,onok){
   btn.addEventListener('click',go);
   ins.forEach(function(i){i.addEventListener('keydown',function(e){if(e.key==='Enter')go()})});
 }
-DF.parseExpr=parseExpr;DF.same=same;DF.answerBox=answerBox;DF.setBox=setBox;
+
+/* כפתור ± ליד שדה מספר (במקלדות בטלפון אין מינוס) */
+document.addEventListener('click',function(e){
+  var b=e.target;if(!b.classList||!b.classList.contains('pm'))return;
+  var inp=b.nextElementSibling;while(inp&&inp.tagName!=='INPUT')inp=inp.nextElementSibling;
+  if(!inp)return;
+  inp.value=inp.value.charAt(0)==='-'?inp.value.slice(1):'-'+inp.value;
+  inp.focus();
+});
+
+/* בונה איברים: [±][מקדם]·x^[חזקה] + ... + [איבר חופשי]. בלי הקלדת נוסחאות (טלפון) */
+function termBox(box,fn,onok,onwrong){
+  var vr=box.getAttribute('data-var')||'x',body=$('.tbody',box),fb=$('.fb',box),btn=$('.btn',box);
+  body.innerHTML='<span class="tl"></span><button type="button" class="btn small ghost tadd">+ איבר</button>'+
+    '<span class="tk"><span class="tp">+</span><button type="button" class="pm" aria-label="הפיכת סימן">±</button><input class="tf" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="איבר חופשי" aria-label="איבר חופשי"></span>';
+  var tl=$('.tl',body),add=$('.tadd',body),n=0;
+  function addTerm(){
+    if(n>=5)return;n++;
+    var t=document.createElement('span');t.className='term';
+    t.innerHTML=(n>1?'<span class="tp">+</span>':'')+'<button type="button" class="pm" aria-label="הפיכת סימן">±</button>'+
+      '<input class="tc" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="מקדם" aria-label="מקדם">'+
+      '<span class="tv">'+vr+'</span><span class="tx">^</span>'+
+      '<input class="te" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="חזקה" aria-label="חזקה">'+
+      (n>1?'<button type="button" class="tdel" aria-label="מחיקת איבר">✕</button>':'');
+    tl.appendChild(t);
+    var d=$('.tdel',t);if(d)d.addEventListener('click',function(){tl.removeChild(t);n--;add.hidden=false});
+    if(n>=5)add.hidden=true;
+  }
+  add.addEventListener('click',addTerm);addTerm();
+  function bad(msg){fb.textContent=msg;fb.className='fb no';if(onwrong)onwrong()}
+  function num(str){var g=parseExpr(str);var v=g?g(0):NaN;return v}
+  function go(){
+    if(box.classList.contains('ok'))return;
+    var T=[],seen={},k=0,ks=$('.tf',body).value.trim(),i,ts=$$('.term',tl),err='';
+    for(i=0;i<ts.length;i++){
+      var cs=$('.tc',ts[i]).value.trim(),es=$('.te',ts[i]).value.trim();
+      if(!cs&&!es)continue;
+      var c=num(cs),e=Number(es);
+      if(!cs||!es||isNaN(c)||!/^\d+$/.test(es)||e<1){err='בכל איבר מלאו מקדם וחזקה (מספר שלם, 1 ומעלה). איבר בלי '+vr+' כתבו בשדה האיבר החופשי';break}
+      if(seen[e]){err='יש שני איברים עם אותה חזקה. אחדו אותם';break}
+      seen[e]=1;T.push([c,e]);
+    }
+    if(!err){
+      if(ks){k=num(ks);if(isNaN(k))err='באיבר החופשי כתבו מספר'}
+      else if(!T.length)err='הוסיפו איבר'
+    }
+    if(err){bad(err);return}
+    var g=function(x){var s=k;for(var j=0;j<T.length;j++)s+=T[j][0]*Math.pow(x,T[j][1]);return s};
+    var ok=same(g,fn);
+    $$('input',body).forEach(function(q){q.classList.toggle('right',ok);q.classList.toggle('wrong',!ok)});
+    if(ok){fb.textContent='נכון';fb.className='fb ok';pass(box);if(onok)onok(box)}
+    else bad('לא מדויק, בדקו שוב');
+  }
+  btn.addEventListener('click',go);
+  body.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.tagName==='INPUT')go()});
+}
+DF.termBox=termBox;DF.parseExpr=parseExpr;DF.same=same;DF.answerBox=answerBox;DF.setBox=setBox;
 })();

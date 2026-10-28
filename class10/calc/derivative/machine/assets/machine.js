@@ -100,30 +100,29 @@ LV.forEach(function(L,idx){
   /* הוכחה אלגברית: ביטוי ב-h, נבדק בהצבת ערכים */
   function g1(h){return f(a+h)-fa}
   var T3=[g1,function(h){return g1(h)/h},function(){return ans}];
-  var NOFORM=[/[(]/,/[\/(]/,/./];
-  var MSG=['פתחו את הסוגריים וכתבו בלי סוגריים','צמצמו ב־h וכתבו בלי שבר ובלי סוגריים',''];
   var rowsEl=$$('.qrow.mr',stage);
+  function solved(box,ri){
+    $('.sol',rowsEl[ri]).hidden=false;
+    if(rowsEl[ri+1])rowsEl[ri+1].hidden=false;
+    if(ri===2){
+      setStars(2);if(!hinted&&wrong<=1)setStars(3);
+      burst();$('#win'+k).hidden=false;
+    }
+  }
   $$('.mrow',stage).forEach(function(box,ri){
+    if(box.classList.contains('tb')){
+      DF.termBox(box,T3[ri],function(b){solved(b,ri)},function(){wrong++});
+      return;
+    }
     var inp=$('input',box),btn=$('.btn',box),fb=$('.fb',box);
     function go(){
       if(box.classList.contains('ok'))return;
-      var raw=inp.value.replace(/\s+/g,'');
-      var g=parseExpr(raw.replace(/h/gi,'x'));
-      if(!g){fb.textContent='לא הצלחתי לקרוא. כתבו למשל 7h+h^2';fb.className='fb no';inp.classList.add('wrong');return}
-      if(ri<2&&NOFORM[ri].test(raw)){wrong++;fb.textContent=MSG[ri];fb.className='fb no';inp.classList.add('wrong');return}
-      var ok=same(g,T3[ri]);
-      if(ok&&ri===2&&/[x h]/i.test(raw))ok=false;
+      var g=parseExpr(inp.value),v=g?g(0):NaN;
+      if(isNaN(v)){fb.textContent='הקלידו מספר';fb.className='fb no';inp.classList.add('wrong');return}
+      var ok=Math.abs(v-ans)<1e-9;
       inp.classList.toggle('right',ok);inp.classList.toggle('wrong',!ok);
-      if(ok){
-        fb.textContent='נכון';fb.className='fb ok';
-        $('.sol',rowsEl[ri]).hidden=false;
-        if(rowsEl[ri+1])rowsEl[ri+1].hidden=false;
-        pass(box);
-        if(ri===2){
-          setStars(2);if(!hinted&&wrong<=1)setStars(3);
-          burst();$('#win'+k).hidden=false;
-        }
-      }else{wrong++;fb.textContent='לא מדויק, בדקו שוב';fb.className='fb no'}
+      if(ok){fb.textContent='נכון';fb.className='fb ok';pass(box);solved(box,ri)}
+      else{wrong++;fb.textContent='לא מדויק, בדקו שוב';fb.className='fb no'}
     }
     btn.addEventListener('click',go);inp.addEventListener('keydown',function(e){if(e.key==='Enter')go()});
   });
