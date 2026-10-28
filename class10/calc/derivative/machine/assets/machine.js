@@ -162,7 +162,7 @@ function dataStage(stage,k,sp){
       var v=numVal(kf);
       if(isNaN(v)){fb.textContent='הזינו מספר';fb.className='fb no';kf.mark(false);return}
       var ok=Math.abs(v-want)<1e-6;kf.mark(ok);
-      if(ok){fb.textContent='נכון';fb.className='fb ok';kf.close();pass(box);cnt[sd]++;if(cnt.r===need.r&&cnt.l===need.l){var lr=$('#lim'+k);if(lr)lr.hidden=false}}
+      if(ok){fb.textContent='נכון';fb.className='fb ok';kf.close();pass(box);cnt[sd]++;}
       else{S.wrong++;fb.textContent='לא מדויק. שיפוע AB = Δy ÷ Δx';fb.className='fb no'}
     }
     btn.addEventListener('click',go);kf.onEnter(go);
@@ -171,6 +171,7 @@ function dataStage(stage,k,sp){
     var kf=plainField(lock),btn=$('.btn',lock),fb=$('.fb',lock),want=+lock.getAttribute('data-ans');
     function go(){
       if(lock.classList.contains('ok'))return;
+      if(cnt.r<need.r||cnt.l<need.l){fb.textContent='קודם חשבו את כל השיפועים משני הצדדים';fb.className='fb no';return}
       var v=numVal(kf);
       if(isNaN(v)){fb.textContent='הזינו מספר';fb.className='fb no';kf.mark(false);return}
       if(Math.abs(v-want)<1e-9){
