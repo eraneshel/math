@@ -11,6 +11,16 @@ function niceStep(r){var e=Math.pow(10,Math.floor(Math.log(r/6)/Math.LN10)),m=r/
 function poly(c){return {
   f:function(x){var s=0;for(var i=0;i<c.length;i++)s+=c[i]*Math.pow(x,i);return s},
   fp:function(x){var s=0;for(var i=1;i<c.length;i++)s+=i*c[i]*Math.pow(x,i-1);return s}}}
+/* שדה מספר פשוט (תא + כפתור ±), באותו ממשק של DF.keyField */
+function plainField(box){
+  var inp=$('.pfield',box),pm=$('.pm',box),cbs=[];
+  pm.addEventListener('click',function(){var v=inp.value.trim();inp.value=v.charAt(0)==='-'?v.slice(1):'-'+v;inp.focus()});
+  inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();cbs.forEach(function(f){f()})}});
+  inp.addEventListener('input',function(){inp.classList.remove('right','wrong')});
+  return {val:function(){return inp.value.replace(/,/g,'.').replace(/[−–]/g,'-').trim()},
+    mark:function(ok){inp.classList.toggle('right',ok===true);inp.classList.toggle('wrong',ok===false)},
+    close:function(){},onEnter:function(f){cbs.push(f)}};
+}
 function numVal(kf){var g=parseExpr(kf.val());return g?g(0):NaN}
 
 /* מצב לשלב: טעויות ורמזים. כוכבים נקבעים בסיום השלב */
@@ -124,22 +134,22 @@ function dataStage(stage,k,sp){
   var Ac=el('circle',{cx:P.X(a),cy:P.Y(fa),r:7,'class':'svg-ptA'},P.top);text(P.top,P.X(a)-14,P.Y(fa)-12,'A');
   pts.forEach(function(p,i){
     el('circle',{cx:P.X(p.x),cy:P.Y(p.y),r:6,'class':'svg-ptB'},P.top);
-    text(P.top,P.X(p.x)+(p.h<0?-16:16),P.Y(p.y)-10,'B'+(i+1));
+    var tt=text(P.top,P.X(p.x)+(p.h<0?-10:10),P.Y(p.y)-12,'B'+(i+1)+' ('+fmt(p.x,3)+', '+fmt(p.y,3)+')');tt.setAttribute('text-anchor',p.h<0?'end':'start');
   });
   var qs=$$('.mq',stage),done=0,fin=$('#dfin'+k),lock=$('.mlock2',stage);
   qs.forEach(function(box){
-    var kf=DF.keyField(box),btn=$('.btn',box),fb=$('.fb',box),want=+box.getAttribute('data-q');
+    var kf=plainField(box),btn=$('.btn',box),fb=$('.fb',box),want=+box.getAttribute('data-q');
     function go(){
       if(box.classList.contains('ok'))return;
       var v=numVal(kf);
       if(isNaN(v)){fb.textContent='הזינו מספר';fb.className='fb no';kf.mark(false);return}
       var ok=Math.abs(v-want)<1e-6;kf.mark(ok);
       if(ok){fb.textContent='נכון';fb.className='fb ok';kf.close();pass(box);done++;if(done===qs.length)fin.hidden=false}
-      else{S.wrong++;fb.textContent='לא מדויק. השתמשו ב־(y של B − y של A) ÷ h';fb.className='fb no'}
+      else{S.wrong++;fb.textContent='לא מדויק. שיפוע AB = (y של B − y של A) ÷ h';fb.className='fb no'}
     }
     btn.addEventListener('click',go);kf.onEnter(go);
   });
-  var kf=DF.keyField(lock),btn=$('.btn',lock),fb=$('.fb',lock);
+  var kf=plainField(lock),btn=$('.btn',lock),fb=$('.fb',lock);
   function go(){
     if(lock.classList.contains('ok'))return;
     var v=numVal(kf);

@@ -61,6 +61,11 @@ def kf(cls, label, extra='', mode='num', var='h', dec=False):
             '<button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div>') % (
                 cls, mode, var, ' data-dec="1"' if dec else '', extra, label)
 
+def pf(cls, label, extra=''):
+    return ('<div class="row-in chk %s pl"%s><span class="q">%s</span><button type="button" class="pm" aria-label="הפיכת סימן">±</button>'
+            '<input type="text" class="pfield num" inputmode="decimal" autocomplete="off" enterkeyhint="done" aria-label="ערך">'
+            '<button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div>') % (cls, extra, label)
+
 def head(k, title, tag=''):
     return ('<section class="stage" id="s%d" aria-labelledby="s%dt"><h2 id="s%dt"><span class="n">%d</span>%s%s'
             '<span class="stars" id="mst%d" aria-label="כוכבי דיוק"><i>★</i><i>★</i><i>★</i></span></h2>') % (k, k, k, k, title, tag, k)
@@ -107,18 +112,19 @@ def data(k, S):
     c, a, hs = S['c'], S['a'], S['hs']
     fa = val(c, a)
     rows = ''
-    for h in hs:
+    for n, h in enumerate(hs, 1):
         x = a + h; y = val(c, x)
         q = (y - fa) / h
-        rows += ('<tr><td class="num">%s</td><td class="num">(%s, %s)</td><td class="qc">%s</td></tr>' % (
-            num(h), num(x), num(y), kf('mq', '', ' data-q="%s"' % repr(round(q, 9)), 'num', 'h', True)))
+        side = 'מימין' if h > 0 else 'משמאל'
+        rows += ('<tr><td class="num"><b>B%d</b><small>%s</small></td><td class="num">%s</td><td class="num">(%s, %s)</td><td class="qc">%s</td></tr>' % (
+            n, side, num(h), num(x), num(y), pf('mq', '', ' data-q="%s"' % repr(round(q, 9)))))
     pts = [{'h': h, 'x': a + h, 'y': val(c, a + h)} for h in hs]
-    intro = T("בקופסה שחורה פונקציה שנוסחתה חסויה. נמדדו ערכים משני צדי הנקודה A, והם מסומנים בגרף ובטבלה. חשבו את שיפוע החותך AB בכל שורה.")
+    intro = T("בקופסה שחורה פונקציה שנוסחתה חסויה. נמדדו ערכים משני צדי הנקודה A: מימין לנקודה A (כש־$h>0$) ומשמאל לנקודה A (כש־$h<0$). הנקודות B1 עד B4 מסומנות בגרף ובטבלה. חשבו את שיפוע החותך AB בכל שורה.")
     return (head(k, S['title']) + '<p class="lvl">%s</p><p>%s</p>' % (T("הנקודה A היא $(%s,\\,%s)$" % (num(a), num(fa))), intro) + viz(k) +
-            '<div class="tw"><table class="dtab mdata" id="dt%d"><thead><tr><th>%s</th><th>B</th><th>%s</th></tr></thead><tbody>%s</tbody></table></div>' % (
-                k, T("$h$"), T("שיפוע AB"), rows) +
-            '<div id="dfin%d" hidden>%s<p>%s</p>%s</div>' % (k, '<p>' + T("המנות מתקרבות אל אותו מספר משני הצדדים. מהו שיפוע המשיק ב־A?") + '</p>', '', kf('mlock2', M("f'(%s)=" % num(a)), ' data-ans="%s"' % num(dval(c, a)))) +
-            '<div id="drev%d" hidden><p class="win">%s</p></div>' % (k, T("הפונקציה בקופסה הייתה $f(x)=%s$. השיפוע שמצאתם הוא נגזרת הפונקציה בנקודה." % ptex(c))) +
+            '<div class="tw"><table class="dtab mdata" id="dt%d"><thead><tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr></thead><tbody>%s</tbody></table></div>' % (
+                k, T("נקודה"), T("$h\\ /\\ \\Delta x$"), T("הנקודה B"), T("שיפוע AB"), rows) +
+            '<div id="dfin%d" hidden><p>%s</p>%s</div>' % (k, T("השיפועים מימין לנקודה A והשיפועים משמאל לנקודה A מתקרבים לאותו מספר: הגבול מימין והגבול משמאל שווים. מהו שיפוע המשיק ב־A?"), pf('mlock2', M("f'(%s)=" % num(a)), ' data-ans="%s"' % num(dval(c, a)))) +
+            '<div id="drev%d" hidden><p class="win">%s</p></div>' % (k, T("הפונקציה בקופסה הייתה $f(x)=%s$. כשהגבול מימין והגבול משמאל שווים, הערך המשותף הוא הנגזרת בנקודה." % ptex(c))) +
             '</section>')
 
 def brk(tex):

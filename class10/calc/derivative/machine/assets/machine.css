@@ -34,3 +34,11 @@
 .mdata .row-in{margin:0}
 .mdata .kfield{min-width:100px;font-size:18px;min-height:42px}
 .mdata th,.mdata td{padding:6px 4px}
+.mdata td small{display:block;font-size:12px;opacity:.7}
+.mdata .pl{direction:ltr;justify-content:center;gap:6px}
+.mdata .pl .q:empty{display:none}
+.mdata .pfield{width:96px;min-height:42px}
+.mdata .pm{min-height:42px}
+.mdata .pl .btn{padding:6px 10px}
+.row-in.mlock2.pl{direction:ltr;justify-content:flex-start}
+.row-in.mlock2.pl .btn,.row-in.mlock2.pl .fb{direction:rtl;unicode-bidi:isolate}
