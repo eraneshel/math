@@ -293,6 +293,10 @@
     var freeMode = !!(spec.sk && spec.sk.free), FP = [], gFree = freeMode ? el('g', {}, gDyn) : null, fpRows = null, fpBody = null;
     function fpBasis() { return spec.sk.basis.map(function (e) { var f = null; try { f = new Function('x', 'with(Math){return (' + String(e).replace(/\^/g, '**') + ');}'); } catch (er) { f = function () { return NaN; }; } return f; }); }
     function fpTouched() { return FP.filter(function (q) { return q.touched; }); }
+    /* key points that must be present (within a narrow tolerance): sk.need = [[x,y],...] */
+    function needTol() { return 0.06; }
+    function needMiss() { var N = (spec.sk && spec.sk.need) || [], T = fpTouched(); return N.filter(function (n) { return !T.some(function (q) { return Math.abs(q.x - n[0]) <= needTol() && Math.abs(q.y - n[1]) <= needTol(); }); }); }
+    function nMinPts() { var K0 = spec.sk; return Math.max(K0.basis.length, (K0.need || []).length); }
     /* least squares fit of the basis to the entered points; null when the points do not determine the curve */
     function doFit() {
       if (!freeMode) return null;
@@ -635,7 +639,7 @@
     if (spec.sk && freeMode) {
       var K = spec.sk; skBox = document.createElement('div'); skBox.className = 'sk';
       var mk = function (tag, cls, txt) { var e2 = document.createElement(tag); if (cls) e2.className = cls; if (txt) e2.textContent = txt; return e2; };
-      var nmin = K.basis.length;
+      var nmin = nMinPts();
       skBox.appendChild(mk('div', 'sk-t', K.intro || ('בנו את הגרף מנקודות. ' + (nmin === 1 ? 'נדרשת לפחות נקודה אחת.' : 'נדרשות לפחות ' + nmin + ' נקודות.') + ' כשיש מספיק נקודות מופיע הכפתור "העבר גרף".')));
       var bt = mk('div', 'sk-w'); bt.appendChild(mk('div', 'sk-wh', 'טבלת ערכים'));
       bt.appendChild(mk('div', 'sk-wd', 'מוסיפים נקודה ומקלידים את x ואת y שלה, או גוררים אותה בשרטוט (נקודה שלא הוזנה מוצגת כעיגול ריק).'));
@@ -713,7 +717,7 @@
       if (g.any) return g.any.some(ok);
       if (g.all) return g.all.every(ok);
       if (g.params) return Object.keys(g.params).every(function (k) { return cmp(Pm[k], g.params[k], (pdef[k].step || 1) / 2 + 1e-9); });
-      if (g.fit) { var ft = doFit(); if (!ft || ft.res > (g.fit.res || 0.15)) return false; return ft.c.every(function (v, i) { return Math.abs(v - g.fit.target[i]) <= (g.fit.tol || 0.08) * Math.max(1, Math.abs(g.fit.target[i])); }); }
+      if (g.fit) { var ft = doFit(); if (!ft || needMiss().length || ft.res > (g.fit.res || 0.15)) return false; return ft.c.every(function (v, i) { return Math.abs(v - g.fit.target[i]) <= (g.fit.tol || 0.08) * Math.max(1, Math.abs(g.fit.target[i])); }); }
       if (g.expr) { refresh(); return !!evx(g.expr, 0); }
       if (g.curve) { refresh(); var gc = g.curve, tol = gc.tol || 0.03 * ys, mx = 0; for (var ti = 0; ti <= 80; ti++) { var tx = xr[0] + xs * ti / 80, d1 = cf(gc.i || 0, tx) - evx(gc.target, tx); if (isFinite(d1)) mx = Math.max(mx, Math.abs(d1)); } return mx <= tol; }
       if (g.line) { var q = lineOf(spec.lines[g.line.i || 0]); if (q.vert) return false; return Math.abs(q.m - g.line.m) < 0.06 && Math.abs(q.b - g.line.b) < 0.06; }
@@ -731,8 +735,8 @@
       setDrag: function (id, x, y) { place(dragDef[id], x, y); prov[id] = true; update(); fireChange(); },
       state: function () { return { params: JSON.parse(JSON.stringify(Pm)), drags: JSON.parse(JSON.stringify(D)) }; },
       addPoint: function (x, y) { return fpAdd(x, y); },
-      ready: function () { if (freeMode) return !!doFit(); return !spec.sk || spec.sk.pts.every(function (q) { return prov[q.id]; }); },
-      missing: function () { if (freeMode) { var nt = fpTouched().length, nb = spec.sk.basis.length; return [nt < nb ? 'נקודות: הוזנו ' + nt + ', נדרשות לפחות ' + nb : 'הנקודות אינן קובעות גרף. החליפו או הוסיפו נקודה בערך x אחר']; } return spec.sk ? spec.sk.pts.filter(function (q) { return !prov[q.id]; }).map(function (q) { return q.lab; }) : []; },
+      ready: function () { if (freeMode) return !!doFit() && !needMiss().length; return !spec.sk || spec.sk.pts.every(function (q) { return prov[q.id]; }); },
+      missing: function () { if (freeMode) { var nt = fpTouched().length, nb = nMinPts(); if (nt < nb) return ['נקודות: הוזנו ' + nt + ', נדרשות לפחות ' + nb]; if (needMiss().length) return [spec.sk.needMsg || 'חסרות נקודות מפתח של הגרף (הנקודות צריכות להיות מדויקות)']; return ['הנקודות אינן קובעות גרף. החליפו או הוסיפו נקודה בערך x אחר']; } return spec.sk ? spec.sk.pts.filter(function (q) { return !prov[q.id]; }).map(function (q) { return q.lab; }) : []; },
       drawGraph: function () { var ft1 = doFit(); if (ft1) fitC = ft1.c; curveHidden = false; update(); },
       hasGoal: !!spec.goal, hint: spec.goalHint || ''
     };
