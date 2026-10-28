@@ -119,7 +119,7 @@ def data(k, S):
         rows += ('<tr><td class="num"><b>B%d</b><small>%s</small><button type="button" class="tri" data-i="%d">בגרף</button></td><td class="num">%s</td><td class="qc">%s</td></tr>' % (
             n, side, n - 1, num(h), pf('mq', '', ' data-q="%s"' % repr(round(q, 9)))))
     pts = [{'h': h, 'x': a + h, 'y': val(c, a + h)} for h in hs]
-    intro = T("בקופסה שחורה פונקציה שנוסחתה חסויה. נמדדו ערכים משני צדי הנקודה A: מימין לנקודה A (כש־$h>0$) ומשמאל לנקודה A (כש־$h<0$). הנקודות B1 עד B4 מסומנות בגרף. הכפתור בגרף בכל שורה מציג את Δx ואת Δy של המשולש בין A ל־B. חשבו את שיפוע החותך AB בכל שורה.")
+    intro = T("בקופסה שחורה פונקציה שנוסחתה חסויה. נמדדו ערכים משני צדי הנקודה A: מימין לנקודה A (כש־$h>0$) ומשמאל לנקודה A (כש־$h<0$). הנקודות B1 עד B4 מסומנות בגרף. לחיצה על נקודה B בגרף (או על הכפתור בגרף בטבלה) מציגה את המשולש בין A ל־B עם Δx ו־Δy. חשבו את שיפוע החותך AB בכל שורה.")
     return (head(k, S['title']) + '<p class="lvl">%s</p><p>%s</p>' % (T("הנקודה A היא $(%s,\\,%s)$" % (num(a), num(fa))), intro) + viz(k) +
             '<div class="tw"><table class="dtab mdata" id="dt%d"><thead><tr><th>%s</th><th>%s</th><th>%s</th></tr></thead><tbody>%s</tbody></table></div>' % (
                 k, T("נקודה"), T("$\\Delta x$"), T("$\\dfrac{\\Delta y}{\\Delta x}$"), rows) +

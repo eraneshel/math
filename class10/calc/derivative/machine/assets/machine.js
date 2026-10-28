@@ -132,19 +132,27 @@ function dataStage(stage,k,sp){
   ymin-=pad;ymax+=pad;var gy=niceStep(ymax-ymin);
   var P=Plot($('#mv'+k),{xmin:x0,xmax:x1,ymin:ymin,ymax:ymax,W:640,H:340,gx:0.5,gy:gy,lx:0.5,ly:gy});
   var Ac=el('circle',{cx:P.X(a),cy:P.Y(fa),r:7,'class':'svg-ptA'},P.top);text(P.top,P.X(a)-14,P.Y(fa)-12,'A');
+  var Bs=[];
   pts.forEach(function(p,i){
-    el('circle',{cx:P.X(p.x),cy:P.Y(p.y),r:6,'class':'svg-ptB'},P.top);
+    Bs.push(el('circle',{cx:P.X(p.x),cy:P.Y(p.y),r:8,'class':'svg-ptB svg-click'},P.top));
     var tt=text(P.top,P.X(p.x)+(p.h<0?-10:10),P.Y(p.y)-12,'B'+(i+1)+' ('+fmt(p.x,3)+', '+fmt(p.y,3)+')');tt.setAttribute('text-anchor',p.h<0?'end':'start');
   });
-  var triN=[];
+  var triN=[],curI=-1;
   function clearTri(){triN.forEach(function(n){if(n.parentNode)n.parentNode.removeChild(n)});triN=[]}
-  $$('.tri',stage).forEach(function(b){b.addEventListener('click',function(){
-    var on=b.classList.contains('on');$$('.tri',stage).forEach(function(x){x.classList.remove('on')});clearTri();if(on)return;
-    b.classList.add('on');var p=pts[+b.getAttribute('data-i')];
-    triN.push(el('polyline',{points:P.X(a)+','+P.Y(fa)+' '+P.X(p.x)+','+P.Y(fa)+' '+P.X(p.x)+','+P.Y(p.y)+' '+P.X(a)+','+P.Y(fa),'class':'svg-tri'},P.top));
-    var tx=text(P.top,(P.X(a)+P.X(p.x))/2,P.Y(fa)+(p.y>fa?16:-8),'Δx');tx.setAttribute('text-anchor','middle');triN.push(tx);
-    var ty=text(P.top,P.X(p.x)+(p.h<0?-8:8),(P.Y(fa)+P.Y(p.y))/2,'Δy');ty.setAttribute('text-anchor',p.h<0?'end':'start');triN.push(ty);
-  })});
+  function showTri(i){
+    var btns=$$('.tri',stage);btns.forEach(function(x){x.classList.remove('on')});Bs.forEach(function(c){c.classList.remove('sel')});clearTri();
+    if(i===curI||i<0){curI=-1;return}
+    curI=i;btns[i].classList.add('on');Bs[i].classList.add('sel');var p=pts[i];
+    var ax=P.X(a),ay=P.Y(fa),bx=P.X(p.x),by=P.Y(p.y),up=p.y>fa,left=p.h<0;
+    triN.push(el('polyline',{points:ax+','+ay+' '+bx+','+ay+' '+bx+','+by,'class':'svg-tri'},P.top));
+    triN.push(el('circle',{cx:bx,cy:ay,r:4,'class':'svg-corner'},P.top));
+    function lab(x,y,s,anc){var n=text(P.top,x,y,s);n.setAttribute('text-anchor',anc);n.setAttribute('class','svg-leg');triN.push(n)}
+    lab((ax+bx)/2,ay+(up?16:-8),'Δx = '+fmt(p.h,3),'middle');
+    lab(bx+(left?-8:8),(ay+by)/2,'Δy = '+fmt(p.y-fa,3),left?'end':'start');
+    lab(bx+(left?-8:8),ay+(up?14:-6),'('+fmt(p.x,3)+', '+fmt(fa,3)+')',left?'end':'start');
+  }
+  $$('.tri',stage).forEach(function(b){b.addEventListener('click',function(){showTri(+b.getAttribute('data-i'))})});
+  Bs.forEach(function(c,i){c.addEventListener('click',function(){showTri(i)})});
   var qs=$$('.mq',stage),done=0,fin=$('#dfin'+k),lock=$('.mlock2',stage);
   qs.forEach(function(box){
     var kf=plainField(box),btn=$('.btn',box),fb=$('.fb',box),want=+box.getAttribute('data-q');

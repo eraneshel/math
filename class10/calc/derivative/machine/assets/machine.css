@@ -45,3 +45,5 @@
 .svg-tri{fill:rgba(255,200,61,.15);stroke:#ffc83d;stroke-width:2;stroke-dasharray:5 4}
 .tri{display:block;margin:4px auto 0;font:inherit;font-size:12px;padding:3px 8px;border-radius:8px;border:1px solid #888;background:transparent;color:inherit;cursor:pointer}
 .tri.on{background:#ffc83d;color:#222;border-color:#ffc83d}
+.svg-click{cursor:pointer}.svg-ptB.sel{stroke:#ffc83d;stroke-width:3}
+.svg-corner{fill:#ffc83d}.svg-leg{fill:#a24a00;font-weight:700;font-size:14px;direction:ltr;unicode-bidi:isolate;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
