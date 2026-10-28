@@ -238,6 +238,8 @@ page = f'''<!doctype html>
 </body>
 </html>
 '''
+LOCKJS = "<script>/*locked*/location.replace(location.pathname.replace(/\\/calc\\/.*$/,'/calc/'))</script>"
+page = page.replace('<head>', '<head>' + LOCKJS, 1)
 page = lib.render_all(page)
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf8').write(page)
 print('built', len(page), 'bytes;', len(lib.TEX), 'formulas')

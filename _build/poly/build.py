@@ -128,6 +128,9 @@ page = f'''<!doctype html>
 </body>
 </html>
 '''
+LOCKJS = "<script>/*locked*/location.replace(location.pathname.replace(/\\/calc\\/.*$/,'/calc/'))</script>"
+if MODE != 'prep':
+    page = page.replace('<head>', '<head>' + LOCKJS, 1)
 page = lib.render_all(page)
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from renumber import renumber
