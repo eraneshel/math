@@ -181,3 +181,8 @@ li:has(.mfrac),p:has(.mfrac){line-height:2.7 !important}
 .mt-f{direction:ltr;text-align:left}
 @media (max-width:520px){.mt-row{grid-template-columns:1fr}.mt-svg{max-width:100%}}
 .mt-svg text{direction:ltr;unicode-bidi:isolate}
+
+/* sketch products: live status line + freehand drawing */
+.sk-st{font-size:15px;font-weight:600;min-height:1.4em;color:var(--muted,#5b6b7a)}.sk-st.ok{color:#1a7f4b}.sk-st.no{color:#b42318}
+.svg-draw{fill:rgba(122,90,248,.05);cursor:crosshair;touch-action:none}.svg-stroke{fill:none;stroke:#7a5af8;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+svg.plot.drawing{outline:2px dashed #7a5af8;outline-offset:2px}

@@ -368,6 +368,19 @@
         q.lab.setAttribute('x', sx(q.x) + 12); q.lab.setAttribute('y', sy(q.y) - 12); q.lab.setAttribute('text-anchor', q.x > xr[1] - 0.25 * xs ? 'end' : 'start');
         if (q.touched) { if (document.activeElement !== q.ix) q.ix.value = String(q.x); if (document.activeElement !== q.iy) q.iy.value = String(q.y); }
       });
+      skStatus();
+    }
+    var skStatEl = null, skStatTimer = null;
+    /* live status line of a sketch product: how many points / key points were entered */
+    function skStatus() {
+      if (!skStatEl || !freeMode) return;
+      var K0 = spec.sk, N = K0.need || [], nt = fpTouched().length, nb = nMinPts(), miss = needMiss().length, rdy = !!doFit() && !miss, t;
+      if (rdy) t = 'הנקודות מדויקות. אפשר ללחוץ "העבר גרף", או לצייר קו דרכן בציור חופשי.';
+      else {
+        t = 'הוזנו ' + nt + ' נקודות' + (nt < nb ? ' (נדרשות לפחות ' + nb + ')' : '');
+        if (N.length) t += '. נקודות מפתח: ' + (N.length - miss) + ' מתוך ' + N.length + (miss && K0.needMsg ? '. ' + K0.needMsg : '');
+      }
+      skStatEl.textContent = t; skStatEl.className = 'sk-st' + (rdy ? ' ok' : '');
     }
     function fpClear() { FP.forEach(function (q) { q.g.remove(); }); FP = []; if (fpBody) fpBody.innerHTML = ''; }
     var dragEls = {};
@@ -641,6 +654,7 @@
       var mk = function (tag, cls, txt) { var e2 = document.createElement(tag); if (cls) e2.className = cls; if (txt) e2.textContent = txt; return e2; };
       var nmin = nMinPts();
       skBox.appendChild(mk('div', 'sk-t', K.intro || ('בנו את הגרף מנקודות. ' + (nmin === 1 ? 'נדרשת לפחות נקודה אחת.' : 'נדרשות לפחות ' + nmin + ' נקודות.') + ' כשיש מספיק נקודות מופיע הכפתור "העבר גרף".')));
+      skStatEl = mk('div', 'sk-st'); skStatEl.setAttribute('aria-live', 'polite'); skBox.appendChild(skStatEl);
       var bt = mk('div', 'sk-w'); bt.appendChild(mk('div', 'sk-wh', 'טבלת ערכים'));
       bt.appendChild(mk('div', 'sk-wd', 'מוסיפים נקודה ומקלידים את x ואת y שלה, או גוררים אותה בשרטוט (נקודה שלא הוזנה מוצגת כעיגול ריק).'));
       var hd = mk('div', 'sk-head'); hd.appendChild(mk('span', 'sk-hc', 'x')); hd.appendChild(mk('span', 'sk-hc', 'y')); hd.appendChild(mk('span', 'sk-hs')); bt.appendChild(hd);
@@ -667,6 +681,45 @@
         });
         b3.appendChild(ab); skBox.appendChild(b3);
       }
+      /* freehand drawing: a stroke through all the entered points (and close to the right shape) draws the graph */
+      var bd = mk('div', 'sk-w'); bd.appendChild(mk('div', 'sk-wh', 'ציור חופשי'));
+      bd.appendChild(mk('div', 'sk-wd', 'אחרי שהוזנו הנקודות, אפשר לצייר באצבע או בעט קו דרכן, משמאל לימין. אם הקו עובר בכל הנקודות והצורה נכונה, הגרף מצויר.'));
+      var drawBtn = mk('button', 'btn small ghost sk-draw', 'ציור חופשי'); drawBtn.type = 'button'; drawBtn.setAttribute('aria-pressed', 'false'); bd.appendChild(drawBtn); skBox.appendChild(bd);
+      var gDraw = el('g', { 'class': 'svg-drawg' }, svg), ov = el('rect', { x: ML, y: MT, width: PW, height: PH, 'class': 'svg-draw' }, gDraw), strokeEl = el('path', { 'class': 'svg-stroke', d: '' }, gDraw);
+      gDraw.style.display = 'none';
+      var stroke = [], drawing = false, drawOn = false;
+      function setDraw(on) { drawOn = on; gDraw.style.display = on ? '' : 'none'; svg.classList.toggle('drawing', on); drawBtn.setAttribute('aria-pressed', on ? 'true' : 'false'); drawBtn.textContent = on ? 'חזרה להזנת נקודות' : 'ציור חופשי'; strokeEl.setAttribute('d', ''); }
+      function addPt(ev) { var q = toData(ev); stroke.push(q); strokeEl.setAttribute('d', stroke.map(function (z, i) { return (i ? 'L' : 'M') + sx(z.x).toFixed(1) + ' ' + sy(z.y).toFixed(1); }).join(' ')); }
+      function sq(v) { return v * v; }
+      function judge() {
+        var T = fpTouched(), ft = doFit();
+        if (!ft || needMiss().length) return 'קודם הזינו את כל נקודות המפתח, ואחר כך צרו קו דרכן.';
+        if (stroke.length < 8) return 'הקו קצר מדי. צרו קו משמאל לימין דרך כל הנקודות.';
+        var mnx = Infinity, mxx = -Infinity; stroke.forEach(function (z) { mnx = Math.min(mnx, z.x); mxx = Math.max(mxx, z.x); });
+        if (mxx - mnx < 0.6 * xs) return 'הקו צריך לעבור על רוב הגרף, משמאל לימין.';
+        var dense = [], i2, j2;
+        for (i2 = 1; i2 < stroke.length; i2++) for (j2 = 0; j2 < 12; j2++) dense.push({ x: stroke[i2 - 1].x + (stroke[i2].x - stroke[i2 - 1].x) * j2 / 12, y: stroke[i2 - 1].y + (stroke[i2].y - stroke[i2 - 1].y) * j2 / 12 });
+        function nd(a, b) { return Math.sqrt(sq((a.x - b.x) / (0.05 * xs)) + sq((a.y - b.y) / (0.05 * ys))); }
+        for (i2 = 0; i2 < T.length; i2++) { var best = Infinity; for (j2 = 0; j2 < dense.length; j2++) best = Math.min(best, nd(dense[j2], T[i2])); if (best > 1) return 'הקו לא עבר דרך כל הנקודות. נסו שוב.'; }
+        var B = fpBasis(), curve = [], k2;
+        for (k2 = 0; k2 <= 400; k2++) { var cx = xr[0] + xs * k2 / 400, cy = 0, b2; for (b2 = 0; b2 < B.length; b2++) cy += ft.c[b2] * B[b2](cx); if (isFinite(cy) && cy >= yr[0] && cy <= yr[1]) curve.push({ x: cx, y: cy }); }
+        var inside = 0, near = 0;
+        dense.forEach(function (z) { if (z.x < xr[0] || z.x > xr[1] || z.y < yr[0] || z.y > yr[1]) return; inside++; var m = Infinity; for (var c3 = 0; c3 < curve.length; c3++) { m = Math.min(m, nd(z, curve[c3])); if (m <= 1.8) break; } if (m <= 1.8) near++; });
+        if (!inside || near / inside < 0.9) return 'הקו עובר דרך הנקודות, אבל צורת הגרף בין הנקודות אינה נכונה. נסו שוב.';
+        return 'ok';
+      }
+      function endStroke() {
+        if (!drawing) return; drawing = false; var r = judge();
+        if (r === 'ok') { strokeEl.setAttribute('d', ''); var cardE = fig.closest('.ex'), bE = cardE && cardE.querySelector('.act-chk'); if (bE) bE.click(); return; }
+        if (skStatEl) { skStatEl.textContent = r; skStatEl.className = 'sk-st no'; clearTimeout(skStatTimer); skStatTimer = setTimeout(skStatus, 4000); }
+        setTimeout(function () { if (!drawing) strokeEl.setAttribute('d', ''); }, 1200);
+      }
+      drawBtn.addEventListener('click', function () { setDraw(!drawOn); });
+      ov.addEventListener('pointerdown', function (ev) { drawing = true; stroke = []; try { ov.setPointerCapture(ev.pointerId); } catch (e) { } addPt(ev); ev.preventDefault(); });
+      ov.addEventListener('pointermove', function (ev) { if (drawing) addPt(ev); });
+      ov.addEventListener('pointerup', endStroke);
+      ov.addEventListener('pointercancel', function () { drawing = false; strokeEl.setAttribute('d', ''); });
+      ['touchstart', 'touchmove'].forEach(function (tn) { ov.addEventListener(tn, function (ev) { ev.preventDefault(); }, { passive: false }); });
       host.appendChild(skBox);
     } else if (spec.sk) {
       var K = spec.sk; skBox = document.createElement('div'); skBox.className = 'sk';
@@ -735,6 +788,7 @@
       setDrag: function (id, x, y) { place(dragDef[id], x, y); prov[id] = true; update(); fireChange(); },
       state: function () { return { params: JSON.parse(JSON.stringify(Pm)), drags: JSON.parse(JSON.stringify(D)) }; },
       addPoint: function (x, y) { return fpAdd(x, y); },
+      px: function (x, y) { var b = svg.getBoundingClientRect(), k = b.width / W; return { x: b.left + sx(x) * k, y: b.top + sy(y) * k }; },
       ready: function () { if (freeMode) return !!doFit() && !needMiss().length; return !spec.sk || spec.sk.pts.every(function (q) { return prov[q.id]; }); },
       missing: function () { if (freeMode) { var nt = fpTouched().length, nb = nMinPts(); if (nt < nb) return ['נקודות: הוזנו ' + nt + ', נדרשות לפחות ' + nb]; if (needMiss().length) return [spec.sk.needMsg || 'חסרות נקודות מפתח של הגרף (הנקודות צריכות להיות מדויקות)']; return ['הנקודות אינן קובעות גרף. החליפו או הוסיפו נקודה בערך x אחר']; } return spec.sk ? spec.sk.pts.filter(function (q) { return !prov[q.id]; }).map(function (q) { return q.lab; }) : []; },
       drawGraph: function () { var ft1 = doFit(); if (ft1) fitC = ft1.c; curveHidden = false; update(); },
