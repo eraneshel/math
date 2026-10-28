@@ -240,6 +240,13 @@
     if (nb) nb.addEventListener('click', function () { d.remove(); next.h.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
     $('[data-x]', d).focus();
   }
+  function markDone(ch, groups, i) {
+    var h = groups[i].h; if (h.nextElementSibling && h.nextElementSibling.classList.contains('mdone-row')) return;
+    var r = document.createElement('div'); r.className = 'mdone-row';
+    r.innerHTML = '<button type="button" class="mdone" title="הצגת סיכום המשימה">✓ המשימה הושלמה</button>';
+    $('button', r).addEventListener('click', function () { showCele(ch, missionGroups(ch), i); });
+    h.parentNode.insertBefore(r, h.nextSibling);
+  }
   function missionCheck(announce) {
     if (TEACHER) return;
     $$('.chapter').forEach(function (ch) {
@@ -247,9 +254,10 @@
       groups.forEach(function (g, i) {
         if (!g.learned) return;
         var key = ch.id + ':' + i, req = g.cards.filter(function (c) { return !isChallenge(c); });
-        if (!req.length || state.cele[key]) return;
+        if (!req.length) return;
+        if (state.cele[key]) { markDone(ch, groups, i); return; }
         if (!req.every(function (c) { return state.done[c.getAttribute('data-id')] === 'ok'; })) return;
-        state.cele[key] = 1; save();
+        state.cele[key] = 1; save(); markDone(ch, groups, i);
         if (announce && !window.__NOCELE) showCele(ch, groups, i);
       });
     });
