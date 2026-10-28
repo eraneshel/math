@@ -58,7 +58,7 @@ stage1 = f'''
 <p>{T("בעמוד הקודם ראינו שהנגזרת היא שיפוע המשיק. כאן נמלא טבלה של שיפועי משיקים ונחפש כלל. בחרו פונקציה ונקודה, ואז לחצו על הוספה לטבלה.")}</p>
 <div class="chips" id="fch" role="group" aria-label="בחירת פונקציה">{fchips}</div>
 <div class="chips" id="xch" role="group" aria-label="בחירת נקודה">{xchips}</div>
-<div class="viz"><svg id="v1" role="img" aria-label="גרף הפונקציה שנבחרה, הנקודה והמשיק"></svg></div>
+<div class="viz"><svg id="rv1" role="img" aria-label="גרף הפונקציה שנבחרה, הנקודה והמשיק"></svg></div>
 <div class="ro"><div class="big"><small>שיפוע המשיק</small><span class="v" id="sl1">-</span></div></div>
 <div class="ctl"><button type="button" class="btn small" id="add1">הוספה לטבלה</button><span class="fb" id="add1fb" aria-live="polite"></span></div>
 <div class="tw"><table class="dtab" id="slopes"><thead><tr><th>{T("$f(x)$")}</th><th>{T("שיפוע ב־$x=1$")}</th><th>{T("שיפוע ב־$x=2$")}</th><th>{T("שיפוע ב־$x=3$")}</th><th>{T("הנגזרת $f'(x)$")}</th></tr></thead><tbody>

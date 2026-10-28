@@ -32,7 +32,7 @@ $$('.showsol').forEach(function(btn){btn.addEventListener('click',function(){var
 
 /* ---------- שלב 1: משיק ← טבלה ---------- */
 (function(){
-  var svg=$('#v1');if(!svg)return;
+  var svg=$('#rv1');if(!svg)return;
   var n=2,a=1,filled={},R={2:[10,2.5],3:[30,2.5],4:[90,2.5]};
   function slope(n,a){return n*Math.pow(a,n-1)}
   function draw(){

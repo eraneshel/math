@@ -1,0 +1,22 @@
+/* מכונת הגבול. נשען על defn.css */
+.stars{margin-inline-start:auto;display:inline-flex;gap:4px;font-style:normal}
+.stars i{font-style:normal;font-size:24px;color:var(--line);transition:color .3s,transform .3s}
+.stars i.on{color:#ffc83d;text-shadow:0 0 10px #ffc83d88}
+.stars i.pop{animation:starpop .6s ease}
+@keyframes starpop{40%{transform:scale(1.7) rotate(-12deg)}}
+.lvl{font-size:19px;margin:6px 0 2px}
+.mviz{position:relative;overflow:hidden}
+.burst{position:absolute;inset:0;pointer-events:none}
+.burst .dot{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--c1,#ffc83d);transform:translate(-50%,-50%);animation:bdot .9s ease-out forwards}
+@keyframes bdot{to{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.2);opacity:0}}
+.mviz.flash{animation:flash .7s ease}
+@keyframes flash{30%{box-shadow:0 0 0 4px #5eead4aa,0 0 28px #5eead4aa}}
+.mlog td,.mlog th{font-variant-numeric:tabular-nums}
+.mlog tbody tr:last-child td{background:var(--okbg)}
+.row-in.mrow,.row-in.mlock{direction:ltr;justify-content:flex-start}
+.row-in.mrow .btn,.row-in.mrow .fb,.row-in.mlock .btn,.row-in.mlock .fb{direction:rtl;unicode-bidi:isolate}
+.row-in.mlock{margin:14px 0}
+.malg{margin-top:6px}
+.win{font-weight:800;color:var(--ok);font-size:19px;margin:10px 0 0}
+.win:before{content:"✔ "}
+@media (prefers-reduced-motion:reduce){.burst .dot,.stars i.pop,.mviz.flash{animation:none}}
