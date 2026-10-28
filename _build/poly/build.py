@@ -15,12 +15,20 @@ if MODE == 'source':
     T_TITLE, T_K, T_H1, T_P, T_CRUMB = ('פונקציות פולינום · חוברת עבודה אישית', 'חוברת עבודה אישית · כיתה י׳ · 5 יחידות', 'פונקציות <em>פולינום</em>',
         'קדם אנליזה · חזקות, אפסים וריבוי · מהבסיס ועד רמת בגרות', 'קדם אנליזה (מקור)')
 else:
-    P.id = 'ch1'
-    CH = [P]
-    OUT = os.path.join(ROOT, 'polynomial')
-    KEYJS = "window.BOOKLET_KEY='poly-path-v1';\n"
-    T_TITLE, T_K, T_H1, T_P, T_CRUMB = ('פולינום', 'כיתה י׳ · 5 יחידות', '<em>פולינום</em>',
-        'משימות רחבות: כל נושאי הפונקציות בכל משימה, ברמה שעולה', 'פולינום')
+    if MODE == 'prep':
+        from content_prep import PREP
+        CH = [PREP]
+        OUT = os.path.join(ROOT, 'polynomial-prep')
+        KEYJS = "window.BOOKLET_KEY='poly-prep-v1';\n"
+        T_TITLE, T_K, T_H1, T_P, T_CRUMB = ('פונקציה פולינום - קדם אנליזה', 'הכנה ללמידה עצמית · כיתה י׳ · 5 יחידות', 'פונקציית <em>פולינום</em>',
+            'שני ימים, כ-25 דקות ביום: קצוות, נקודות אפס וריבוי, סימן, בניית נוסחה וזוגיות', 'פונקציה פולינום - קדם אנליזה')
+    else:
+        P.id = 'ch1'
+        CH = [P]
+        OUT = os.path.join(ROOT, 'polynomial')
+        KEYJS = "window.BOOKLET_KEY='poly-path-v1';\n"
+        T_TITLE, T_K, T_H1, T_P, T_CRUMB = ('פולינום', 'כיתה י׳ · 5 יחידות', '<em>פולינום</em>',
+            'משימות רחבות: כל נושאי הפונקציות בכל משימה, ברמה שעולה', 'פולינום')
     os.makedirs(os.path.join(OUT, 'assets'), exist_ok=True)
     for f in os.listdir(os.path.join(SRC, 'assets')):
         if f == 'meta.js':
