@@ -153,35 +153,40 @@ function dataStage(stage,k,sp){
   }
   $$('.tri',stage).forEach(function(b){b.addEventListener('click',function(){showTri(+b.getAttribute('data-i'))})});
   Bs.forEach(function(c,i){c.addEventListener('click',function(){showTri(i)})});
-  var qs=$$('.mq',stage),done=0,fin=$('#dfin'+k),lock=$('.mlock2',stage);
+  var qs=$$('.mq',stage),cnt={r:0,l:0},need={r:0,l:0},lims=$$('.mlock2',stage),limDone=0;
+  qs.forEach(function(box){need[box.getAttribute('data-side')]++});
   qs.forEach(function(box){
-    var kf=plainField(box),btn=$('.btn',box),fb=$('.fb',box),want=+box.getAttribute('data-q');
+    var kf=plainField(box),btn=$('.btn',box),fb=$('.fb',box),want=+box.getAttribute('data-q'),sd=box.getAttribute('data-side');
     function go(){
       if(box.classList.contains('ok'))return;
       var v=numVal(kf);
       if(isNaN(v)){fb.textContent='הזינו מספר';fb.className='fb no';kf.mark(false);return}
       var ok=Math.abs(v-want)<1e-6;kf.mark(ok);
-      if(ok){fb.textContent='נכון';fb.className='fb ok';kf.close();pass(box);done++;if(done===qs.length)fin.hidden=false}
-      else{S.wrong++;fb.textContent='לא מדויק. שיפוע AB = (y של B − y של A) ÷ h';fb.className='fb no'}
+      if(ok){fb.textContent='נכון';fb.className='fb ok';kf.close();pass(box);cnt[sd]++;if(cnt[sd]===need[sd]){var lr=$('#lim'+k+sd);if(lr)lr.hidden=false}}
+      else{S.wrong++;fb.textContent='לא מדויק. שיפוע AB = Δy ÷ Δx';fb.className='fb no'}
     }
     btn.addEventListener('click',go);kf.onEnter(go);
   });
-  var kf=plainField(lock),btn=$('.btn',lock),fb=$('.fb',lock);
-  function go(){
-    if(lock.classList.contains('ok'))return;
-    var v=numVal(kf);
-    if(isNaN(v)){fb.textContent='הזינו מספר';fb.className='fb no';kf.mark(false);return}
-    if(Math.abs(v-ans)<1e-9){
-      kf.mark(true);kf.close();fb.textContent='ננעל!';fb.className='fb ok';
-      P.path(f,x0,x1,200,'svg-curve');var tn=P.line(a,fa,ans,'svg-tan dash');
-      P.top.parentNode.appendChild(P.top);
-      $('#drev'+k).hidden=false;flash(stage);burstEl(stage,Ac);pass(lock);
-    }else{
-      S.wrong++;kf.mark(false);fb.className='fb no';
-      fb.textContent=Math.abs(v-ans)<0.5?'קרוב. לאיזה מספר שלם מתקרבות המנות משני הצדדים?':'לא מדויק. הסתכלו על המנות משני הצדדים';
+  lims.forEach(function(lock){
+    var kf=plainField(lock),btn=$('.btn',lock),fb=$('.fb',lock),want=+lock.getAttribute('data-ans');
+    function go(){
+      if(lock.classList.contains('ok'))return;
+      var v=numVal(kf);
+      if(isNaN(v)){fb.textContent='הזינו מספר';fb.className='fb no';kf.mark(false);return}
+      if(Math.abs(v-want)<1e-9){
+        kf.mark(true);kf.close();fb.textContent='ננעל!';fb.className='fb ok';pass(lock);limDone++;
+        if(limDone===lims.length){
+          P.path(f,x0,x1,200,'svg-curve');P.line(a,fa,ans,'svg-tan dash');
+          P.top.parentNode.appendChild(P.top);
+          $('#drev'+k).hidden=false;flash(stage);burstEl(stage,Ac);
+        }
+      }else{
+        S.wrong++;kf.mark(false);fb.className='fb no';
+        fb.textContent=Math.abs(v-want)<0.5?'קרוב. לאיזה מספר שלם מתקרבים השיפועים?':'לא מדויק. הסתכלו על השיפועים בטבלה';
+      }
     }
-  }
-  btn.addEventListener('click',go);kf.onEnter(go);
+    btn.addEventListener('click',go);kf.onEnter(go);
+  });
 }
 
 /* ---------- אתגר וגשר: שאלות מספר ובחירה ---------- */

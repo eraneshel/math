@@ -47,3 +47,8 @@
 .tri.on{background:#ffc83d;color:#222;border-color:#ffc83d}
 .svg-click{cursor:pointer}.svg-ptB.sel{stroke:#ffc83d;stroke-width:3}
 .svg-corner{fill:#ffc83d}.svg-leg{fill:#a24a00;font-weight:700;font-size:14px;direction:ltr;unicode-bidi:isolate;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
+.mdata tr.grp th{background:rgba(122,90,248,.12);text-align:center;font-weight:700;padding:8px 4px}
+.mdata tr.limrow td{padding:8px 4px;background:rgba(255,200,61,.1)}
+.mdata tr.limrow .q{font-size:15px}
+.mdata tr.limrow .pl{justify-content:center;flex-wrap:wrap}
+.mdata tr.grp th{overflow:hidden}.mdata tr.grp .katex,.mdata tr.grp .katex *{pointer-events:none}

@@ -21,7 +21,7 @@ def hint(txt): return '<details class="hint"><summary>רמז</summary><span>%s</
 STAGES = [
     dict(kind='approach', c=[0, 3, 1], a=2, title='מקרבים ונועלים', nav='מקרבים'),
     dict(kind='algebra', c=[0, 3, 1], a=2, title='מוכיחים בחישוב', nav='מוכיחים'),
-    dict(kind='data', c=[0, -3, 0, 1], a=2, hs=[0.5, 0.1, -0.1, -0.5], title='קופסה שחורה: מתוך נתונים', nav='נתונים'),
+    dict(kind='data', c=[0, -3, 0, 1], a=2, hs=[0.5, 0.1, -0.5, -0.1], title='קופסה שחורה: מתוך נתונים', nav='נתונים'),
     dict(kind='algebra', c=[0, 0, 1, 1], a=-1, given1=True, title='מוכיחים בעצמכם', nav='בעצמכם'),
     dict(kind='boss', title='מצאו את הטעות', nav='אתגר'),
     dict(kind='bridge', title='גשר לכללי גזירה', nav='גשר'),
@@ -111,20 +111,24 @@ def algebra(k, S):
 def data(k, S):
     c, a, hs = S['c'], S['a'], S['hs']
     fa = val(c, a)
+    ans = num(dval(c, a))
     rows = ''
-    for n, h in enumerate(hs, 1):
-        x = a + h; y = val(c, x)
-        q = (y - fa) / h
-        side = 'מימין' if h > 0 else 'משמאל'
-        rows += ('<tr><td class="num"><b>B%d</b><small>%s</small><button type="button" class="tri" data-i="%d">בגרף</button></td><td class="num">%s</td><td class="qc">%s</td></tr>' % (
-            n, side, n - 1, num(h), pf('mq', '', ' data-q="%s"' % repr(round(q, 9)))))
-    pts = [{'h': h, 'x': a + h, 'y': val(c, a + h)} for h in hs]
-    intro = T("בקופסה שחורה פונקציה שנוסחתה חסויה. נמדדו ערכים משני צדי הנקודה A: מימין לנקודה A (כש־$h>0$) ומשמאל לנקודה A (כש־$h<0$). הנקודות B1 עד B4 מסומנות בגרף. לחיצה על נקודה B בגרף (או על הכפתור בגרף בטבלה) מציגה את המשולש בין A ל־B עם Δx ו־Δy. חשבו את שיפוע החותך AB בכל שורה.")
+    for sd, sign, grp in (('r', '+', 'מימין לנקודה A'), ('l', '-', 'משמאל לנקודה A')):
+        rows += '<tr class="grp"><th colspan="3">%s</th></tr>' % T("%s: $\\Delta x\\to 0^{%s}$" % (grp, sign))
+        for n, h in enumerate(hs, 1):
+            if (h > 0) != (sd == 'r'):
+                continue
+            x = a + h; y = val(c, x)
+            q = (y - fa) / h
+            rows += ('<tr><td class="num"><b>B%d</b><button type="button" class="tri" data-i="%d">בגרף</button></td><td class="num">%s</td><td class="qc">%s</td></tr>' % (
+                n, n - 1, num(h), pf('mq', '', ' data-q="%s" data-side="%s"' % (repr(round(q, 9)), sd))))
+        lab = M("\\lim_{\\Delta x\\to 0^{%s}}\\dfrac{\\Delta y}{\\Delta x}=" % sign)
+        rows += '<tr class="limrow" id="lim%d%s" hidden><td colspan="3">%s</td></tr>' % (k, sd, pf('mlock2', lab, ' data-ans="%s"' % ans))
+    intro = T("בקופסה שחורה פונקציה שנוסחתה חסויה. נמדדו ערכים משני צדי הנקודה A, והנקודות B1 עד B4 מסומנות בגרף. לחיצה על נקודה B בגרף (או על הכפתור בגרף בטבלה) מציגה את המשולש בין A ל־B עם Δx ו־Δy. חשבו את שיפוע החותך AB בכל שורה. החץ $\\Delta x\\to 0$ אומר ש־$\\Delta x$ מתקרב ל־0, והסימן $0^{+}$ או $0^{-}$ אומר מאיזה צד. כשהשיפועים בצד אחד מתקרבים למספר, המספר הזה הוא הגבול, ונכתב בסימון $\\lim$.")
     return (head(k, S['title']) + '<p class="lvl">%s</p><p>%s</p>' % (T("הנקודה A היא $(%s,\\,%s)$" % (num(a), num(fa))), intro) + viz(k) +
             '<div class="tw"><table class="dtab mdata" id="dt%d"><thead><tr><th>%s</th><th>%s</th><th>%s</th></tr></thead><tbody>%s</tbody></table></div>' % (
                 k, T("נקודה"), T("$\\Delta x$"), T("$\\dfrac{\\Delta y}{\\Delta x}$"), rows) +
-            '<div id="dfin%d" hidden><p>%s</p>%s</div>' % (k, T("השיפועים מימין לנקודה A והשיפועים משמאל לנקודה A מתקרבים לאותו מספר: הגבול מימין והגבול משמאל שווים. מהו שיפוע המשיק ב־A?"), pf('mlock2', M("\\lim_{\\Delta x\\to 0^{+}}\\dfrac{\\Delta y}{\\Delta x}=\\lim_{\\Delta x\\to 0^{-}}\\dfrac{\\Delta y}{\\Delta x}=f'(%s)=" % num(a)), ' data-ans="%s"' % num(dval(c, a)))) +
-            '<div id="drev%d" hidden><p class="win">%s</p></div>' % (k, T("הפונקציה בקופסה הייתה $f(x)=%s$. כשהגבול מימין והגבול משמאל שווים, הערך המשותף הוא הנגזרת בנקודה." % ptex(c))) +
+            '<div id="drev%d" hidden><p class="win">%s</p><p class="win" style="direction:ltr;text-align:center">%s</p><p class="win">%s</p></div>' % (k, T("הגבול מימין והגבול משמאל שווים, והערך המשותף הוא שיפוע המשיק ב־A, כלומר הנגזרת בנקודה:"), M("f'(%s)=%s" % (num(a), ans)), T("הפונקציה בקופסה הייתה $f(x)=%s$." % ptex(c))) +
             '</section>')
 
 def brk(tex):
