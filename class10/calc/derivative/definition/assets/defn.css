@@ -201,3 +201,5 @@ button.chk.btn{margin:6px 0}
 .kpad[hidden]{display:none}
 .row-in.kp{direction:ltr;justify-content:flex-start;align-items:center}
 .row-in.kp .btn,.row-in.kp .fb{direction:rtl;unicode-bidi:isolate}
+
+.kpad .key.wide{grid-column:1/-1}

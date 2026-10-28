@@ -84,16 +84,18 @@ function keyField(box){
     else{
       if(s.length>=24)return;
       if(k==='^'&&(!s||/[+\-^]$/.test(s)))return;
+      if(k==='.'&&/\./.test(s.split(/[+\-]/).pop()))return;
       if(mode==='num'&&k==='-'){s=s.charAt(0)==='-'?s.slice(1):'-'+s;render();return}
       s+=k;
     }
     render();fld.classList.remove('right','wrong');
   }
   function build(){
-    var keys=mode==='expr'?['7','8','9','4','5','6','1','2','3','0',vr,'^','+','-','del']:['7','8','9','4','5','6','1','2','3','-','0','del'];
+    var dec=box.getAttribute('data-dec')==='1';
+    var keys=mode==='expr'?['7','8','9','4','5','6','1','2','3','0',vr,'^','+','-','del']:(dec?['7','8','9','4','5','6','1','2','3','-','0','.','del']:['7','8','9','4','5','6','1','2','3','-','0','del']);
     panel=document.createElement('div');panel.className='kpad kp-'+mode;panel.hidden=true;
     keys.forEach(function(k){
-      var b=document.createElement('button');b.type='button';b.className='key'+(k==='del'?' del':'');b.setAttribute('data-k',k);
+      var b=document.createElement('button');b.type='button';b.className='key'+(k==='del'?' del':'')+(k==='del'&&mode==='num'&&dec?' wide':'');b.setAttribute('data-k',k);
       b.textContent=k==='del'?'⌫':k==='-'?'−':k==='^'?'חזקה ▫':k;
       b.addEventListener('click',function(){press(k);fld.focus()});
       panel.appendChild(b);
@@ -113,7 +115,7 @@ function keyField(box){
     if(k==='Enter'){if(enter)enter();e.preventDefault();return}
     if(k==='Backspace'){press('del');e.preventDefault();return}
     if(k===' '){open();e.preventDefault();return}
-    if(/^\d$/.test(k)||k==='^'||k==='+'||k==='-'){press(k);e.preventDefault();return}
+    if(/^\d$/.test(k)||k==='^'||k==='+'||k==='-'||(k==='.'&&box.getAttribute('data-dec')==='1')){press(k);e.preventDefault();return}
     if(mode==='expr'&&(k==='x'||k==='h'||k==='X'||k==='H')){press(vr);e.preventDefault()}
   });
   var api={

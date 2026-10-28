@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Builds class10/calc/derivative/machine/index.html ("מכונת הגבול": תרגול חישוב נגזרת לפי ההגדרה, בצורת משחק שלבים).
-משתף assets עם definition/. הלוגיקה והעיצוב ב-machine/assets/machine.js ו-machine.css (ידני)."""
+"""Builds class10/calc/derivative/machine/index.html ("מכונת הגבול": נגזרת בנקודה לפי ההגדרה).
+שלבים (STAGES): approach (מקרבים ונועלים), algebra (הוכחה אלגברית; given1=שורה 1 נתונה), data (קופסה שחורה: מנות מתוך נתונים),
+boss (מצאו את הטעות), bridge (גשר לכללי גזירה). הלוגיקה ב-machine/assets/machine.js (ידני). משתף assets עם definition/."""
 import os, sys, time, json
 from math import comb
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -16,8 +17,15 @@ def M(tex): return lib.md('$\\displaystyle %s$' % tex, inline=True)
 def T(s): return lib.md(s, inline=True)
 def hint(txt): return '<details class="hint"><summary>רמז</summary><span>%s</span></details>' % T(txt)
 
-# שלבים: מקדמי הפולינום מהנמוך לגבוה, והנקודה a
-LEVELS = [([0, 3, 1], 2), ([0, 0, 0, 1], 1), ([0, -1, 2], 3), ([0, -3, 0, 1], 2), ([0, 0, 0, 0, 1], 1), ([0, 0, 1, 1], -1)]
+# מקדמי פולינום מהנמוך לגבוה
+STAGES = [
+    dict(kind='approach', c=[0, 3, 1], a=2, title='מקרבים ונועלים', nav='מקרבים'),
+    dict(kind='algebra', c=[0, 3, 1], a=2, title='מוכיחים בחישוב', nav='מוכיחים'),
+    dict(kind='data', c=[0, -3, 0, 1], a=2, hs=[0.5, 0.1, -0.1, -0.5], title='קופסה שחורה: מתוך נתונים', nav='נתונים'),
+    dict(kind='algebra', c=[0, 0, 1, 1], a=-1, given1=True, title='מוכיחים בעצמכם', nav='בעצמכם'),
+    dict(kind='boss', title='מצאו את הטעות', nav='אתגר'),
+    dict(kind='bridge', title='גשר לכללי גזירה', nav='גשר'),
+]
 
 def ptex(c, var='x'):
     out = ''
@@ -42,51 +50,76 @@ def shift(c, a):
 
 def val(c, x): return sum(ck * x ** k for k, ck in enumerate(c))
 def dval(c, x): return sum(k * ck * x ** (k - 1) for k, ck in enumerate(c) if k)
+def num(v):
+    s = ('%.6f' % v).rstrip('0').rstrip('.')
+    return s.replace('-', '-')
 
-titles = ['שלב %d' % (i + 1) for i in range(len(LEVELS))]
-NL = len(LEVELS)
-nav_titles = titles + ['אתגר', 'גשר']
-nav = ''.join('<a href="#s%d"><b>%d</b>%s</a>' % (i, i, t) for i, t in enumerate(nav_titles, 1))
+nav = ''.join('<a href="#s%d"><b>%d</b>%s</a>' % (i, i, s['nav']) for i, s in enumerate(STAGES, 1))
 
-def stage(k, c, a):
-    sh = shift(c, a)
-    g1 = [0] + sh[1:]
-    g2 = sh[1:]
-    fa = val(c, a); d = dval(c, a)
-    fx = ptex(c, 'x')
-    lab1 = M("f(%d+h)-f(%d)=" % (a, a))
-    lab2 = M("\\dfrac{f(%d+h)-f(%d)}{h}=" % (a, a))
-    lab3 = M("f'(%d)=" % a)
-    first = (k == 1)
-    intro = ''
-    if first:
-        intro = '<p>%s</p>' % T("לחצו על קירוב כדי להזיז את B אל A. הטבלה מראה לאן מתייצב שיפוע החותך. הזינו את שיפוע המשיק ב־A ונעלו אותו.")
-    def inrow(cls, label, extra='', tb=False):
-        return ('<div class="row-in chk %s kp" data-k="%d" data-mode="%s" data-var="h"%s><span class="q">%s</span><div class="kfield"></div>'
-                '<button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div>') % (cls, k, 'expr' if tb else 'num', extra, label)
-    rows = (
-        '<div class="qrow mr" data-r="1">' + inrow('mrow', lab1, ' data-r="1"', True) + hint("פתחו סוגריים: $f(%d+h)=%s$." % (a, ptex(sh, 'h'))) +
-        '<div class="sol" hidden>%s</div></div>' % T("$f(%d+h)-f(%d)=%s$" % (a, a, ptex(g1, 'h'))) +
-        '<div class="qrow mr" data-r="2" hidden>' + inrow('mrow', lab2, ' data-r="2"', True) + hint("הוציאו את $h$ כגורם משותף במונה וצמצמו. כתבו ללא שבר.") +
-        '<div class="sol" hidden>%s</div></div>' % T("$%s$, כש־$h$ שונה מ־0." % ptex(g2, 'h')) +
-        '<div class="qrow mr" data-r="3" hidden>' + inrow('mrow', lab3, ' data-r="3"') + hint("כש־$h$ שואף ל־0, כל איבר שמכיל את $h$ שואף ל־0.") +
-        '<div class="sol" hidden>%s</div></div>' % T("$f'(%d)=\\lim_{h\\to 0}\\left(%s\\right)=%d$" % (a, ptex(g2, 'h'), d))
-    )
-    return f'''
-<section class="stage" id="s{k}" aria-labelledby="s{k}t"><h2 id="s{k}t"><span class="n">{k}</span>{titles[k-1]}<span class="stars" id="mst{k}" aria-label="כוכבי דיוק"><i>★</i><i>★</i><i>★</i></span></h2>
-<p class="lvl">{T("$f(x)=%s$, והנקודה A היא $(%d,\\,%d)$" % (fx, a, fa))}</p>
-{intro}
-<div class="viz mviz"><svg id="mv{k}" role="img" aria-label="גרף הפונקציה, הנקודות A ו־B והישר AB"></svg><div class="burst" id="bu{k}" aria-hidden="true"></div></div>
-<div class="ctl"><button type="button" class="btn small" id="near{k}">קירוב: קרבו את B</button><span class="fb" id="nfb{k}" aria-live="polite"></span></div>
-<div class="tw"><table class="dtab mlog" id="log{k}"><thead><tr><th>{T("$h$")}</th><th>{T("שיפוע החותך AB")}</th></tr></thead><tbody></tbody></table></div>
-{inrow('mlock', lab3.replace('f&#39;', "f'"), ' data-lock="1"')}
-<div class="malg" id="alg{k}" hidden>
-<p class="lead">{T("עכשיו מוכיחים. הזינו כל ביטוי בכפתורי התווים.")}</p>
-{rows}
-</div>
-<p class="win" id="win{k}" hidden>השלב הושלם</p>
-</section>'''
+def kf(cls, label, extra='', mode='num', var='h', dec=False):
+    return ('<div class="row-in chk %s kp" data-mode="%s" data-var="%s"%s%s><span class="q">%s</span><div class="kfield"></div>'
+            '<button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div>') % (
+                cls, mode, var, ' data-dec="1"' if dec else '', extra, label)
 
+def head(k, title, tag=''):
+    return ('<section class="stage" id="s%d" aria-labelledby="s%dt"><h2 id="s%dt"><span class="n">%d</span>%s%s'
+            '<span class="stars" id="mst%d" aria-label="כוכבי דיוק"><i>★</i><i>★</i><i>★</i></span></h2>') % (k, k, k, k, title, tag, k)
+
+def viz(k):
+    return '<div class="viz mviz"><svg id="mv%d" role="img" aria-label="גרף"></svg></div>' % k
+
+def approach(k, S):
+    c, a = S['c'], S['a']
+    fa = val(c, a)
+    intro = '<p class="lvl">%s</p><p>%s</p>' % (
+        T("$f(x)=%s$, והנקודה A היא $(%d,\\,%d)$" % (ptex(c), a, fa)),
+        T("לחצו על קירוב כדי להזיז את B אל A. הטבלה מראה לאן מתייצב שיפוע החותך AB. הזינו את שיפוע המשיק ב־A ונעלו אותו."))
+    return (head(k, S['title']) + intro + viz(k) +
+            '<div class="ctl"><button type="button" class="btn small" id="near%d">קירוב: קרבו את B</button><span class="fb" id="nfb%d" aria-live="polite"></span></div>' % (k, k) +
+            '<div class="tw"><table class="dtab mlog" id="log%d"><thead><tr><th>%s</th><th>%s</th></tr></thead><tbody></tbody></table></div>' % (k, T("$h$"), T("שיפוע החותך AB")) +
+            kf('mlock', M("f'(%d)=" % a), ' data-lock="1"') + '</section>')
+
+def algebra(k, S):
+    c, a = S['c'], S['a']
+    sh = shift(c, a); g1 = [0] + sh[1:]; g2 = sh[1:]; d = dval(c, a)
+    lab = [M("f(%d+h)-f(%d)=" % (a, a)), M("\\dfrac{f(%d+h)-f(%d)}{h}=" % (a, a)), M("f'(%d)=" % a)]
+    sol = [T("$f(%d+h)-f(%d)=%s$" % (a, a, ptex(g1, 'h'))), T("$%s$, כש־$h$ שונה מ־0." % ptex(g2, 'h')),
+           T("$f'(%d)=\\lim_{h\\to 0}\\left(%s\\right)=%d$" % (a, ptex(g2, 'h'), d))]
+    hints = ["פתחו סוגריים: $f(%d+h)=%s$." % (a, ptex(sh, 'h')),
+             "הוציאו את $h$ כגורם משותף במונה וצמצמו.",
+             "כש־$h$ שואף ל־0, כל איבר שמכיל את $h$ שואף ל־0."]
+    rows = ''
+    for r in range(3):
+        if r == 0 and S.get('given1'):
+            rows += '<div class="qrow mr given" data-r="1"><div class="sol">%s</div></div>' % sol[0]
+            continue
+        hid = '' if (r == 0 or (r == 1 and S.get('given1'))) else ' hidden'
+        rows += ('<div class="qrow mr" data-r="%d"%s>' % (r + 1, hid) +
+                 kf('mrow', lab[r], ' data-r="%d"' % (r + 1), 'num' if r == 2 else 'expr') +
+                 hint(hints[r]) + '<div class="sol" hidden>%s</div></div>' % sol[r])
+    if S.get('given1'):
+        intro = T("$f(x)=%s$, והנקודה A היא $(%d,\\,%d)$. השורה הראשונה נתונה. השלימו את ההוכחה." % (ptex(c), a, val(c, a)))
+    else:
+        intro = T("$f(x)=%s$, והנקודה A היא $(%d,\\,%d)$. נוכיח אלגברית את השיפוע שננעל. הזינו כל ביטוי בכפתורי התווים." % (ptex(c), a, val(c, a)))
+    return head(k, S['title']) + '<p class="lvl">%s</p><div class="malg">%s</div><p class="win" id="win%d" hidden>השלב הושלם</p></section>' % (intro, rows, k)
+
+def data(k, S):
+    c, a, hs = S['c'], S['a'], S['hs']
+    fa = val(c, a)
+    rows = ''
+    for h in hs:
+        x = a + h; y = val(c, x)
+        q = (y - fa) / h
+        rows += ('<tr><td class="num">%s</td><td class="num">(%s, %s)</td><td class="qc">%s</td></tr>' % (
+            num(h), num(x), num(y), kf('mq', '', ' data-q="%s"' % repr(round(q, 9)), 'num', 'h', True)))
+    pts = [{'h': h, 'x': a + h, 'y': val(c, a + h)} for h in hs]
+    intro = T("בקופסה שחורה פונקציה שנוסחתה חסויה. נמדדו ערכים משני צדי הנקודה A, והם מסומנים בגרף ובטבלה. חשבו את שיפוע החותך AB בכל שורה.")
+    return (head(k, S['title']) + '<p class="lvl">%s</p><p>%s</p>' % (T("הנקודה A היא $(%s,\\,%s)$" % (num(a), num(fa))), intro) + viz(k) +
+            '<div class="tw"><table class="dtab mdata" id="dt%d"><thead><tr><th>%s</th><th>B</th><th>%s</th></tr></thead><tbody>%s</tbody></table></div>' % (
+                k, T("$h$"), T("שיפוע AB"), rows) +
+            '<div id="dfin%d" hidden>%s<p>%s</p>%s</div>' % (k, '<p>' + T("המנות מתקרבות אל אותו מספר משני הצדדים. מהו שיפוע המשיק ב־A?") + '</p>', '', kf('mlock2', M("f'(%s)=" % num(a)), ' data-ans="%s"' % num(dval(c, a)))) +
+            '<div id="drev%d" hidden><p class="win">%s</p></div>' % (k, T("הפונקציה בקופסה הייתה $f(x)=%s$. השיפוע שמצאתם הוא נגזרת הפונקציה בנקודה." % ptex(c))) +
+            '</section>')
 
 def brk(tex):
     d = 0
@@ -97,43 +130,45 @@ def brk(tex):
             return '{%s}={%s}' % (tex[:i], tex[i+1:])
     return tex
 
-def mc(q, opts, c, exp='', reveal=None, extra=''):
+def mc(q, opts, c, exp='', reveal=None):
     ob = ''.join('<button type="button" class="opt">%s</button>' % o for o in opts)
     rv = ' data-reveal="%s"' % reveal if reveal else ''
-    return ('<div class="mc chk" data-c="%d"%s%s><div class="mc-q">%s</div><div class="opts">%s</div>'
-            '<span class="fb" aria-live="polite"></span>%s</div>') % (c, rv, extra, q, ob, ('<div class="mc-exp" hidden>%s</div>' % exp) if exp else '')
+    return ('<div class="mc chk" data-c="%d"%s><div class="mc-q">%s</div><div class="opts">%s</div>'
+            '<span class="fb" aria-live="polite"></span>%s</div>') % (c, rv, q, ob, ('<div class="mc-exp" hidden>%s</div>' % exp) if exp else '')
 
 def numq(id_, label, ans, reveal=None, hidden=False):
     rv = ' data-reveal="%s"' % reveal if reveal else ''
     return ('<div class="row-in chk mnum kp" id="%s" data-mode="num" data-ans="%s"%s%s><span class="q">%s</span><div class="kfield"></div>'
             '<button type="button" class="btn small">בדיקה</button><span class="fb" aria-live="polite"></span></div>') % (id_, ans, rv, ' hidden' if hidden else '', label)
 
-boss_rows = ["f(3+h)-f(3)=(3+h)^2-2(3+h)-3",
-             "f(3+h)-f(3)=9+6h+h^2-6+2h-3",
-             "f(3+h)-f(3)=8h+h^2",
-             "f'(3)=\\lim_{h\\to 0}\\dfrac{8h+h^2}{h}=\\lim_{h\\to 0}(8+h)=8"]
-boss_html = ''.join('<div class="brow"><b class="bn">%d</b><span class="fx">%s</span></div>' % (i + 1, M(brk(r))) for i, r in enumerate(boss_rows))
-boss = f'''
-<section class="stage" id="s{NL+1}" aria-labelledby="s{NL+1}t"><h2 id="s{NL+1}t"><span class="n">{NL+1}</span>מצאו את הטעות<span class="dtag">אתגר</span></h2>
-<p>{T("בפתרון הבא של $f'(3)$ עבור $f(x)=x^2-2x$ יש טעות אחת.")}</p>
-<div class="boss">{boss_html}</div>
-{mc("באיזו שורה הטעות?", ["שורה 1", "שורה 2", "שורה 3", "שורה 4"], 1, T("בשורה 2 הוצב סימן שגוי: $-2(3+h)=-6-2h$."), "#bq2")}
-<div id="bq2" hidden>{mc("מהי שורה 2 הנכונה?", [M("9+6h+h^2-6-2h+3"), M("9+3h+h^2-6-2h-3"), M("9+6h+h^2-6-2h-3")], 2, "", "#bq3")}</div>
-<div id="bq3" hidden>{numq("bnum", M("f'(3)="), 4)}</div>
-</section>'''
+def boss(k, S):
+    rows = ["f(3+h)-f(3)=(3+h)^2-2(3+h)-3", "f(3+h)-f(3)=9+6h+h^2-6+2h-3", "f(3+h)-f(3)=8h+h^2",
+            "f'(3)=\\lim_{h\\to 0}\\dfrac{8h+h^2}{h}=\\lim_{h\\to 0}(8+h)=8"]
+    bh = ''.join('<div class="brow"><b class="bn">%d</b><span class="fx">%s</span></div>' % (i + 1, M(brk(r))) for i, r in enumerate(rows))
+    return (head(k, S['title'], '<span class="dtag">אתגר</span>') +
+            '<p>%s</p><div class="boss">%s</div>' % (T("בפתרון הבא של $f'(3)$ עבור $f(x)=x^2-2x$ יש טעות אחת."), bh) +
+            mc("באיזו שורה הטעות?", ["שורה 1", "שורה 2", "שורה 3", "שורה 4"], 1, T("בשורה 2 הוצב סימן שגוי: $-2(3+h)=-6-2h$."), "#bq2") +
+            '<div id="bq2" hidden>%s</div>' % mc("מהי שורה 2 הנכונה?", [M("9+6h+h^2-6-2h+3"), M("9+3h+h^2-6-2h-3"), M("9+6h+h^2-6-2h-3")], 2, '', "#bq3") +
+            '<div id="bq3" hidden>%s</div></section>' % numq("bnum", M("f'(3)="), 4))
 
-bridge = f'''
-<section class="stage" id="s{NL+2}" aria-labelledby="s{NL+2}t"><h2 id="s{NL+2}t"><span class="n">{NL+2}</span>גשר לכללי גזירה</h2>
-<p>{T("בשלבים 2 ו־5 חישבתם נגזרת ב־$x=1$, והנה התוצאות יחד עם $x^2$ מעמוד ההגדרה:")}</p>
-<div class="tw"><table class="dtab"><thead><tr><th>{T("$f(x)$")}</th><th>{T("$f'(1)$")}</th></tr></thead><tbody>
-<tr><th>{M("x^2")}</th><td class="num">2</td></tr><tr><th>{M("x^3")}</th><td class="num">3</td></tr><tr><th>{M("x^4")}</th><td class="num">4</td></tr></tbody></table></div>
-<p>{T("נחשו לפי התבנית. עבור $f(x)=x^5$:")}</p>
-{numq("brg", M("f'(1)="), 5, "#bgo")}
-<div id="bgo" hidden><p class="win">{T("בכללי גזירה נבדוק את התבנית הזו בכל נקודה.")}</p><p><a class="btn" href="../rules/" target="_top">כללי גזירה ←</a></p></div>
-</section>'''
+def bridge(k, S):
+    return ('<section class="stage" id="s%d" aria-labelledby="s%dt"><h2 id="s%dt"><span class="n">%d</span>%s</h2>' % (k, k, k, k, S['title']) +
+            '<p>%s</p>' % T("חישבתם ש־$f(x)=x^2+3x$ משיקה ב־$x=2$ בשיפוע 7. ידוע ש־$x^2$ משיק ב־$x=2$ בשיפוע 4, והישר $3x$ בשיפוע 3.") +
+            mc("מה הקשר בין המספרים 7, 4 ו־3?", ["אין קשר ביניהם", "4 + 3 = 7: הנגזרת של סכום היא סכום הנגזרות", "4 − 3 = 1, לא 7"], 1,
+               T("כשגוזרים סכום, גוזרים כל איבר בנפרד. זה אחד מכללי הגזירה."), "#bgo") +
+            '<div id="bgo" hidden><p class="win">%s</p><p><a class="btn" href="../rules/" target="_top">כללי גזירה ←</a></p></div></section>' % T("עכשיו נלמד את כל הכללים, כדי לא לחשב לפי ההגדרה בכל פעם."))
 
-stages = ''.join(stage(i + 1, c, a) for i, (c, a) in enumerate(LEVELS)) + boss + bridge
-lv_json = json.dumps([{'c': c, 'a': a} for c, a in LEVELS])
+builders = {'approach': approach, 'algebra': algebra, 'data': data, 'boss': boss, 'bridge': bridge}
+stages_html = ''.join(builders[S['kind']](i + 1, S) for i, S in enumerate(STAGES))
+sp = []
+for S in STAGES:
+    d = {'kind': S['kind']}
+    for key in ('c', 'a', 'hs'):
+        if key in S: d[key] = S[key]
+    if S['kind'] == 'data':
+        d['pts'] = [{'h': h, 'x': S['a'] + h, 'y': val(S['c'], S['a'] + h)} for h in S['hs']]
+    sp.append(d)
+lv_json = json.dumps(sp)
 
 hero_fig = ('<svg viewBox="-14 -6 280 228" width="100%"><g fill="none" stroke-linecap="round" stroke-linejoin="round">'
             '<path d="M30 190V20M30 190H250" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>'
@@ -166,7 +201,7 @@ page = f'''<!doctype html>
     <div class="crumb"><a href="../../../../" target="_top">בית</a> › <a href="../../../" target="_top">כיתה י׳</a> › <a href="../../" target="_top">חשבון דיפרנציאלי ואינטגרלי</a> › <a href="../" target="_top">נגזרת</a> › מכונת הגבול</div>
     <span class="k">כיתה י׳ · 5 יחידות</span>
     <h1>מכונת <em>הגבול</em></h1>
-    <p>מקרבים, נועלים את השיפוע ומוכיחים</p>
+    <p>מקרבים, מוכיחים, ומוצאים את השיפוע גם מתוך נתונים</p>
   </div>
   <div class="hero-fig" aria-hidden="true">{hero_fig}</div>
 </section>
@@ -175,8 +210,8 @@ page = f'''<!doctype html>
   <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="התקדמות בעמוד" id="prog"><div class="prog-fill" id="prog-fill"></div><span class="prog-txt" id="prog-txt"></span></div>
 </div>
 <main class="dmain" id="main">
-<p class="dintro">{T("בכל שלב נתונה פונקציה ונקודה A. מקרבים את B אל A, נועלים את שיפוע המשיק ומוכיחים אותו לפי ההגדרה. הכוכבים מראים דיוק בשלב: ★ שיפוע נכון, ★★ הוכחה, ★★★ בלי רמזים ועם טעות אחת לכל היותר.")}</p>
-{stages}
+<p class="dintro">{T("שיפוע המשיק בנקודה הוא הגבול של שיפועי החותכים. בכל שלב מגלים אותו בדרך אחרת. הכוכבים מראים דיוק בשלב: ★ השלמה, ★★ טעות אחת לכל היותר, ★★★ בלי טעויות ובלי רמזים.")}</p>
+{stages_html}
 </main>
 <div class="foot">מתמטיקה · לכל בעיה יש פתרון, להנות מהאתגר</div>
 </div>

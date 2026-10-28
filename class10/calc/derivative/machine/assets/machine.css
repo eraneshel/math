@@ -26,3 +26,11 @@
 .brow .bn{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--navy);color:#ffc83d}
 .brow .fx{min-width:0;font-size:clamp(.85em,4vw,1.05em)}
 .mc .opts .opt .katex{font-size:1.05em}
+
+.stage{position:relative}
+.stage>.burst{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:20px}
+.qrow.given{border-style:dashed}
+.mdata td.qc{min-width:160px}
+.mdata .row-in{margin:0}
+.mdata .kfield{min-width:100px;font-size:18px;min-height:42px}
+.mdata th,.mdata td{padding:6px 4px}
