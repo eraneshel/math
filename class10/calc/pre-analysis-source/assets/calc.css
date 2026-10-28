@@ -195,7 +195,7 @@ svg.plot.drawing{outline:2px dashed #7a5af8;outline-offset:2px}
 .cele-box h3{margin:.4rem 0 .1rem;font-size:1.35rem}
 .cele-sub{margin:0 0 .6rem;opacity:.8}
 .cele-ok{width:64px;height:64px;margin:0 auto;border-radius:50%;background:#16a34a;color:#fff;font-size:2.2rem;line-height:64px;animation:celePop .5s cubic-bezier(.2,1.6,.4,1)}
-.cele-l{text-align:start;margin:.6rem 0}
+.cele-l{text-align:start;margin:.6rem 0;font-size:.95rem}.cele-sum>b{display:block;margin-bottom:.3rem}.cele-sum p{margin:.35rem 0}
 .cele-l ul{margin:.3rem 0;padding-inline-start:1.2rem}
 .cele-btns{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:.6rem}
 .cele-burst{position:absolute;top:50px;left:50%;width:0;height:0;pointer-events:none}

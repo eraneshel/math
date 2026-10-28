@@ -213,11 +213,17 @@
       if (el.tagName === 'H2') { cur = { h: el, cards: [], learned: null }; groups.push(cur); return; }
       if (!cur) return;
       if (el.classList.contains('ex') && el.getAttribute('data-kind') && el.getAttribute('data-kind') !== 'example') cur.cards.push(el);
-      if (el.classList.contains('learned')) cur.learned = el;
+      if (el.classList.contains('sumbox')) cur.learned = el;
     });
     return groups;
   }
   function isChallenge(card) { var b = $('.ex-body', card); return !!b && /^\s*אתגר/.test(b.textContent); }
+  function sumHtml(g) {
+    if (!g.learned) return '';
+    var c = g.learned.cloneNode(true), t = c.firstElementChild;
+    if (t && /סיכום/.test(t.textContent)) c.removeChild(t);
+    return '<div class="cele-sum"><b>סיכום המשימה</b>' + c.innerHTML + '</div>';
+  }
   function showCele(ch, groups, i) {
     var g = groups[i], old = $('#cele'); if (old) old.remove();
     var title = g.h.textContent.replace(/^משימה\s*\d+\s*:\s*/, ''), n = i + 1;
@@ -226,7 +232,7 @@
     var next = groups[i + 1];
     d.innerHTML = '<div class="cele-box"><div class="cele-burst" aria-hidden="true">' + conf + '</div><div class="cele-ok" aria-hidden="true">✓</div>' +
       '<h3 id="cele-h">סיימתם את משימה ' + n + '!</h3><p class="cele-sub">' + title + '</p>' +
-      '<div class="cele-l"><b>מה למדתם:</b>' + (g.learned ? g.learned.innerHTML : '') + '</div>' +
+      '<div class="cele-l">' + sumHtml(g) + '</div>' +
       '<div class="cele-btns">' + (next ? '<button type="button" class="btn" data-next>למשימה הבאה</button>' : '') + '<button type="button" class="btn ghost" data-x>סגירה</button></div></div>';
     document.body.appendChild(d);
     $('[data-x]', d).addEventListener('click', function () { d.remove(); });
