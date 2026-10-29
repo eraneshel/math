@@ -50,7 +50,14 @@
     var res = 0; pts.forEach(function (q) { var y = co[0] * Math.pow(q[0], 4) + co[1] * Math.pow(q[0], 3) + co[2] * q[0] * q[0] + co[3] * q[0] + co[4]; res = Math.max(res, Math.abs(y - q[1])); });
     return { c: co, res: res };
   }
-  function matchBase(co, a) { return co.every(function (v, i) { var t = a * BASE[i]; return Math.abs(v - t) <= 0.08 * Math.max(1, Math.abs(t)); }); }
+  /* התאמה לפי צורת העקום בכל הקטע, כדי שגם נקודות שנגררו (לא מדויקות) יתקבלו אם הגרף נכון */
+  function matchBase(co, a) {
+    for (var x = -1.5; x <= 4.5001; x += 0.1) {
+      var y = co[0] * Math.pow(x, 4) + co[1] * Math.pow(x, 3) + co[2] * x * x + co[3] * x + co[4], t = a * (Math.pow(x, 4) + BASE[1] * Math.pow(x, 3) + BASE[2] * x * x + BASE[3] * x + BASE[4]);
+      if (!isFinite(y) || Math.abs(y - t) > 0.06 * 120 * Math.max(1, Math.abs(a) / 2)) return false;
+    }
+    return true;
+  }
   function value(it) {
     var a = S.ans[it.id]; if (!a) return null;
     if (it.type === 'sketch') return (a.drawn && a.pts && fit4(a.pts)) ? 1 : null;
@@ -61,7 +68,7 @@
   function grade(it) {
     var v = value(it); if (v === null) return '0';
     if (it.type === 'sketch') {
-      var f = fit4(S.ans.s.pts); if (!f || f.res > 0.6) return '0';
+      var f = fit4(S.ans.s.pts); if (!f || f.res > 4) return '0';
       if (matchBase(f.c, REF_A)) return '1';
       var ks = kStudent(); if (ks !== null && ks !== 0 && !same(ks, REF_A) && matchBase(f.c, ks)) return 'F';
       return '0';
@@ -198,7 +205,7 @@
     return it.type === 'mc' ? it.opts[v] : String(v);
   }
   function correctText(it) {
-    if (it.type === 'sketch') return 'f(x)=2x⁴−14x³+24x²+8x−32';
+    if (it.type === 'sketch') return '';
     if (it.type === 'num') return String(it.c);
     var c = CHAIN[it.id] ? 0 : +it.c; return it.opts[c];
   }
@@ -218,7 +225,7 @@
       d.appendChild(el('summary', '', '<span class="m">' + (ok === '0' ? '✗' : '✓') + '</span> סעיף ' + (n + 1) + (ok === 'F' ? ' (נכון לפי תשובתך בסעיף א)' : '') + ' · ' + pointsOf(it, ok) + '/' + it.pts));
       d.appendChild(el('div', 'qq', it.q));
       d.appendChild(el('div', 'qnote', '<b>התשובה שלכם:</b> ' + shownAnswer(it)));
-      if (ok === '0') d.appendChild(el('div', 'qnote', '<b>התשובה הנכונה:</b> ' + correctText(it)));
+      if (ok === '0' && it.type !== 'sketch') d.appendChild(el('div', 'qnote', '<b>התשובה הנכונה:</b> ' + correctText(it)));
       d.appendChild(el('div', 'qwhy', it.why));
       root.appendChild(d);
     });
