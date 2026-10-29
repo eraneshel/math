@@ -1,0 +1,33 @@
+.quiz-main{max-width:760px;margin:0 auto;padding:16px}
+.qcard{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:16px 18px;margin:14px 0}
+.qcard h2{margin:0 0 6px;font-size:1.15em}
+.qprog{color:var(--mut);font-size:.95em;margin-bottom:8px}
+.qbar{height:8px;background:var(--soft);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.qbar>i{display:block;height:100%;background:var(--g);width:0}
+.qsec{font-weight:800;color:var(--blue);margin:2px 0 8px}
+.qq{font-size:1.05em;line-height:1.7;margin-bottom:10px}
+.qopts{display:grid;gap:8px;margin:8px 0}
+.qopts .mc-o{display:flex;align-items:center;gap:10px;border:2px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;background:var(--card)}
+.qopts .mc-o input{flex:none}
+.qopts .mc-o.sel{border-color:var(--blue);background:var(--soft)}
+.qopts .mc-o.ok{border-color:#1f8a5b;background:#e9f7ef}
+.qopts .mc-o.no{border-color:#c2410c;background:#fff1ea}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.qnum{display:flex;gap:6px;direction:ltr;max-width:220px}
+.qnum input{flex:1;min-width:0;font:inherit;font-size:18px;padding:8px 10px;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+.qnum button{font:inherit;font-weight:800;border:2px solid var(--line);border-radius:10px;background:var(--soft);color:var(--ink);min-width:44px;cursor:pointer}
+.qfb{margin-top:12px;border-radius:12px;padding:10px 14px;line-height:1.7}
+.qfb.ok{background:#e9f7ef;border:2px solid #1f8a5b;color:#0f4d33}
+.qfb.ft{background:#eef4ff;border:2px solid #2f5fd0;color:#16346f}
+.qfb.no{background:#fff1ea;border:2px solid #c2410c;color:#7c2d12}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .qfb.ok{background:#12301f;color:#bff0d6}:root:not([data-theme=light]) .qfb.ft{background:#142447;color:#c9dcff}:root:not([data-theme=light]) .qfb.no{background:#3a1d12;color:#ffd8c4}:root:not([data-theme=light]) .qopts .mc-o.ok{background:#12301f}:root:not([data-theme=light]) .qopts .mc-o.no{background:#3a1d12}}
+.qfb b{display:block;font-size:1.05em}
+.qscore{direction:ltr;font-size:2.2em;font-weight:900;text-align:center;margin:6px 0}
+.qlist{list-style:none;padding:0;margin:10px 0}
+.qlist li{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--line)}
+.qlist .m{font-weight:900;width:1.4em;text-align:center}
+.qcode{direction:ltr;text-align:left;font-family:ui-monospace,monospace;font-size:1.05em;background:var(--soft);border:2px dashed var(--line);border-radius:10px;padding:10px 12px;word-break:break-all;user-select:all}
+.qname{width:100%;font:inherit;font-size:18px;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);margin:8px 0}
+.qnote{color:var(--mut);font-size:.95em}
+.qstem{background:var(--soft);border-radius:12px;padding:10px 12px}
+.qfb .math-expr,.qq .math-expr{white-space:nowrap}
