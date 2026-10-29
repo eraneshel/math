@@ -4,7 +4,7 @@
    ENDPOINT: כתובת ה-Web App של apps_script.gs (ריק = ללא שליחה). ?teacher=1: בלי שמירה, ללא נעילה אחרי הגשה. */
 (function () {
   'use strict';
-  var KEY = 'poly-quiz-v3', VER = 3, REF_A = 2, FT_CREDIT = 1, QUIZ_MINUTES = 30, BASE = [1, -7, 12, 4, -16];
+  var KEY = 'poly-quiz-v3', VER = 4, REF_A = 2, FT_CREDIT = 1, QUIZ_MINUTES = 30, BASE = [1, -7, 12, 4, -16];
   var ENDPOINT = '';
   var teacher = /[?&]teacher=1/.test(location.search);
   var root = document.getElementById('quiz');
@@ -212,6 +212,11 @@
     if (teacher) { var tb = el('button', 'btn small ghost', 'איפוס (מורה)'); tb.type = 'button'; tb.addEventListener('click', function () { S = { name: '', ans: {} }; try { localStorage.removeItem(KEY); } catch (e) { } screenStart(); }); root.appendChild(tb); }
   }
 
+  /* איפוס למורה לצורך ניסוי: חמש לחיצות מהירות על כותרת הבוחן */
+  (function () {
+    var h = document.querySelector('.hero h1'), n = 0, t = null; if (!h) return;
+    h.addEventListener('click', function () { n++; clearTimeout(t); t = setTimeout(function () { n = 0; }, 1500); if (n >= 5) { try { localStorage.removeItem(KEY); } catch (e) { } location.reload(); } });
+  })();
   if (!S.start) screenStart();
   else if (S.submitted) screenResult();
   else if (remainingMs() <= 0) finish(true);
