@@ -4,7 +4,7 @@
    ENDPOINT: כתובת ה-Web App של apps_script.gs (ריק = ללא שליחה). ?teacher=1: בלי שמירה, ללא נעילה אחרי הגשה. */
 (function () {
   'use strict';
-  var KEY = 'poly-quiz-v2', REF_A = 2, FT_CREDIT = 1, QUIZ_MINUTES = 30, BASE = [1, -7, 12, 4, -16];
+  var KEY = 'poly-quiz-v3', VER = 3, REF_A = 2, FT_CREDIT = 1, QUIZ_MINUTES = 30, BASE = [1, -7, 12, 4, -16];
   var ENDPOINT = '';
   var teacher = /[?&]teacher=1/.test(location.search);
   var root = document.getElementById('quiz');
@@ -17,8 +17,8 @@
   });
   var stemEl = document.getElementById('stem'), STEM = stemEl ? stemEl.innerHTML : '';
   var S = load(), timer = null, sendT = null;
-  function load() { if (teacher) return { name: '', ans: {} }; try { var v = JSON.parse(localStorage.getItem(KEY)); if (v && v.ans) return v; } catch (e) { } return { name: '', ans: {} }; }
-  function save() { if (teacher) return; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }
+  function load() { if (teacher) return { name: '', ans: {} }; try { var v = JSON.parse(localStorage.getItem(KEY)); if (v && v.ans && v.ver === VER) return v; } catch (e) { } return { name: '', ans: {} }; }
+  function save() { if (teacher) return; S.ver = VER; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; }
   function num(s) { s = String(s).replace(/−/g, '-').replace(',', '.').replace(/\s/g, ''); var v = parseFloat(s); return (s !== '' && isFinite(v) && /^-?\d*\.?\d+$/.test(s)) ? v : NaN; }
   function same(a, b) { return Math.abs(a - b) < 1e-6; }
@@ -208,7 +208,8 @@
     var c = el('div', 'qcard'), t = total();
     c.appendChild(el('h2', '', S.name + ', הבוחן הוגש' + (S.timedOut ? ' (הזמן הסתיים)' : '')));
     c.appendChild(el('div', 'qscore', t + ' / 100'));
-    c.appendChild(el('div', 'qnote', 'זמן עבודה: ' + fmt(usedSec() * 1000) + ' · נענו ' + answered() + ' מתוך ' + bank.length));
+    c.appendChild(el('div', 'qnote', 'זמן עבודה: ' + fmt(usedSec() * 1000)));
+    c.appendChild(el('div', 'qnote', 'נענו ' + answered() + ' מתוך ' + bank.length + ' סעיפים'));
     root.appendChild(c);
     root.appendChild(el('h2', 'qsec-h', 'ניתוח הסעיפים'));
     bank.forEach(function (it, n) {
