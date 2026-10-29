@@ -19,7 +19,7 @@ else:
         from content_prep import PREP
         CH = [PREP]
         OUT = os.path.join(ROOT, 'polynomial-prep')
-        KEYJS = "window.BOOKLET_KEY='poly-prep-v1';\n"
+        KEYJS = "window.BOOKLET_KEY='poly-prep-v2';\n"
         T_TITLE, T_K, T_H1, T_P, T_CRUMB = ('פונקציה פולינום - קדם אנליזה', 'הכנה ללמידה עצמית · כיתה י׳ · 5 יחידות', 'פונקציית <em>פולינום</em>',
             'קצוות, נקודות אפס וריבוי, סימן, בניית נוסחה וזוגיות', 'פונקציה פולינום - קדם אנליזה')
     else:
