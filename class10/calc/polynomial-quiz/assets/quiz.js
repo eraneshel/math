@@ -3,6 +3,7 @@
 (function () {
   'use strict';
   var KEY = 'poly-quiz-v1', REF_K = 4, FT_CREDIT = 1;
+  var ENDPOINT = ''; /* כתובת ה-Web App של Apps Script (apps_script.gs). ריק = ללא שליחה */
   var teacher = /[?&]teacher=1/.test(location.search);
   var root = document.getElementById('quiz');
   var bank = Array.prototype.map.call(document.querySelectorAll('#bank .qi'), function (n) {
@@ -15,6 +16,13 @@
   var stemEl = document.getElementById('stem'), STEM = stemEl ? stemEl.innerHTML : '';
   var S = load();
   function load() { if (teacher) return { name: '', ans: {} }; try { var v = JSON.parse(localStorage.getItem(KEY)); if (v && v.ans) return v; } catch (e) { } return { name: '', ans: {} }; }
+  function sid() { if (!S.sid) S.sid = Math.random().toString(36).slice(2, 10); return S.sid; }
+  function send() {
+    if (!ENDPOINT || teacher) return;
+    var ans = {}, tot = 0, n = 0;
+    bank.forEach(function (it) { var a = S.ans[it.id]; if (a) { n++; tot += a.sec || 0; ans[it.id] = { ok: a.ok, v: a.v, sec: a.sec || 0 }; } });
+    try { fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ sid: sid(), name: S.name, score: total(), answered: n, totalSec: tot, ans: ans }) }); } catch (e) { }
+  }
   function save() { if (teacher) return; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; }
   function num(s) { s = String(s).replace(/−/g, '-').replace(',', '.').replace(/\s/g, ''); var v = parseFloat(s); return (s !== '' && isFinite(v) && /^-?\d*\.?\d+$/.test(s)) ? v : NaN; }
@@ -97,6 +105,7 @@
       nw.appendChild(sg); nw.appendChild(ni); c.appendChild(nw);
       getV = function () { var v = num(ni.value); return isFinite(v) ? v : null; };
     }
+    var t0 = Date.now();
     var row = el('div', 'qrow'), chk = el('button', 'btn', 'בדיקה'); chk.type = 'button'; row.appendChild(chk);
     var msg = el('span', 'qnote'); row.appendChild(msg); c.appendChild(row);
     var fbBox = el('div'); c.appendChild(fbBox);
@@ -114,7 +123,7 @@
     if (done) { showFb(done.ok, done.v); return; }
     chk.addEventListener('click', function () {
       var v = getV(); if (v === null) { msg.textContent = it.type === 'mc' ? 'בחרו תשובה.' : 'הזינו מספר.'; return; }
-      var ok = grade(it, v); S.ans[it.id] = { v: v, ok: ok }; save(); msg.textContent = ''; showFb(ok, v);
+      var ok = grade(it, v); S.ans[it.id] = { v: v, ok: ok, sec: Math.round((Date.now() - t0) / 1000) }; save(); send(); msg.textContent = ''; showFb(ok, v);
     });
   }
 
