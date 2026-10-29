@@ -31,3 +31,14 @@
 .qnote{color:var(--mut);font-size:.95em}
 .qstem{background:var(--soft);border-radius:12px;padding:10px 12px}
 .qfb .math-expr,.qq .math-expr{white-space:nowrap}
+.qtimer{position:sticky;top:0;z-index:5;display:flex;gap:12px;align-items:center;justify-content:space-between;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px 12px;margin:8px 0}
+.qt{font-size:1.4em;font-weight:900;direction:ltr}
+.qt.low{color:#c2410c}
+.qcnt{color:var(--mut)}
+.qconfirm{background:var(--soft);border:2px solid var(--blue);border-radius:14px;padding:12px;margin:8px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.qsec-h{margin:22px 0 6px;color:var(--blue);font-size:1.15em}
+.qclr{background:none;border:0;color:var(--mut);text-decoration:underline;font:inherit;font-size:.9em;cursor:pointer;padding:4px 0}
+.qres summary{cursor:pointer;font-weight:800}
+.qres .m{display:inline-block;width:1.4em;text-align:center;font-weight:900}
+.qres.ok{border-color:#1f8a5b}.qres.ft{border-color:#2f5fd0}.qres.no{border-color:#c2410c}
+.qwhy{margin-top:8px;line-height:1.7;background:var(--soft);border-radius:10px;padding:8px 12px}
