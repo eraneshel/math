@@ -11,10 +11,12 @@ function doPost(e) {
     if (sh.getLastRow() === 0) {
       var h = ['מזהה', 'שם', 'עודכן', 'סטטוס', 'ציון', 'ענו', 'זמן (שניות)'];
       IDS.forEach(function (i) { h.push(i + ' תוצאה', i + ' תשובה', i + ' עריכות'); });
+      h.push('שרטוט');
       sh.appendRow(h); sh.setFrozenRows(1); analysis(ss);
     }
     var row = [d.sid, d.name, new Date(), d.status, d.score, d.answered, d.usedSec];
     IDS.forEach(function (i) { var a = (d.ans || {})[i] || {}; row.push(a.ok === undefined ? '' : a.ok, a.v === undefined ? '' : a.v, a.edits === undefined ? '' : a.edits); });
+    row.push(d.link ? '=HYPERLINK("' + d.link + '","צפייה בשרטוט")' : '');
     var f = sh.getRange(2, 1, Math.max(sh.getLastRow() - 1, 1), 1).createTextFinder(String(d.sid)).matchEntireCell(true).findNext();
     if (f) sh.getRange(f.getRow(), 1, 1, row.length).setValues([row]); else sh.appendRow(row);
     return ContentService.createTextOutput('ok');

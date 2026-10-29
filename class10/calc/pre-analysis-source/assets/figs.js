@@ -684,7 +684,9 @@
       /* freehand drawing: a stroke through all the entered points (and close to the right shape) draws the graph */
       var bd = mk('div', 'sk-w'); bd.appendChild(mk('div', 'sk-wh', 'ציור חופשי'));
       bd.appendChild(mk('div', 'sk-wd', K.rawStroke ? 'אחרי שהוזנו הנקודות, ציירו באצבע או בעט קו דרכן, משמאל לימין. אפשר לצייר מחדש, והקו האחרון הוא שנשמר.' : 'אחרי שהוזנו הנקודות, אפשר לצייר באצבע או בעט קו דרכן, משמאל לימין. אם הקו עובר בכל הנקודות והצורה נכונה, הגרף מצויר.'));
-      var drawBtn = mk('button', 'btn small ghost sk-draw', 'ציור חופשי'); drawBtn.type = 'button'; drawBtn.setAttribute('aria-pressed', 'false'); bd.appendChild(drawBtn); skBox.appendChild(bd);
+      var drawBtn = mk('button', 'btn small ghost sk-draw', 'ציור חופשי'); drawBtn.type = 'button'; drawBtn.setAttribute('aria-pressed', 'false'); bd.appendChild(drawBtn);
+      if (K.rawStroke) { var clrB = mk('button', 'btn small ghost sk-clr', 'מחיקת הקו'); clrB.type = 'button'; clrB.addEventListener('click', function () { keepEl.setAttribute('d', ''); strokeEl.setAttribute('d', ''); lastStroke = []; fireChange(); }); bd.appendChild(clrB); }
+      skBox.appendChild(bd);
       var gDraw = el('g', { 'class': 'svg-drawg' }, svg), ov = el('rect', { x: ML, y: MT, width: PW, height: PH, 'class': 'svg-draw' }, gDraw), strokeEl = el('path', { 'class': 'svg-stroke', d: '' }, gDraw);
       gDraw.style.display = 'none'; svg.insertBefore(gDraw, gDyn); /* שכבת הציור מתחת לנקודות: גרירת נקודה תמיד מזיזה אותה */
       var stroke = [], drawing = false, drawOn = false, keepEl = el('path', { 'class': 'svg-stroke keep', d: '' }, svg); svg.insertBefore(keepEl, gDyn); lastStroke = [];

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>שרטוט תלמיד</title>
+<style>body{font-family:system-ui,Arial,sans-serif;margin:0;padding:16px;background:#f6f8fa;color:#14213d}main{max-width:720px;margin:0 auto}h1{font-size:1.2em;margin:0 0 6px}p{margin:4px 0}svg{direction:ltr;width:100%;height:auto;background:#fff;border:1px solid #cbd5e1;border-radius:10px;margin-top:8px}.k{display:flex;gap:14px;flex-wrap:wrap;font-size:.9em;margin-top:6px}.k span:before{content:"";display:inline-block;width:20px;height:0;border-top:3px solid;margin-inline-end:5px;vertical-align:middle}.k .r:before{border-color:#94a3b8;border-top-style:dashed}.k .s:before{border-color:#7a5af8}.k .p:before{border-top:0;width:10px;height:10px;border-radius:50%;background:#c2410c}</style></head>
+<body><main><h1>שרטוט התלמיד, סעיף ז</h1><p id="info"></p>
+<svg id="pl" direction="ltr" viewBox="0 0 640 400" role="img" aria-label="שרטוט"></svg>
+<div class="k"><span class="s">הקו שצויר</span><span class="p">נקודות שסומנו</span><span class="r">הגרף הנכון (a=2), להשוואה</span></div></main>
+<script>
+(function(){
+var q=new URLSearchParams(location.search).get('d'),D={};try{D=JSON.parse(decodeURIComponent(escape(atob(q))));}catch(e){}
+var W=640,H=400,ML=40,MR=14,MT=14,MB=26,xr=[-1.5,4.5],yr=[-40,80];
+function sx(x){return ML+(x-xr[0])/(xr[1]-xr[0])*(W-ML-MR)}function sy(y){return MT+(yr[1]-y)/(yr[1]-yr[0])*(H-MT-MB)}
+var s='';for(var i=-1;i<=4;i++)s+='<line x1="'+sx(i)+'" y1="'+MT+'" x2="'+sx(i)+'" y2="'+(H-MB)+'" stroke="#e2e8f0"/><text x="'+sx(i)+'" y="'+(H-8)+'" font-size="11" text-anchor="middle" fill="#475569">'+i+'</text>';
+for(var j=-40;j<=80;j+=20)s+='<line x1="'+ML+'" y1="'+sy(j)+'" x2="'+(W-MR)+'" y2="'+sy(j)+'" stroke="#e2e8f0"/><text x="'+(ML-5)+'" y="'+(sy(j)+4)+'" font-size="11" text-anchor="end" fill="#475569">'+j+'</text>';
+s+='<line x1="'+ML+'" y1="'+sy(0)+'" x2="'+(W-MR)+'" y2="'+sy(0)+'" stroke="#475569"/><line x1="'+sx(0)+'" y1="'+MT+'" x2="'+sx(0)+'" y2="'+(H-MB)+'" stroke="#475569"/>';
+var d='';for(var x=-1.5;x<=4.5001;x+=0.03){var y=2*(x+1)*(x-2)*(x-2)*(x-4);if(y<yr[0]||y>yr[1]){d+=' ';continue}d+=(d&&d.slice(-1)!==' '?'L':'M')+sx(x).toFixed(1)+' '+sy(y).toFixed(1)}
+s+='<path d="'+d+'" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>';
+if(D.stroke&&D.stroke.length)s+='<path d="'+D.stroke.map(function(z,k){return(k?'L':'M')+sx(z[0]).toFixed(1)+' '+sy(z[1]).toFixed(1)}).join(' ')+'" fill="none" stroke="#7a5af8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';
+(D.pts||[]).forEach(function(p){s+='<circle cx="'+sx(p[0])+'" cy="'+sy(p[1])+'" r="5" fill="#c2410c" stroke="#fff" stroke-width="1.5"/><text x="'+(sx(p[0])+7)+'" y="'+(sy(p[1])-7)+'" font-size="11" fill="#14213d" direction="ltr">('+p[0]+';'+p[1]+')</text>'});
+document.getElementById('pl').innerHTML=s;
+document.getElementById('info').textContent=(D.name?D.name+' · ':'')+'a שהתלמיד מצא: '+(D.a===null||D.a===undefined?'לא נענה':D.a)+' · '+((D.pts||[]).length)+' נקודות';
+})();
+</script></body></html>

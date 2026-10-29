@@ -16,8 +16,8 @@ for f in ['style.css', 'calc.css', 'katex.min.css', 'hero.js', 'figs.js']:
     shutil.copy(os.path.join(SRC, f), os.path.join(OUT, 'assets', f))
 shutil.rmtree(os.path.join(OUT, 'assets', 'fonts'), ignore_errors=True)
 shutil.copytree(os.path.join(SRC, 'fonts'), os.path.join(OUT, 'assets', 'fonts'))
-for f in ['quiz.js', 'quiz.css']:
-    shutil.copy(os.path.join(HERE, 'quiz', f), os.path.join(OUT, 'assets', f))
+for f in ['quiz.js', 'quiz.css', 'view.html']:
+    shutil.copy(os.path.join(HERE, 'quiz', f), os.path.join(OUT, 'view.html' if f == 'view.html' else os.path.join('assets', f)))
 
 ENDS4 = ['שני הקצוות למעלה', 'שני הקצוות למטה', 'שמאל למטה וימין למעלה', 'שמאל למעלה וימין למטה']
 STEM = r'נתון הפולינום $f(x)=a\cdot(x+1)(x-2)^2(x-4)$, כאשר $a$ מספר ממשי, והגרף שלו עובר דרך הנקודה $(1;-12)$.'

@@ -79,7 +79,10 @@
   function send() {
     if (!ENDPOINT || teacher || !S.start) return;
     var ans = {}; bank.forEach(function (it) { var a = S.ans[it.id] || {}; ans[it.id] = { ok: grade(it), v: (it.type === 'sketch' ? (a.pts ? a.pts.length + ' נקודות, נכונות: ' + sketchBest().r.n + ', קו: ' + sketchBest().r.line : '') : (a.v === undefined || a.v === null ? '' : a.v)), edits: a.edits || 0 }; });
-    try { fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ sid: S.sid, name: S.name, status: status(), score: total(), answered: answered(), usedSec: usedSec(), ans: ans }) }); } catch (e) { }
+    var link = '';
+    try { var sk = S.ans.s || {}, pl = { name: S.name, a: kStudent(), pts: sk.pts || [], stroke: (sk.stroke || []).map(function (z) { return [Math.round(z[0] * 100) / 100, Math.round(z[1] * 10) / 10]; }) };
+      link = location.href.split('?')[0].split('#')[0].replace(/[^\/]*$/, '') + 'view.html?d=' + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(pl))))); } catch (e) { }
+    try { fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ sid: S.sid, name: S.name, status: status(), score: total(), answered: answered(), usedSec: usedSec(), ans: ans, link: link }) }); } catch (e) { }
   }
   function sendSoon() { clearTimeout(sendT); sendT = setTimeout(send, 2500); }
 
