@@ -290,7 +290,7 @@
     });
 
     /* ---------- free anonymous points (sketch products) ---------- */
-    var freeMode = !!(spec.sk && spec.sk.free), FP = [], gFree = freeMode ? el('g', {}, gDyn) : null, fpRows = null, fpBody = null;
+    var lastStroke = [], keepElRef = null, freeMode = !!(spec.sk && spec.sk.free), FP = [], gFree = freeMode ? el('g', {}, gDyn) : null, fpRows = null, fpBody = null;
     function fpBasis() { return spec.sk.basis.map(function (e) { var f = null; try { f = new Function('x', 'with(Math){return (' + String(e).replace(/\^/g, '**') + ');}'); } catch (er) { f = function () { return NaN; }; } return f; }); }
     function fpTouched() { return FP.filter(function (q) { return q.touched; }); }
     /* key points that must be present (within a narrow tolerance): sk.need = [[x,y],...] */
@@ -683,11 +683,12 @@
       }
       /* freehand drawing: a stroke through all the entered points (and close to the right shape) draws the graph */
       var bd = mk('div', 'sk-w'); bd.appendChild(mk('div', 'sk-wh', 'ציור חופשי'));
-      bd.appendChild(mk('div', 'sk-wd', 'אחרי שהוזנו הנקודות, אפשר לצייר באצבע או בעט קו דרכן, משמאל לימין. אם הקו עובר בכל הנקודות והצורה נכונה, הגרף מצויר.'));
+      bd.appendChild(mk('div', 'sk-wd', K.rawStroke ? 'אחרי שהוזנו הנקודות, ציירו באצבע או בעט קו דרכן, משמאל לימין. אפשר לצייר מחדש, והקו האחרון הוא שנשמר.' : 'אחרי שהוזנו הנקודות, אפשר לצייר באצבע או בעט קו דרכן, משמאל לימין. אם הקו עובר בכל הנקודות והצורה נכונה, הגרף מצויר.'));
       var drawBtn = mk('button', 'btn small ghost sk-draw', 'ציור חופשי'); drawBtn.type = 'button'; drawBtn.setAttribute('aria-pressed', 'false'); bd.appendChild(drawBtn); skBox.appendChild(bd);
       var gDraw = el('g', { 'class': 'svg-drawg' }, svg), ov = el('rect', { x: ML, y: MT, width: PW, height: PH, 'class': 'svg-draw' }, gDraw), strokeEl = el('path', { 'class': 'svg-stroke', d: '' }, gDraw);
       gDraw.style.display = 'none'; svg.insertBefore(gDraw, gDyn); /* שכבת הציור מתחת לנקודות: גרירת נקודה תמיד מזיזה אותה */
-      var stroke = [], drawing = false, drawOn = false;
+      var stroke = [], drawing = false, drawOn = false, keepEl = el('path', { 'class': 'svg-stroke keep', d: '' }, svg); svg.insertBefore(keepEl, gDyn); lastStroke = [];
+      function pathOf(arr) { return arr.map(function (z, i) { return (i ? 'L' : 'M') + sx(z.x).toFixed(1) + ' ' + sy(z.y).toFixed(1); }).join(' '); }
       function setDraw(on) { drawOn = on; gDraw.style.display = on ? '' : 'none'; svg.classList.toggle('drawing', on); drawBtn.setAttribute('aria-pressed', on ? 'true' : 'false'); drawBtn.textContent = on ? 'חזרה להזנת נקודות' : 'ציור חופשי'; strokeEl.setAttribute('d', ''); }
       function addPt(ev) { var q = toData(ev); stroke.push(q); strokeEl.setAttribute('d', stroke.map(function (z, i) { return (i ? 'L' : 'M') + sx(z.x).toFixed(1) + ' ' + sy(z.y).toFixed(1); }).join(' ')); }
       function sq(v) { return v * v; }
@@ -709,13 +710,15 @@
         return 'ok';
       }
       function endStroke() {
-        if (!drawing) return; drawing = false; var r = judge();
+        if (!drawing) return; drawing = false;
+        if (K.rawStroke) { strokeEl.setAttribute('d', ''); if (stroke.length >= 5) { lastStroke = stroke.slice(); keepEl.setAttribute('d', pathOf(lastStroke)); fireChange(); } return; }
+        var r = judge();
         if (r === 'ok') { setDraw(false); var cardE = fig.closest('.ex'), bE = cardE && cardE.querySelector('.act-chk'); if (bE) bE.click(); return; }
         if (skStatEl) { skStatEl.textContent = r; skStatEl.className = 'sk-st no'; clearTimeout(skStatTimer); skStatTimer = setTimeout(skStatus, 4000); }
         setTimeout(function () { if (!drawing) strokeEl.setAttribute('d', ''); }, 1200);
       }
       drawBtn.addEventListener('click', function () { setDraw(!drawOn); });
-      ov.addEventListener('pointerdown', function (ev) { drawing = true; stroke = []; try { ov.setPointerCapture(ev.pointerId); } catch (e) { } addPt(ev); ev.preventDefault(); });
+      ov.addEventListener('pointerdown', function (ev) { drawing = true; stroke = []; if (K.rawStroke) { keepEl.setAttribute('d', ''); lastStroke = []; } try { ov.setPointerCapture(ev.pointerId); } catch (e) { } addPt(ev); ev.preventDefault(); });
       ov.addEventListener('pointermove', function (ev) { if (drawing) addPt(ev); });
       ov.addEventListener('pointerup', endStroke);
       ov.addEventListener('pointercancel', function () { drawing = false; strokeEl.setAttribute('d', ''); });
@@ -788,6 +791,8 @@
       setDrag: function (id, x, y) { place(dragDef[id], x, y); prov[id] = true; update(); fireChange(); },
       state: function () { return { params: JSON.parse(JSON.stringify(Pm)), drags: JSON.parse(JSON.stringify(D)) }; },
       addPoint: function (x, y) { return fpAdd(x, y); },
+      stroke: function () { return lastStroke.map(function (q) { return [q.x, q.y]; }); },
+      setStroke: function (arr) { lastStroke = arr.map(function (q) { return { x: q[0], y: q[1] }; }); var kp = svg.querySelector('.svg-stroke.keep'); if (kp) kp.setAttribute('d', lastStroke.map(function (z, i) { return (i ? 'L' : 'M') + sx(z.x).toFixed(1) + ' ' + sy(z.y).toFixed(1); }).join(' ')); },
       points: function () { return freeMode ? fpTouched().map(function (q) { return [q.x, q.y]; }) : []; },
       isDrawn: function () { return !curveHidden; },
       px: function (x, y) { var b = svg.getBoundingClientRect(), k = b.width / W; return { x: b.left + sx(x) * k, y: b.top + sy(y) * k }; },

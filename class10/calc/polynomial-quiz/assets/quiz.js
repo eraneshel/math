@@ -4,7 +4,7 @@
    ENDPOINT: כתובת ה-Web App של apps_script.gs (ריק = ללא שליחה). ?teacher=1: בלי שמירה, ללא נעילה אחרי הגשה. */
 (function () {
   'use strict';
-  var KEY = 'poly-quiz-v3', VER = 4, REF_A = 2, FT_CREDIT = 1, QUIZ_MINUTES = 30, BASE = [1, -7, 12, 4, -16];
+  var KEY = 'poly-quiz-v3', VER = 5, REF_A = 2, FT_CREDIT = 1, QUIZ_MINUTES = 30, BASE = [1, -7, 12, 4, -16];
   var ENDPOINT = '';
   var teacher = /[?&]teacher=1/.test(location.search);
   var root = document.getElementById('quiz');
@@ -39,9 +39,13 @@
   function sketchPts(a) {
     var s = S.ans.s, pts = (s && s.pts ? s.pts : []).slice(0, 8), keys = [[-1, 0], [2, 0], [4, 0], [0, curveY(0, a)]], got = 0, n = 0;
     function close(p, k) { return Math.abs(p[0] - k[0]) <= 0.3 && Math.abs(p[1] - k[1]) <= 0.3; }
-    keys.forEach(function (k) { if (pts.some(function (p) { return close(p, k); })) { got += 4; n++; } });
-    if (pts.some(function (p) { return p[0] >= -1.5 && p[0] <= 4.5 && Math.abs(p[1] - curveY(p[0], a)) <= 1 && !keys.some(function (k) { return close(p, k); }); })) { got += 4; n++; }
-    return { pts: got, n: n };
+    keys.forEach(function (k) { if (pts.some(function (p) { return close(p, k); })) { got += 2; n++; } });
+    if (pts.some(function (p) { return p[0] >= -1.5 && p[0] <= 4.5 && Math.abs(p[1] - curveY(p[0], a)) <= 1 && !keys.some(function (k) { return close(p, k); }); })) { got += 2; n++; }
+    /* הקו החופשי: משמאל לימין על רוב הגרף וסמוך לעקום (10 נקודות) */
+    var st = (s && s.stroke) || [], line = 0, inside = 0, near = 0, mn = Infinity, mx = -Infinity;
+    st.forEach(function (z) { if (z[1] < -40 || z[1] > 80) return; inside++; mn = Math.min(mn, z[0]); mx = Math.max(mx, z[0]); if (Math.abs(z[1] - curveY(z[0], a)) <= 0.075 * 120) near++; });
+    if (inside >= 5 && mx - mn >= 0.6 * 6) { var fr = near / inside; line = fr >= 0.9 ? 10 : (fr >= 0.7 ? 5 : 0); }
+    return { pts: got + line, n: n, line: line };
   }
   function sketchBest() {
     var ref = sketchPts(REF_A), ks = kStudent(), ft = (ks !== null && ks !== 0 && !same(ks, REF_A)) ? sketchPts(ks) : null;
@@ -49,14 +53,14 @@
   }
   function value(it) {
     var a = S.ans[it.id]; if (!a) return null;
-    if (it.type === 'sketch') return (a.pts && a.pts.length) ? 1 : null;
+    if (it.type === 'sketch') return ((a.pts && a.pts.length) || (a.stroke && a.stroke.length)) ? 1 : null;
     if (a.v === undefined || a.v === null || a.v === '') return null;
     if (it.type === 'num') { var v = num(a.v); return isFinite(v) ? v : null; } return +a.v;
   }
 
   function grade(it) {
     var v = value(it); if (v === null) return '0';
-    if (it.type === 'sketch') { var sb = sketchBest(); return sb.r.pts >= 20 ? (sb.f ? 'F' : '1') : (sb.r.pts > 0 ? 'P' : '0'); }
+    if (it.type === 'sketch') { var sb = sketchBest(); return sb.r.pts >= 18 ? (sb.f ? 'F' : '1') : (sb.r.pts > 0 ? 'P' : '0'); }
     var ref, ft = null;
     if (CHAIN[it.id]) { ref = it.id === 'd' || it.id === 'e' ? 0 : null; var ks2 = kStudent(); if (ks2 !== null && !same(ks2, REF_A)) ft = expected(it.id, ks2); }
     else ref = it.type === 'num' ? num(it.c) : +it.c;
@@ -74,7 +78,7 @@
   function usedSec() { var end = S.endTs || Date.now(); return Math.max(0, Math.round((end - S.start) / 1000)); }
   function send() {
     if (!ENDPOINT || teacher || !S.start) return;
-    var ans = {}; bank.forEach(function (it) { var a = S.ans[it.id] || {}; ans[it.id] = { ok: grade(it), v: (it.type === 'sketch' ? (a.pts ? a.pts.length + ' נקודות, נכונות: ' + sketchBest().r.n : '') : (a.v === undefined || a.v === null ? '' : a.v)), edits: a.edits || 0 }; });
+    var ans = {}; bank.forEach(function (it) { var a = S.ans[it.id] || {}; ans[it.id] = { ok: grade(it), v: (it.type === 'sketch' ? (a.pts ? a.pts.length + ' נקודות, נכונות: ' + sketchBest().r.n + ', קו: ' + sketchBest().r.line : '') : (a.v === undefined || a.v === null ? '' : a.v)), edits: a.edits || 0 }; });
     try { fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ sid: S.sid, name: S.name, status: status(), score: total(), answered: answered(), usedSec: usedSec(), ans: ans }) }); } catch (e) { }
   }
   function sendSoon() { clearTimeout(sendT); sendT = setTimeout(send, 2500); }
@@ -148,13 +152,13 @@
       c.appendChild(ex);
       if (window.Figs) window.Figs.renderAll(ex);
       var f = ex.querySelector('.fig'), api = f && f._api; if (!api) return;
-      Array.prototype.forEach.call(ex.querySelectorAll('.sk-wh'), function (h) { if (h.textContent === 'ציור חופשי' && h.parentNode) h.parentNode.hidden = true; });
       var a0 = S.ans.s || {};
       (a0.pts || []).forEach(function (p) { api.addPoint(p[0], p[1]); });
+      if (a0.stroke && a0.stroke.length) api.setStroke(a0.stroke);
       function store() {
-        var a = S.ans.s || { edits: 0 }, pts = api.points(), key = JSON.stringify(pts);
+        var a = S.ans.s || { edits: 0 }, pts = api.points(), stk = api.stroke(), key = JSON.stringify(pts) + stk.length;
         if (a.key !== undefined && a.key !== key) a.edits = (a.edits || 0) + 1;
-        a.key = key; a.pts = pts; S.ans.s = a; save(); sendSoon(); upd();
+        a.key = key; a.pts = pts; a.stroke = stk.length > 120 ? stk.filter(function (_, i) { return i % Math.ceil(stk.length / 120) === 0; }) : stk; S.ans.s = a; save(); sendSoon(); upd();
       }
       f.addEventListener('figchange', store);
     }
@@ -180,7 +184,7 @@
   }
 
   function shownAnswer(it) {
-    if (it.type === 'sketch') { var sa = S.ans.s; return (sa && sa.pts && sa.pts.length) ? 'סומנו ' + sa.pts.length + ' נקודות, מתוכן ' + sketchBest().r.n + ' נקודות נכונות מתוך 5 נדרשות' : 'לא סומנו נקודות'; }
+    if (it.type === 'sketch') { var sa = S.ans.s; return (sa && ((sa.pts && sa.pts.length) || (sa.stroke && sa.stroke.length))) ? 'סומנו ' + sa.pts.length + ' נקודות, מתוכן ' + sketchBest().r.n + ' נכונות מתוך 5 נדרשות. הקו שציירתם: ' + (sketchBest().r.line === 10 ? 'מדויק' : (sketchBest().r.line === 5 ? 'קרוב לגרף' : 'לא תאם את הגרף או לא צויר')) : 'לא סומנו נקודות'; }
     var v = value(it); if (v === null) return 'לא נענה';
     return it.type === 'mc' ? it.opts[v] : String(v);
   }
