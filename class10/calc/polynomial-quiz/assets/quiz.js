@@ -130,15 +130,7 @@
       ul.appendChild(li);
     });
     c.appendChild(ul);
-    c.appendChild(el('p', '', '<b>קוד התוצאה שלכם.</b> שלחו אותו למורה יחד עם השם (בוואטסאפ או בצילום מסך):'));
-    var cd = el('div', 'qcode', code()); c.appendChild(cd);
-    var cb = el('button', 'btn small', 'העתקת הקוד'); cb.type = 'button'; cb.style.marginTop = '8px';
-    cb.addEventListener('click', function () {
-      try { navigator.clipboard.writeText(S.name + ' ' + code()).then(function () { cb.textContent = 'הועתק'; }, function () { sel(); }); } catch (e) { sel(); }
-      function sel() { var r = document.createRange(); r.selectNodeContents(cd); var s = getSelection(); s.removeAllRanges(); s.addRange(r); cb.textContent = 'סמנו והעתיקו'; }
-    });
-    c.appendChild(cb);
-    c.appendChild(el('p', 'qnote', 'חלק א ופרטי הסעיפים בקוד: 1 נכון, F נכון לפי התשובה שלכם בסעיף א, 0 לא נכון.'));
+    c.appendChild(el('p', 'qnote', 'הציון והמשוב נשארים אצלכם. מה שטעיתם בו, חזרו אליו בדף ההכנה.'));
     if (teacher) { var tb = el('button', 'btn small ghost', 'איפוס (מורה)'); tb.type = 'button'; tb.addEventListener('click', function () { S = { name: '', ans: {} }; try { localStorage.removeItem(KEY); } catch (e) { } screenName(); }); c.appendChild(tb); }
     root.appendChild(c);
   }
