@@ -4,7 +4,7 @@
    ENDPOINT: כתובת ה-Web App של apps_script.gs (ריק = ללא שליחה). ?teacher=1: בלי שמירה, ללא נעילה אחרי הגשה. */
 (function () {
   'use strict';
-  var KEY = 'poly-quiz-v3', VER = 5, REF_A = 2, FT_CREDIT = 1, QUIZ_MINUTES = 30, BASE = [1, -7, 12, 4, -16];
+  var KEY = 'poly-quiz-v3', VER = 6, REF_A = 2, FT_CREDIT = 1, QUIZ_MINUTES = 30, BASE = [1, -7, 12, 4, -16];
   var ENDPOINT = '';
   var teacher = /[?&]teacher=1/.test(location.search);
   var root = document.getElementById('quiz');
@@ -39,12 +39,12 @@
   function sketchPts(a) {
     var s = S.ans.s, pts = (s && s.pts ? s.pts : []).slice(0, 8), keys = [[-1, 0], [2, 0], [4, 0], [0, curveY(0, a)]], got = 0, n = 0;
     function close(p, k) { return Math.abs(p[0] - k[0]) <= 0.3 && Math.abs(p[1] - k[1]) <= 0.3; }
-    keys.forEach(function (k) { if (pts.some(function (p) { return close(p, k); })) { got += 2; n++; } });
+    keys.forEach(function (k) { if (pts.some(function (p) { return close(p, k); })) { got += 1; n++; } });
     if (pts.some(function (p) { return p[0] >= -1.5 && p[0] <= 4.5 && Math.abs(p[1] - curveY(p[0], a)) <= 1 && !keys.some(function (k) { return close(p, k); }); })) { got += 2; n++; }
-    /* הקו החופשי: משמאל לימין על רוב הגרף וסמוך לעקום (10 נקודות) */
+    /* הקו החופשי: משמאל לימין על רוב הגרף וסמוך לעקום (6 נקודות) */
     var st = (s && s.stroke) || [], line = 0, inside = 0, near = 0, mn = Infinity, mx = -Infinity;
     st.forEach(function (z) { if (z[1] < -40 || z[1] > 80) return; inside++; mn = Math.min(mn, z[0]); mx = Math.max(mx, z[0]); if (Math.abs(z[1] - curveY(z[0], a)) <= 0.075 * 120) near++; });
-    if (inside >= 5 && mx - mn >= 0.6 * 6) { var fr = near / inside; line = fr >= 0.9 ? 10 : (fr >= 0.7 ? 5 : 0); }
+    if (inside >= 5 && mx - mn >= 0.6 * 6) { var fr = near / inside; line = fr >= 0.9 ? 6 : (fr >= 0.7 ? 3 : 0); }
     return { pts: got + line, n: n, line: line };
   }
   function sketchBest() {
@@ -60,7 +60,7 @@
 
   function grade(it) {
     var v = value(it); if (v === null) return '0';
-    if (it.type === 'sketch') { var sb = sketchBest(); return sb.r.pts >= 18 ? (sb.f ? 'F' : '1') : (sb.r.pts > 0 ? 'P' : '0'); }
+    if (it.type === 'sketch') { var sb = sketchBest(); return sb.r.pts >= 11 ? (sb.f ? 'F' : '1') : (sb.r.pts > 0 ? 'P' : '0'); }
     var ref, ft = null;
     if (CHAIN[it.id]) { ref = it.id === 'd' || it.id === 'e' ? 0 : null; var ks2 = kStudent(); if (ks2 !== null && !same(ks2, REF_A)) ft = expected(it.id, ks2); }
     else ref = it.type === 'num' ? num(it.c) : +it.c;
@@ -184,7 +184,7 @@
   }
 
   function shownAnswer(it) {
-    if (it.type === 'sketch') { var sa = S.ans.s; return (sa && ((sa.pts && sa.pts.length) || (sa.stroke && sa.stroke.length))) ? 'סומנו ' + sa.pts.length + ' נקודות, מתוכן ' + sketchBest().r.n + ' נכונות מתוך 5 נדרשות. הקו שציירתם: ' + (sketchBest().r.line === 10 ? 'מדויק' : (sketchBest().r.line === 5 ? 'קרוב לגרף' : 'לא תאם את הגרף או לא צויר')) : 'לא סומנו נקודות'; }
+    if (it.type === 'sketch') { var sa = S.ans.s; return (sa && ((sa.pts && sa.pts.length) || (sa.stroke && sa.stroke.length))) ? 'סומנו ' + sa.pts.length + ' נקודות, מתוכן ' + sketchBest().r.n + ' נכונות מתוך 5 נדרשות. הקו שציירתם: ' + (sketchBest().r.line === 6 ? 'מדויק' : (sketchBest().r.line === 3 ? 'קרוב לגרף' : 'לא תאם את הגרף או לא צויר')) : 'לא סומנו נקודות'; }
     var v = value(it); if (v === null) return 'לא נענה';
     return it.type === 'mc' ? it.opts[v] : String(v);
   }
