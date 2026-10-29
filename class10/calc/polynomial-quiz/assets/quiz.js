@@ -44,9 +44,15 @@
     if (ex) { got += 2; n++; }
     det.push(['נקודה נוספת על הגרף (למשל <span class="math-expr">(1 ; ' + Math.round(curveY(1, a) * 100) / 100 + ')</span>)', ex]);
     /* הקו החופשי: משמאל לימין על רוב הגרף וסמוך לעקום (6 נקודות) */
-    var st = (s && s.stroke) || [], line = 0, inside = 0, near = 0, mn = Infinity, mx = -Infinity;
-    st.forEach(function (z) { if (z[1] < -40 || z[1] > 80) return; inside++; mn = Math.min(mn, z[0]); mx = Math.max(mx, z[0]); if (Math.abs(z[1] - curveY(z[0], a)) <= 0.075 * 120) near++; });
-    if (inside >= 5 && mx - mn >= 0.6 * 6) { var fr = near / inside; line = fr >= 0.9 ? 6 : (fr >= 0.7 ? 3 : 0); }
+    var st = (s && s.stroke) || [], line = 0, inside = 0, near = 0, mn = Infinity, mx = -Infinity, cur = [];
+    for (var cx = -1.5; cx <= 4.5001; cx += 0.03) { var cy = curveY(cx, a); if (cy >= -40 && cy <= 80) cur.push([cx, cy]); }
+    st.forEach(function (z) {
+      if (z[1] < -40 || z[1] > 80) return; inside++; mn = Math.min(mn, z[0]); mx = Math.max(mx, z[0]);
+      /* מרחק מהעקום במידות של השרטוט (5% מרוחב וגובה החלון = יחידה אחת), כדי שגם בקטעים תלולים קו קרוב יתקבל */
+      var best = Infinity; for (var i = 0; i < cur.length; i++) { var dx = (z[0] - cur[i][0]) / 0.3, dy = (z[1] - cur[i][1]) / 6; best = Math.min(best, dx * dx + dy * dy); }
+      if (best <= 2.25) near++;
+    });
+    if (inside >= 5 && mx - mn >= 0.6 * 6) { var fr = near / inside; line = fr >= 0.85 ? 6 : (fr >= 0.6 ? 3 : 0); }
     det.push(['הקו החופשי: ' + (line === 6 ? 'מדויק' : (line === 3 ? 'קרוב לגרף' : 'לא תאם את הגרף או לא צויר')), line === 6, line === 3]);
     return { pts: got + line, n: n, line: line, det: det };
   }
