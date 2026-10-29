@@ -686,7 +686,7 @@
       bd.appendChild(mk('div', 'sk-wd', 'אחרי שהוזנו הנקודות, אפשר לצייר באצבע או בעט קו דרכן, משמאל לימין. אם הקו עובר בכל הנקודות והצורה נכונה, הגרף מצויר.'));
       var drawBtn = mk('button', 'btn small ghost sk-draw', 'ציור חופשי'); drawBtn.type = 'button'; drawBtn.setAttribute('aria-pressed', 'false'); bd.appendChild(drawBtn); skBox.appendChild(bd);
       var gDraw = el('g', { 'class': 'svg-drawg' }, svg), ov = el('rect', { x: ML, y: MT, width: PW, height: PH, 'class': 'svg-draw' }, gDraw), strokeEl = el('path', { 'class': 'svg-stroke', d: '' }, gDraw);
-      gDraw.style.display = 'none';
+      gDraw.style.display = 'none'; svg.insertBefore(gDraw, gDyn); /* שכבת הציור מתחת לנקודות: גרירת נקודה תמיד מזיזה אותה */
       var stroke = [], drawing = false, drawOn = false;
       function setDraw(on) { drawOn = on; gDraw.style.display = on ? '' : 'none'; svg.classList.toggle('drawing', on); drawBtn.setAttribute('aria-pressed', on ? 'true' : 'false'); drawBtn.textContent = on ? 'חזרה להזנת נקודות' : 'ציור חופשי'; strokeEl.setAttribute('d', ''); }
       function addPt(ev) { var q = toData(ev); stroke.push(q); strokeEl.setAttribute('d', stroke.map(function (z, i) { return (i ? 'L' : 'M') + sx(z.x).toFixed(1) + ' ' + sy(z.y).toFixed(1); }).join(' ')); }
@@ -710,7 +710,7 @@
       }
       function endStroke() {
         if (!drawing) return; drawing = false; var r = judge();
-        if (r === 'ok') { strokeEl.setAttribute('d', ''); var cardE = fig.closest('.ex'), bE = cardE && cardE.querySelector('.act-chk'); if (bE) bE.click(); return; }
+        if (r === 'ok') { setDraw(false); var cardE = fig.closest('.ex'), bE = cardE && cardE.querySelector('.act-chk'); if (bE) bE.click(); return; }
         if (skStatEl) { skStatEl.textContent = r; skStatEl.className = 'sk-st no'; clearTimeout(skStatTimer); skStatTimer = setTimeout(skStatus, 4000); }
         setTimeout(function () { if (!drawing) strokeEl.setAttribute('d', ''); }, 1200);
       }
