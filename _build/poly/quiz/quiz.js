@@ -37,15 +37,18 @@
   /* שרטוט: ניקוד לפי נקודות נכונות. 3 נקודות אפס ונקודת חיתוך עם ציר y (4 נקודות כל אחת) ועוד נקודה אחת נוספת על הגרף (4 נקודות). עד 8 נקודות נבדקות */
   function curveY(x, a) { return a * (Math.pow(x, 4) + BASE[1] * Math.pow(x, 3) + BASE[2] * x * x + BASE[3] * x + BASE[4]); }
   function sketchPts(a) {
-    var s = S.ans.s, pts = (s && s.pts ? s.pts : []).slice(0, 8), keys = [[-1, 0], [2, 0], [4, 0], [0, curveY(0, a)]], got = 0, n = 0;
+    var s = S.ans.s, pts = (s && s.pts ? s.pts : []).slice(0, 8), keys = [[-1, 0], [2, 0], [4, 0], [0, curveY(0, a)]], got = 0, n = 0, det = [];
     function close(p, k) { return Math.abs(p[0] - k[0]) <= 0.3 && Math.abs(p[1] - k[1]) <= 0.3; }
-    keys.forEach(function (k) { if (pts.some(function (p) { return close(p, k); })) { got += 1; n++; } });
-    if (pts.some(function (p) { return p[0] >= -1.5 && p[0] <= 4.5 && Math.abs(p[1] - curveY(p[0], a)) <= 1 && !keys.some(function (k) { return close(p, k); }); })) { got += 2; n++; }
+    keys.forEach(function (k, i) { var hit = pts.some(function (p) { return close(p, k); }); if (hit) { got += 1; n++; } det.push([(i < 3 ? 'נקודת אפס ' : 'חיתוך עם ציר ה-y ') + '<span class="math-expr">(' + k[0] + ' ; ' + Math.round(k[1] * 100) / 100 + ')</span>', hit]); });
+    var ex = pts.some(function (p) { return p[0] >= -1.5 && p[0] <= 4.5 && Math.abs(p[1] - curveY(p[0], a)) <= 1 && !keys.some(function (k) { return close(p, k); }); });
+    if (ex) { got += 2; n++; }
+    det.push(['נקודה נוספת על הגרף (למשל <span class="math-expr">(1 ; ' + Math.round(curveY(1, a) * 100) / 100 + ')</span>)', ex]);
     /* הקו החופשי: משמאל לימין על רוב הגרף וסמוך לעקום (6 נקודות) */
     var st = (s && s.stroke) || [], line = 0, inside = 0, near = 0, mn = Infinity, mx = -Infinity;
     st.forEach(function (z) { if (z[1] < -40 || z[1] > 80) return; inside++; mn = Math.min(mn, z[0]); mx = Math.max(mx, z[0]); if (Math.abs(z[1] - curveY(z[0], a)) <= 0.075 * 120) near++; });
     if (inside >= 5 && mx - mn >= 0.6 * 6) { var fr = near / inside; line = fr >= 0.9 ? 6 : (fr >= 0.7 ? 3 : 0); }
-    return { pts: got + line, n: n, line: line };
+    det.push(['הקו החופשי: ' + (line === 6 ? 'מדויק' : (line === 3 ? 'קרוב לגרף' : 'לא תאם את הגרף או לא צויר')), line === 6, line === 3]);
+    return { pts: got + line, n: n, line: line, det: det };
   }
   function sketchBest() {
     var ref = sketchPts(REF_A), ks = kStudent(), ft = (ks !== null && ks !== 0 && !same(ks, REF_A)) ? sketchPts(ks) : null;
@@ -187,7 +190,7 @@
   }
 
   function shownAnswer(it) {
-    if (it.type === 'sketch') { var sa = S.ans.s; return (sa && ((sa.pts && sa.pts.length) || (sa.stroke && sa.stroke.length))) ? 'סומנו ' + sa.pts.length + ' נקודות, מתוכן ' + sketchBest().r.n + ' נכונות מתוך 5 נדרשות. הקו שציירתם: ' + (sketchBest().r.line === 6 ? 'מדויק' : (sketchBest().r.line === 3 ? 'קרוב לגרף' : 'לא תאם את הגרף או לא צויר')) : 'לא סומנו נקודות'; }
+    if (it.type === 'sketch') { var sa = S.ans.s; if (!(sa && ((sa.pts && sa.pts.length) || (sa.stroke && sa.stroke.length)))) return 'לא סומנו נקודות'; return 'סומנו ' + (sa.pts || []).length + ' נקודות.<ul class="qdet">' + sketchBest().r.det.map(function (d) { return '<li class="' + (d[1] ? 'y' : (d[2] ? 'h' : 'n')) + '">' + (d[1] ? '✓ ' : (d[2] ? '◐ ' : '✗ ')) + d[0] + '</li>'; }).join('') + '</ul>'; }
     var v = value(it); if (v === null) return 'לא נענה';
     return it.type === 'mc' ? it.opts[v] : String(v);
   }

@@ -43,3 +43,4 @@
 .qres.ok{border-color:#1f8a5b}.qres.ft{border-color:#2f5fd0}.qres.no{border-color:#c2410c}
 .qwhy{margin-top:8px;line-height:1.7;background:var(--soft);border-radius:10px;padding:8px 12px}
 .qsk .sk-st,.qsk figcaption{display:none}
+.qdet{margin:6px 0 0;padding:0;list-style:none}.qdet li{padding:2px 0}.qdet .y{color:#1f8a5b}.qdet .n{color:#c2410c}.qdet .h{color:#2f5fd0}
