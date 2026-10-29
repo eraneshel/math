@@ -5,7 +5,7 @@
 (function () {
   'use strict';
   var KEY = 'poly-quiz-v3', VER = 6, REF_A = 2, FT_CREDIT = 1, QUIZ_MINUTES = 30, BASE = [1, -7, 12, 4, -16];
-  var ENDPOINT = '';
+  var ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKf7XR6QNkn_spAg1WQfVlzdB7_aex78kNlhBT3TZO3H9fZ9L6xLvksnKhnPDvOnwHOA/exec';
   var teacher = /[?&]teacher=1/.test(location.search);
   var root = document.getElementById('quiz');
   var bank = Array.prototype.map.call(document.querySelectorAll('#bank .qi'), function (n) {
