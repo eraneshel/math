@@ -375,7 +375,7 @@
     function skStatus() {
       if (!skStatEl || !freeMode) return;
       var K0 = spec.sk, N = K0.need || [], nt = fpTouched().length, nb = nMinPts(), miss = needMiss().length, rdy = !!doFit() && !miss, t;
-      if (rdy) t = 'הנקודות מדויקות. אפשר ללחוץ "העבר גרף", או לצייר קו דרכן בציור חופשי.';
+      if (rdy) t = N.length ? 'הנקודות מדויקות. אפשר ללחוץ "העבר גרף", או לצייר קו דרכן בציור חופשי.' : 'הוזנו מספיק נקודות. אפשר ללחוץ "העבר גרף", או לצייר קו דרכן בציור חופשי.';
       else {
         t = 'הוזנו ' + nt + ' נקודות' + (nt < nb ? ' (נדרשות לפחות ' + nb + ')' : '');
         if (N.length) t += '. נקודות מפתח: ' + (N.length - miss) + ' מתוך ' + N.length + (miss && K0.needMsg ? '. ' + K0.needMsg : '');
@@ -788,6 +788,8 @@
       setDrag: function (id, x, y) { place(dragDef[id], x, y); prov[id] = true; update(); fireChange(); },
       state: function () { return { params: JSON.parse(JSON.stringify(Pm)), drags: JSON.parse(JSON.stringify(D)) }; },
       addPoint: function (x, y) { return fpAdd(x, y); },
+      points: function () { return freeMode ? fpTouched().map(function (q) { return [q.x, q.y]; }) : []; },
+      isDrawn: function () { return !curveHidden; },
       px: function (x, y) { var b = svg.getBoundingClientRect(), k = b.width / W; return { x: b.left + sx(x) * k, y: b.top + sy(y) * k }; },
       ready: function () { if (freeMode) return !!doFit() && !needMiss().length; return !spec.sk || spec.sk.pts.every(function (q) { return prov[q.id]; }); },
       missing: function () { if (freeMode) { var nt = fpTouched().length, nb = nMinPts(); if (nt < nb) return ['נקודות: הוזנו ' + nt + ', נדרשות לפחות ' + nb]; if (needMiss().length) return [spec.sk.needMsg || 'חסרות נקודות מפתח של הגרף (הנקודות צריכות להיות מדויקות)']; return ['הנקודות אינן קובעות גרף. החליפו או הוסיפו נקודה בערך x אחר']; } return spec.sk ? spec.sk.pts.filter(function (q) { return !prov[q.id]; }).map(function (q) { return q.lab; }) : []; },

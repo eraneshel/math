@@ -4,14 +4,14 @@
    ENDPOINT: כתובת ה-Web App של apps_script.gs (ריק = ללא שליחה). ?teacher=1: בלי שמירה, ללא נעילה אחרי הגשה. */
 (function () {
   'use strict';
-  var KEY = 'poly-quiz-v2', REF_K = 4, FT_CREDIT = 1, QUIZ_MINUTES = 40;
+  var KEY = 'poly-quiz-v2', REF_A = 2, FT_CREDIT = 1, QUIZ_MINUTES = 30, BASE = [1, -7, 12, 4, -16];
   var ENDPOINT = '';
   var teacher = /[?&]teacher=1/.test(location.search);
   var root = document.getElementById('quiz');
   var bank = Array.prototype.map.call(document.querySelectorAll('#bank .qi'), function (n) {
     return {
       id: n.getAttribute('data-id'), sec: n.getAttribute('data-sec'), pts: +n.getAttribute('data-pts'), type: n.getAttribute('data-type'),
-      c: n.getAttribute('data-c'), q: n.querySelector('.qq').innerHTML, why: n.querySelector('.qw').innerHTML,
+      c: n.getAttribute('data-c'), q: n.querySelector('.qq').innerHTML, fig: (n.querySelector('.qfig') || {}).innerHTML || '', why: n.querySelector('.qw').innerHTML,
       opts: Array.prototype.map.call(n.querySelectorAll('.qo'), function (o) { return o.innerHTML; })
     };
   });
@@ -23,29 +23,51 @@
   function num(s) { s = String(s).replace(/−/g, '-').replace(',', '.').replace(/\s/g, ''); var v = parseFloat(s); return (s !== '' && isFinite(v) && /^-?\d*\.?\d+$/.test(s)) ? v : NaN; }
   function same(a, b) { return Math.abs(a - b) < 1e-6; }
 
-  /* תשובה נכונה לפי ערך k (לסעיפי חקירה) */
-  function expected(id, k) {
+  /* תשובה נכונה לפי ערך a (סעיפי חקירה שתלויים בסימן של a) */
+  function expected(id, a) {
+    if (!a) return null;
     switch (id) {
-      case 'b': return k > 0 ? 2 : 0;
-      case 'c': return 1;
-      case 'd': return k > 0 ? 1 : 3;
-      case 'e': return 0;
-      case 'f': return 0;
-      case 'g': return k > 0 ? 2 : 0;
-      case 'h': return k > 0 ? -k * k / 4 : 0;
-      case 'i': if (k <= 0) return 0; var m = -k * k / 4; return m < -5 - 1e-9 ? 3 : (Math.abs(m + 5) < 1e-9 ? 1 : 0);
+      case 'd': return a > 0 ? 0 : 1;
+      case 'e': return a > 0 ? 0 : 1;
     }
     return null;
   }
-  var CHAIN = { b: 1, c: 1, d: 1, e: 1, f: 1, g: 1, h: 1, i: 1 };
-  function kStudent() { var a = S.ans.k; if (!a || a.v === undefined || a.v === null) return null; var v = num(a.v); return isFinite(v) ? v : null; }
-  function value(it) { var a = S.ans[it.id]; if (!a || a.v === undefined || a.v === null || a.v === '') return null; if (it.type === 'num') { var v = num(a.v); return isFinite(v) ? v : null; } return +a.v; }
+  var CHAIN = { d: 1, e: 1 };
+  function kStudent() { var a = S.ans.p; if (!a || a.v === undefined || a.v === null) return null; var v = num(a.v); return isFinite(v) ? v : null; }
+  /* שרטוט: התאמת פולינום מממעלה 4 לנקודות שהוזנו (ריבועים פחותים) */
+  function fit4(pts) {
+    var n = 5; if (!pts || pts.length < n) return null;
+    var A = [], r, c, i, k;
+    for (r = 0; r < n; r++) { A.push([]); for (c = 0; c <= n; c++) A[r].push(0); }
+    pts.forEach(function (q) { var v = [Math.pow(q[0], 4), Math.pow(q[0], 3), q[0] * q[0], q[0], 1]; for (r = 0; r < n; r++) { for (c = 0; c < n; c++) A[r][c] += v[r] * v[c]; A[r][n] += v[r] * q[1]; } });
+    for (i = 0; i < n; i++) {
+      var pv = i; for (r = i + 1; r < n; r++) if (Math.abs(A[r][i]) > Math.abs(A[pv][i])) pv = r;
+      if (Math.abs(A[pv][i]) < 1e-9) return null;
+      var t = A[i]; A[i] = A[pv]; A[pv] = t;
+      for (r = 0; r < n; r++) if (r !== i) { var m = A[r][i] / A[i][i]; for (c = i; c <= n; c++) A[r][c] -= m * A[i][c]; }
+    }
+    var co = []; for (i = 0; i < n; i++) co.push(A[i][n] / A[i][i]);
+    var res = 0; pts.forEach(function (q) { var y = co[0] * Math.pow(q[0], 4) + co[1] * Math.pow(q[0], 3) + co[2] * q[0] * q[0] + co[3] * q[0] + co[4]; res = Math.max(res, Math.abs(y - q[1])); });
+    return { c: co, res: res };
+  }
+  function matchBase(co, a) { return co.every(function (v, i) { var t = a * BASE[i]; return Math.abs(v - t) <= 0.08 * Math.max(1, Math.abs(t)); }); }
+  function value(it) {
+    var a = S.ans[it.id]; if (!a) return null;
+    if (it.type === 'sketch') return (a.drawn && a.pts && fit4(a.pts)) ? 1 : null;
+    if (a.v === undefined || a.v === null || a.v === '') return null;
+    if (it.type === 'num') { var v = num(a.v); return isFinite(v) ? v : null; } return +a.v;
+  }
 
   function grade(it) {
     var v = value(it); if (v === null) return '0';
+    if (it.type === 'sketch') {
+      var f = fit4(S.ans.s.pts); if (!f || f.res > 0.6) return '0';
+      if (matchBase(f.c, REF_A)) return '1';
+      var ks = kStudent(); if (ks !== null && ks !== 0 && !same(ks, REF_A) && matchBase(f.c, ks)) return 'F';
+      return '0';
+    }
     var ref, ft = null;
-    if (it.id === 'k') ref = 4;
-    else if (CHAIN[it.id]) { ref = expected(it.id, REF_K); var ks = kStudent(); if (ks !== null && !same(ks, REF_K)) ft = expected(it.id, ks); }
+    if (CHAIN[it.id]) { ref = it.id === 'd' || it.id === 'e' ? 0 : null; var ks2 = kStudent(); if (ks2 !== null && !same(ks2, REF_A)) ft = expected(it.id, ks2); }
     else ref = it.type === 'num' ? num(it.c) : +it.c;
     var eq = it.type === 'num' ? same : function (a, b) { return a === b; };
     if (eq(v, ref)) return '1';
@@ -61,7 +83,7 @@
   function usedSec() { var end = S.endTs || Date.now(); return Math.max(0, Math.round((end - S.start) / 1000)); }
   function send() {
     if (!ENDPOINT || teacher || !S.start) return;
-    var ans = {}; bank.forEach(function (it) { var a = S.ans[it.id] || {}; ans[it.id] = { ok: grade(it), v: (a.v === undefined ? '' : a.v), edits: a.edits || 0 }; });
+    var ans = {}; bank.forEach(function (it) { var a = S.ans[it.id] || {}; ans[it.id] = { ok: grade(it), v: (it.type === 'sketch' ? (a.pts ? a.pts.length + ' נקודות' + (a.drawn ? ', גרף' : '') : '') : (a.v === undefined || a.v === null ? '' : a.v)), edits: a.edits || 0 }; });
     try { fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ sid: S.sid, name: S.name, status: status(), score: total(), answered: answered(), usedSec: usedSec(), ans: ans }) }); } catch (e) { }
   }
   function sendSoon() { clearTimeout(sendT); sendT = setTimeout(send, 2500); }
@@ -70,7 +92,7 @@
     root.innerHTML = '';
     var c = el('div', 'qcard');
     c.appendChild(el('h2', '', 'לפני שמתחילים'));
-    c.appendChild(el('div', 'qq', '<b>זמן הבוחן: ' + QUIZ_MINUTES + ' דקות.</b> הבוחן כולל 13 סעיפים: חלק א (4 סעיפים) וחלק ב (חקירה מלאה, 9 סעיפים). אין רמזים ואין משוב בזמן הבוחן. אפשר לשנות תשובות ולחזור לכל סעיף עד ההגשה, ללא הורדת ניקוד. הציון נקבע לפי התשובות הסופיות. אם טעיתם בסעיף א בחלק ב, הסעיפים הבאים ייבדקו גם לפי התשובה שלכם (תשובה נגררת). מגישים בלחיצה על "הגשה", ואחרי ההגשה לא ניתן לשנות. עובדים עם מחשבון, עט ומחברת. כשהזמן נגמר, הבוחן מוגש אוטומטית.'));
+    c.appendChild(el('div', 'qq', '<b>זמן הבוחן: ' + QUIZ_MINUTES + ' דקות.</b> הבוחן כולל 12 סעיפים: חלק א (4 סעיפים), חלק ב (חקירה ושרטוט הגרף מנקודות) ושאלת אתגר בסוף. אין רמזים ואין משוב בזמן הבוחן. אפשר לשנות תשובות ולחזור לכל סעיף עד ההגשה, ללא הורדת ניקוד. הציון נקבע לפי התשובות הסופיות. אם טעיתם בסעיף א בחלק ב, הסעיפים שתלויים בו ייבדקו גם לפי התשובה שלכם. מגישים בלחיצה על "הגשה", ואחרי ההגשה לא ניתן לשנות. עובדים עם מחשבון, עט ומחברת. כשהזמן נגמר, הבוחן מוגש אוטומטית.'));
     var inp = el('input', 'qname'); inp.type = 'text'; inp.placeholder = 'שם מלא'; inp.setAttribute('aria-label', 'שם מלא'); inp.value = S.name || '';
     c.appendChild(inp);
     var b = el('button', 'btn', 'התחלת הבוחן'); b.type = 'button';
@@ -98,13 +120,15 @@
     bank.forEach(function (it, n) {
       if (it.sec !== lastSec) {
         lastSec = it.sec;
-        root.appendChild(el('h2', 'qsec-h', it.sec === 'A' ? 'חלק א: חזקות, פולינום וקצוות' : 'חלק ב: חקירה מלאה'));
+        root.appendChild(el('h2', 'qsec-h', it.sec === 'A' ? 'חלק א: חזקות, פולינום וקצוות' : (it.sec === 'B' ? 'חלק ב: חקירה ושרטוט' : 'שאלת אתגר')));
         if (it.sec === 'B') root.appendChild(el('div', 'qcard qstem', '<b>נתון לכל הסעיפים בחלק ב:</b> ' + STEM));
       }
       var c = el('div', 'qcard'), a = S.ans[it.id] || {};
       c.appendChild(el('div', 'qprog', 'סעיף ' + (n + 1) + ' · ' + it.pts + ' נקודות'));
       c.appendChild(el('div', 'qq', it.q));
-      if (it.type === 'mc') {
+      if (it.type === 'sketch') {
+        buildSketch(it, c);
+      } else if (it.type === 'mc') {
         var wrap = el('div', 'qopts');
         it.opts.forEach(function (o, k) {
           var lab = el('label', 'mc-o'), r = document.createElement('input'); r.type = 'radio'; r.name = 'q-' + it.id; r.value = k;
@@ -128,6 +152,25 @@
       }
       root.appendChild(c);
     });
+    function buildSketch(it, c) {
+      var ex = el('div', 'ex qsk'), holder = el('div', '', it.fig); ex.appendChild(holder);
+      var b = el('button', 'btn act-chk', 'העבר גרף'); b.type = 'button'; b.hidden = true; ex.appendChild(b);
+      c.appendChild(ex);
+      if (window.Figs) window.Figs.renderAll(ex);
+      var f = ex.querySelector('.fig'), api = f && f._api; if (!api) return;
+      var a0 = S.ans.s || {};
+      (a0.pts || []).forEach(function (q) { api.addPoint(q[0], q[1]); });
+      if (a0.drawn) api.drawGraph();
+      function sync() { b.hidden = !api.ready(); }
+      function store(drawn) {
+        var a = S.ans.s || { edits: 0 }, pts = api.points(), key = JSON.stringify(pts) + (drawn ? 'd' : '');
+        if (a.key !== undefined && a.key !== key) a.edits = (a.edits || 0) + 1;
+        a.key = key; a.pts = pts; a.drawn = drawn; S.ans.s = a; save(); sendSoon(); upd();
+      }
+      f.addEventListener('figchange', function (e) { sync(); store(!!S.ans.s && !!S.ans.s.drawn && !(e.detail && e.detail.reset)); });
+      b.addEventListener('click', function () { api.drawGraph(); store(true); });
+      sync();
+    }
     function record(id, v) {
       var a = S.ans[id] || { edits: 0 }; if (String(a.v) !== String(v)) a.edits = (a.edits || 0) + 1;
       a.v = (v === '' ? null : v); S.ans[id] = a; save(); sendSoon(); upd();
@@ -150,12 +193,14 @@
   }
 
   function shownAnswer(it) {
+    if (it.type === 'sketch') { var sa = S.ans.s; return (sa && sa.drawn && value(it) !== null) ? 'גרף שורטט מ-' + sa.pts.length + ' נקודות' : 'לא שורטט גרף'; }
     var v = value(it); if (v === null) return 'לא נענה';
     return it.type === 'mc' ? it.opts[v] : String(v);
   }
   function correctText(it) {
-    if (it.type === 'num') return String(it.id === 'k' ? 4 : (it.id === 'h' ? -4 : it.c));
-    var c = CHAIN[it.id] ? expected(it.id, REF_K) : +it.c; return it.opts[c];
+    if (it.type === 'sketch') return 'f(x)=2x⁴−14x³+24x²+8x−32';
+    if (it.type === 'num') return String(it.c);
+    var c = CHAIN[it.id] ? 0 : +it.c; return it.opts[c];
   }
 
   function screenResult() {
