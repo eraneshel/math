@@ -126,7 +126,6 @@ p.tip{background:var(--soft);border-inline-start:6px solid var(--blue);padding:1
 .rv-row.no{border-inline-start-color:#c2410c}
 .rv-q{font-weight:700}.rv-w{color:var(--muted,#5b6b7c);font-size:.95em;margin-top:2px}
 .rv-m{font-weight:800}
-.rv-d{margin-top:4px;padding:6px 10px;border-radius:8px;background:#fff4ec;color:#7c2d12;font-size:.95em}
 .rv-note{display:block;margin-top:8px}.rv-note span{display:block;font-weight:600;margin-bottom:4px}
 .rv-note textarea{width:100%;box-sizing:border-box;border:1.5px solid var(--line,#d5dde8);border-radius:10px;padding:8px;font:inherit}
 .sym{flex-wrap:wrap}.sym button{padding:0 8px}

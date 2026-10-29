@@ -188,7 +188,6 @@ document.addEventListener('click', function (e) {
     var b = box.querySelector('.pred-lock'); b.disabled = true; b.textContent = 'הניחוש נשמר';
     box.querySelector('.fb').textContent = 'נחזור אליו בשלב המסקנה.'; box.classList.add('locked');
   }
-  function diag(it, k) { var d = it.querySelector('.dg[data-o="' + k + '"]'); return d ? '<div class="rv-d"><b>למה זו טעות:</b> ' + d.innerHTML + '</div>' : ''; }
   function render(rv) {
     var pid = rv.getAttribute('data-pred'), o = load(pid), body = rv.querySelector('.rv-b');
     var items = Array.prototype.slice.call(rv.querySelectorAll('.rv-src > .rv-f'));
@@ -197,7 +196,7 @@ document.addEventListener('click', function (e) {
     items.forEach(function (it, i) {
       var opts = Array.prototype.map.call(it.querySelectorAll('.o'), function (x) { return x.innerHTML; });
       var t = +it.getAttribute('data-t'), ok = o.a[i] === t; if (!ok) wrong++;
-      rows += '<div class="rv-row ' + (ok ? 'ok' : 'no') + '"><div class="rv-q">' + it.querySelector('.q').innerHTML + '</div><div class="rv-g"><b>הניחוש שלכם:</b> ' + opts[o.a[i]] + ' <span class="rv-m">' + (ok ? '✓' : '✗') + '</span></div>' + (ok ? '' : '<div class="rv-t"><b>מה מצאנו:</b> ' + opts[t] + '</div>') + (ok ? '' : diag(it, o.a[i])) + '<div class="rv-w">' + it.querySelector('.w').innerHTML + '</div></div>';
+      rows += '<div class="rv-row ' + (ok ? 'ok' : 'no') + '"><div class="rv-q">' + it.querySelector('.q').innerHTML + '</div><div class="rv-g"><b>הניחוש שלכם:</b> ' + opts[o.a[i]] + ' <span class="rv-m">' + (ok ? '✓' : '✗') + '</span></div>' + (ok ? '' : '<div class="rv-t"><b>מה מצאנו:</b> ' + opts[t] + '</div>') + '<div class="rv-w">' + it.querySelector('.w').innerHTML + '</div></div>';
     });
     var msg;
     if (!wrong) msg = o.c === 0 ? 'כל הניחושים נכונים, ואמרתם שזה ניחוש. כנראה שאתם יודעים יותר ממה שחשבתם.' : 'כל הניחושים נכונים. עכשיו אפשר לנסח למה.';

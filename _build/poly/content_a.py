@@ -69,14 +69,12 @@ def PRED(pid, feats, graph, conf_q='עד כמה אתם בטוחים בניחוש
     out += '<div class="pred-row"><button type="button" class="btn pred-lock">אני מתחייב/ת לניחוש</button><span class="fb" aria-live="polite"></span></div></div>'
     return out
 
-def REVISIT(pid, feats, graph, truths, whys, gtruth, gwhy, diags=None, gdiag=None):
+def REVISIT(pid, feats, graph, truths, whys, gtruth, gwhy):
     """summary block: guesses vs what was found (source strings live in hidden DOM so KaTeX renders normally)"""
-    def _dg(d):
-        return ''.join('<div class="dg" data-o="%d">%s</div>' % (k, md(v, inline=True)) for k, v in (d or {}).items())
     src = ''
-    for n, ((q, opts), t, w) in enumerate(zip(feats, truths, whys)):
-        src += '<div class="rv-f" data-t="%d"><div class="q">%s</div>%s<div class="w">%s</div>%s</div>' % (t, md(q, inline=True), ''.join('<div class="o">%s</div>' % md(o, inline=True) for o in opts), md(w, inline=True), _dg(diags[n] if diags else None))
-    src += '<div class="rv-f rv-g" data-t="%d"><div class="q">%s</div>%s<div class="w">%s</div>%s</div>' % (gtruth, md(graph[0], inline=True), ''.join('<div class="o">%s</div>' % lab for lab, _ in graph[1]), md(gwhy, inline=True), _dg(gdiag))
+    for (q, opts), t, w in zip(feats, truths, whys):
+        src += '<div class="rv-f" data-t="%d"><div class="q">%s</div>%s<div class="w">%s</div></div>' % (t, md(q, inline=True), ''.join('<div class="o">%s</div>' % md(o, inline=True) for o in opts), md(w, inline=True))
+    src += '<div class="rv-f rv-g" data-t="%d"><div class="q">%s</div>%s<div class="w">%s</div></div>' % (gtruth, md(graph[0], inline=True), ''.join('<div class="o">%s</div>' % lab for lab, _ in graph[1]), md(gwhy, inline=True))
     return ('<div class="revisit" data-pred="%s"><div class="rv-h">חזרה לניחוש</div><div class="rv-src" hidden>%s</div><div class="rv-b"></div>'
             '<label class="rv-note"><span>מה הפתיע אתכם? אפשר לכתוב במילים שלכם (לא נבדק)</span><textarea rows="2" data-rvnote="%s"></textarea></label></div>\n') % (pid, src, pid)
 
