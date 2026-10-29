@@ -34,45 +34,29 @@
   }
   var CHAIN = { d: 1, e: 1 };
   function kStudent() { var a = S.ans.p; if (!a || a.v === undefined || a.v === null) return null; var v = num(a.v); return isFinite(v) ? v : null; }
-  /* שרטוט: התאמת פולינום מממעלה 4 לנקודות שהוזנו (ריבועים פחותים) */
-  function fit4(pts) {
-    var n = 5; if (!pts || pts.length < n) return null;
-    var A = [], r, c, i, k;
-    for (r = 0; r < n; r++) { A.push([]); for (c = 0; c <= n; c++) A[r].push(0); }
-    pts.forEach(function (q) { var v = [Math.pow(q[0], 4), Math.pow(q[0], 3), q[0] * q[0], q[0], 1]; for (r = 0; r < n; r++) { for (c = 0; c < n; c++) A[r][c] += v[r] * v[c]; A[r][n] += v[r] * q[1]; } });
-    for (i = 0; i < n; i++) {
-      var pv = i; for (r = i + 1; r < n; r++) if (Math.abs(A[r][i]) > Math.abs(A[pv][i])) pv = r;
-      if (Math.abs(A[pv][i]) < 1e-9) return null;
-      var t = A[i]; A[i] = A[pv]; A[pv] = t;
-      for (r = 0; r < n; r++) if (r !== i) { var m = A[r][i] / A[i][i]; for (c = i; c <= n; c++) A[r][c] -= m * A[i][c]; }
-    }
-    var co = []; for (i = 0; i < n; i++) co.push(A[i][n] / A[i][i]);
-    var res = 0; pts.forEach(function (q) { var y = co[0] * Math.pow(q[0], 4) + co[1] * Math.pow(q[0], 3) + co[2] * q[0] * q[0] + co[3] * q[0] + co[4]; res = Math.max(res, Math.abs(y - q[1])); });
-    return { c: co, res: res };
+  /* שרטוט: ניקוד לפי נקודות נכונות. 3 נקודות אפס ונקודת חיתוך עם ציר y (4 נקודות כל אחת) ועוד נקודה אחת נוספת על הגרף (4 נקודות). עד 8 נקודות נבדקות */
+  function curveY(x, a) { return a * (Math.pow(x, 4) + BASE[1] * Math.pow(x, 3) + BASE[2] * x * x + BASE[3] * x + BASE[4]); }
+  function sketchPts(a) {
+    var s = S.ans.s, pts = (s && s.pts ? s.pts : []).slice(0, 8), keys = [[-1, 0], [2, 0], [4, 0], [0, curveY(0, a)]], got = 0, n = 0;
+    function close(p, k) { return Math.abs(p[0] - k[0]) <= 0.3 && Math.abs(p[1] - k[1]) <= 0.3; }
+    keys.forEach(function (k) { if (pts.some(function (p) { return close(p, k); })) { got += 4; n++; } });
+    if (pts.some(function (p) { return p[0] >= -1.5 && p[0] <= 4.5 && Math.abs(p[1] - curveY(p[0], a)) <= 1 && !keys.some(function (k) { return close(p, k); }); })) { got += 4; n++; }
+    return { pts: got, n: n };
   }
-  /* התאמה לפי צורת העקום בכל הקטע, כדי שגם נקודות שנגררו (לא מדויקות) יתקבלו אם הגרף נכון */
-  function matchBase(co, a) {
-    for (var x = -1.5; x <= 4.5001; x += 0.1) {
-      var y = co[0] * Math.pow(x, 4) + co[1] * Math.pow(x, 3) + co[2] * x * x + co[3] * x + co[4], t = a * (Math.pow(x, 4) + BASE[1] * Math.pow(x, 3) + BASE[2] * x * x + BASE[3] * x + BASE[4]);
-      if (!isFinite(y) || Math.abs(y - t) > 0.06 * 120 * Math.max(1, Math.abs(a) / 2)) return false;
-    }
-    return true;
+  function sketchBest() {
+    var ref = sketchPts(REF_A), ks = kStudent(), ft = (ks !== null && ks !== 0 && !same(ks, REF_A)) ? sketchPts(ks) : null;
+    return (ft && ft.pts > ref.pts) ? { r: ft, f: true } : { r: ref, f: false };
   }
   function value(it) {
     var a = S.ans[it.id]; if (!a) return null;
-    if (it.type === 'sketch') return (a.drawn && a.pts && fit4(a.pts)) ? 1 : null;
+    if (it.type === 'sketch') return (a.pts && a.pts.length) ? 1 : null;
     if (a.v === undefined || a.v === null || a.v === '') return null;
     if (it.type === 'num') { var v = num(a.v); return isFinite(v) ? v : null; } return +a.v;
   }
 
   function grade(it) {
     var v = value(it); if (v === null) return '0';
-    if (it.type === 'sketch') {
-      var f = fit4(S.ans.s.pts); if (!f || f.res > 4) return '0';
-      if (matchBase(f.c, REF_A)) return '1';
-      var ks = kStudent(); if (ks !== null && ks !== 0 && !same(ks, REF_A) && matchBase(f.c, ks)) return 'F';
-      return '0';
-    }
+    if (it.type === 'sketch') { var sb = sketchBest(); return sb.r.pts >= 20 ? (sb.f ? 'F' : '1') : (sb.r.pts > 0 ? 'P' : '0'); }
     var ref, ft = null;
     if (CHAIN[it.id]) { ref = it.id === 'd' || it.id === 'e' ? 0 : null; var ks2 = kStudent(); if (ks2 !== null && !same(ks2, REF_A)) ft = expected(it.id, ks2); }
     else ref = it.type === 'num' ? num(it.c) : +it.c;
@@ -81,7 +65,7 @@
     if (ft !== null && eq(v, ft)) return 'F';
     return '0';
   }
-  function pointsOf(it, ok) { return ok === '1' ? it.pts : (ok === 'F' ? Math.round(it.pts * FT_CREDIT) : 0); }
+  function pointsOf(it, ok) { if (it.type === 'sketch') return sketchBest().r.pts; return ok === '1' ? it.pts : (ok === 'F' ? Math.round(it.pts * FT_CREDIT) : 0); }
   function total() { var t = 0; bank.forEach(function (it) { t += pointsOf(it, grade(it)); }); return t; }
   function answered() { return bank.filter(function (it) { return value(it) !== null; }).length; }
 
@@ -90,7 +74,7 @@
   function usedSec() { var end = S.endTs || Date.now(); return Math.max(0, Math.round((end - S.start) / 1000)); }
   function send() {
     if (!ENDPOINT || teacher || !S.start) return;
-    var ans = {}; bank.forEach(function (it) { var a = S.ans[it.id] || {}; ans[it.id] = { ok: grade(it), v: (it.type === 'sketch' ? (a.pts ? a.pts.length + ' נקודות' + (a.drawn ? ', גרף' : '') : '') : (a.v === undefined || a.v === null ? '' : a.v)), edits: a.edits || 0 }; });
+    var ans = {}; bank.forEach(function (it) { var a = S.ans[it.id] || {}; ans[it.id] = { ok: grade(it), v: (it.type === 'sketch' ? (a.pts ? a.pts.length + ' נקודות, נכונות: ' + sketchBest().r.n : '') : (a.v === undefined || a.v === null ? '' : a.v)), edits: a.edits || 0 }; });
     try { fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ sid: S.sid, name: S.name, status: status(), score: total(), answered: answered(), usedSec: usedSec(), ans: ans }) }); } catch (e) { }
   }
   function sendSoon() { clearTimeout(sendT); sendT = setTimeout(send, 2500); }
@@ -161,22 +145,18 @@
     });
     function buildSketch(it, c) {
       var ex = el('div', 'ex qsk'), holder = el('div', '', it.fig); ex.appendChild(holder);
-      var b = el('button', 'btn act-chk', 'העבר גרף'); b.type = 'button'; b.hidden = true; ex.appendChild(b);
       c.appendChild(ex);
       if (window.Figs) window.Figs.renderAll(ex);
       var f = ex.querySelector('.fig'), api = f && f._api; if (!api) return;
+      Array.prototype.forEach.call(ex.querySelectorAll('.sk-wh'), function (h) { if (h.textContent === 'ציור חופשי' && h.parentNode) h.parentNode.hidden = true; });
       var a0 = S.ans.s || {};
-      (a0.pts || []).forEach(function (q) { api.addPoint(q[0], q[1]); });
-      if (a0.drawn) api.drawGraph();
-      function sync() { b.hidden = !api.ready(); }
-      function store(drawn) {
-        var a = S.ans.s || { edits: 0 }, pts = api.points(), key = JSON.stringify(pts) + (drawn ? 'd' : '');
+      (a0.pts || []).forEach(function (p) { api.addPoint(p[0], p[1]); });
+      function store() {
+        var a = S.ans.s || { edits: 0 }, pts = api.points(), key = JSON.stringify(pts);
         if (a.key !== undefined && a.key !== key) a.edits = (a.edits || 0) + 1;
-        a.key = key; a.pts = pts; a.drawn = drawn; S.ans.s = a; save(); sendSoon(); upd();
+        a.key = key; a.pts = pts; S.ans.s = a; save(); sendSoon(); upd();
       }
-      f.addEventListener('figchange', function (e) { sync(); store(!!S.ans.s && !!S.ans.s.drawn && !(e.detail && e.detail.reset)); });
-      b.addEventListener('click', function () { api.drawGraph(); store(true); });
-      sync();
+      f.addEventListener('figchange', store);
     }
     function record(id, v) {
       var a = S.ans[id] || { edits: 0 }; if (String(a.v) !== String(v)) a.edits = (a.edits || 0) + 1;
@@ -200,7 +180,7 @@
   }
 
   function shownAnswer(it) {
-    if (it.type === 'sketch') { var sa = S.ans.s; return (sa && sa.drawn && value(it) !== null) ? 'גרף שורטט מ-' + sa.pts.length + ' נקודות' : 'לא שורטט גרף'; }
+    if (it.type === 'sketch') { var sa = S.ans.s; return (sa && sa.pts && sa.pts.length) ? 'סומנו ' + sa.pts.length + ' נקודות, מתוכן ' + sketchBest().r.n + ' נקודות נכונות מתוך 5 נדרשות' : 'לא סומנו נקודות'; }
     var v = value(it); if (v === null) return 'לא נענה';
     return it.type === 'mc' ? it.opts[v] : String(v);
   }
@@ -220,9 +200,9 @@
     root.appendChild(c);
     root.appendChild(el('h2', 'qsec-h', 'ניתוח הסעיפים'));
     bank.forEach(function (it, n) {
-      var ok = grade(it), d = el('details', 'qcard qres ' + (ok === '0' ? 'no' : (ok === 'F' ? 'ft' : 'ok')));
-      d.open = ok === '0';
-      d.appendChild(el('summary', '', '<span class="m">' + (ok === '0' ? '✗' : '✓') + '</span> סעיף ' + (n + 1) + (ok === 'F' ? ' (נכון לפי תשובתך בסעיף א)' : '') + ' · ' + pointsOf(it, ok) + '/' + it.pts));
+      var ok = grade(it), d = el('details', 'qcard qres ' + (ok === '0' ? 'no' : (ok === 'F' || ok === 'P' ? 'ft' : 'ok')));
+      d.open = ok === '0' || ok === 'P';
+      d.appendChild(el('summary', '', '<span class="m">' + (ok === '0' ? '✗' : (ok === 'P' ? '◐' : '✓')) + '</span> סעיף ' + (n + 1) + (ok === 'F' ? ' (נכון לפי תשובתך בסעיף א)' : '') + ' · ' + pointsOf(it, ok) + '/' + it.pts));
       d.appendChild(el('div', 'qq', it.q));
       d.appendChild(el('div', 'qnote', '<b>התשובה שלכם:</b> ' + shownAnswer(it)));
       if (ok === '0' && it.type !== 'sketch') d.appendChild(el('div', 'qnote', '<b>התשובה הנכונה:</b> ' + correctText(it)));
