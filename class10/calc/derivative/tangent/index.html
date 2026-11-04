@@ -1130,7 +1130,7 @@ path.axis { stroke: none; }
     const lines = h('div', { class: 'padlines' });
     let cur = null;
     const addLine = () => {
-      const inp = h('input', { type: 'text', class: 'in padin', dir: 'ltr', autocomplete: 'off', autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false', inputmode: 'none', placeholder: 'שורה להקלדה' });
+      const inp = h('input', { type: 'text', class: 'in padin', dir: 'ltr', autocomplete: 'off', autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false', placeholder: 'שורה להקלדה' });
       const out = h('span', { class: 'padout' });
       inp.addEventListener('focus', () => { cur = inp; });
       inp.addEventListener('input', () => {
@@ -1206,7 +1206,7 @@ path.axis { stroke: none; }
     const type = part.ans.t;
     const box = h('div', { class: 'part' });
     if (part.q) box.append(h('div', { class: 'pq' }, n > 1 ? h('b', null, part.step ? 'שלב ' + (k + 1) + '. ' : LETTERS[k] + '. ') : null, h('span', { html: T(part.q) })));
-    const input = h('input', { type: 'text', class: 'in', dir: 'ltr', autocomplete: 'off', autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false', inputmode: 'none', enterkeyhint: 'done', placeholder: PH[type], 'aria-label': 'התשובה שלכם', id: 'in' + Math.random().toString(36).slice(2) });
+    const input = h('input', { type: 'text', class: 'in', dir: 'ltr', autocomplete: 'off', autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false', enterkeyhint: 'done', placeholder: PH[type], 'aria-label': 'התשובה שלכם', id: 'in' + Math.random().toString(36).slice(2) });
     const press = ch => {
       const len = input.value.length;
       const st = input.selectionStart == null ? len : input.selectionStart, en = input.selectionEnd == null ? st : input.selectionEnd;
