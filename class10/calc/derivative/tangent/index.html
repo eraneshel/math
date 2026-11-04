@@ -1103,6 +1103,60 @@ path.axis { stroke: none; }
     return card;
   }
 
+  // בדיקת אמת לשורת חישוב: שרשרת שוויונות של מספרים, ערכי פונקציה f(a), ערכי נגזרת f'(a) ושמות (m, y_1). מחזיר null אם אי אפשר להכריע.
+  function truthLine(raw, fns) {
+    if (/[;,]/.test(raw)) return null;
+    const parts = raw.split('=').map(t => t.trim()).filter(Boolean);
+    if (parts.length < 2) return null;
+    const vals = [];
+    for (const pt of parts) {
+      if (/^[A-Za-z][A-Za-z0-9]*(_\{?[A-Za-z0-9]+\}?)?$/.test(pt)) continue;
+      const m = pt.match(/^([fgh])('?)\(\s*([^()]+?)\s*\)$/);
+      if (m) {
+        const fn = fns.find(f => f.n === m[1]); let a = null;
+        try { a = E.calc(m[3]); } catch (e) { }
+        if (!fn || a == null) return null;
+        vals.push(E.P.eval(m[2] ? E.P.der(fn.c) : fn.c, a)); continue;
+      }
+      if (/[A-Za-z]/.test(pt)) return null;
+      let v = null; try { v = E.calc(pt); } catch (e) { }
+      if (v == null || !isFinite(v)) return null;
+      vals.push(v);
+    }
+    if (vals.length < 2) return null;
+    return { ok: vals.every(v => Math.abs(v - vals[0]) <= 1e-6 * (1 + Math.abs(vals[0]))) };
+  }
+  // בדיקת אמת למשוואות ושוויונות אלגבריים בשורה: זהות פולינומית, או משוואה שמתקיימת בפתרון הנכון.
+  // מחזיר {ok:true} / {ok:false} / {ok:null} (בלי סתירה אך לא ניתן לאמת) / null (לא מכריע, ממשיכים לבדיקה הרגילה)
+  function eqLine(raw, cfg) {
+    if (/[;,]/.test(raw) || /^\s*[xX]\s*=/.test(raw)) return null;
+    const parts = raw.split('=').map(t => t.trim());
+    if (parts.length < 2 || parts.some(t => !t)) return null;
+    const fns = cfg.fns || [], polys = []; let hasCall = false;
+    for (const pt of parts) {
+      let m = pt.match(/^([fgh])('?)\(\s*x\s*\)$/);
+      if (m) { const fn = fns.find(f => f.n === m[1]); if (!fn) return null; polys.push(m[2] ? E.P.der(fn.c) : fn.c); hasCall = true; continue; }
+      m = pt.match(/^\((.+)\)'$/);
+      if (m) { const c = E.polyOf(m[1]); if (!c) return null; polys.push(E.P.der(c)); hasCall = true; continue; }
+      if (/^[A-Za-z][A-Za-z0-9]*(_\{?[A-Za-z0-9]+\}?)?$/.test(pt) && !/^[xX]$/.test(pt)) continue;
+      const c = E.polyOf(pt); if (!c) return null; polys.push(c);
+    }
+    if (polys.length < 2) return null;
+    const X = [];
+    cfg.checks.forEach(c => { if (!c.final) return; const a = c.ans;
+      if (a.t === 'point') X.push(a.v[0]); else if (a.t === 'points') a.v.forEach(v => X.push(v[0])); else if (a.t === 'set') a.v.forEach(v => X.push(v)); });
+    let allOk = true;
+    for (let i = 0; i + 1 < polys.length; i++) {
+      const A = polys[i], B = polys[i + 1];
+      if (E.P.same(A, B)) continue;
+      if (!X.length) { allOk = null; continue; }
+      const holds = X.every(x => Math.abs(E.P.eval(A, x) - E.P.eval(B, x)) <= 1e-6 * (1 + Math.abs(E.P.eval(B, x))));
+      if (holds) continue;
+      if (hasCall) return null;
+      allOk = null;
+    }
+    return { ok: allOk };
+  }
   function autoPad(it) {
     const checks = [], wrong = [], fns = [];
     const src = [it.prompt].concat(it.parts.map(p => p.q || '')).join(' ');
@@ -1119,7 +1173,7 @@ path.axis { stroke: none; }
       wrong.push(...window.Content.derivWrongs(f.c));
       checks.push({ ans: B.E(f.c), msg: 'זו הפונקציה ' + M(f.n + '(x)') + ' עצמה. כתבו את השלב הבא.' });
     });
-    return { checks, wrong };
+    return { checks, wrong, fns };
   }
 
   function buildPad(cfg) {
@@ -1144,11 +1198,19 @@ path.axis { stroke: none; }
       const chk = () => {
         const raw = inp.value.trim(); if (!raw) { fbk.className = 'fb padfb'; fbk.textContent = ''; return; }
         const bad = r => { fbk.className = 'fb padfb warn'; fbk.innerHTML = r; };
+        const tl = truthLine(raw, cfg.fns || []);
+        if (tl) { if (tl.ok) { fbk.className = 'fb padfb ok'; fbk.textContent = '✓ החישוב נכון.'; } else bad('שני צדדי השוויון אינם שווים. בדקו את החישוב.'); return; }
+        const ql = eqLine(raw, cfg);
+        if (ql) {
+          if (ql.ok === true) { fbk.className = 'fb padfb ok'; fbk.textContent = '✓ השוויון נכון.'; return; }
+          if (ql.ok === false) { bad('המשוואה הזו אינה מתקיימת בפתרון הנכון. בדקו את השלב.'); return; }
+          fbk.className = 'fb padfb info'; fbk.textContent = 'לא הצלחתי לאמת את השורה הזו, אבל לא מצאתי בה סתירה. אפשר להמשיך.'; return;
+        }
         let cand, str = raw;
         if (/y/i.test(raw) && raw.includes('=')) cand = ['line', 'lines'];
         else if (raw.includes(';')) cand = ['point', 'points'];
         else if (raw.includes(',')) { cand = ['set']; str = raw.replace(/[a-z]\s*=/gi, ''); }
-        else { const p = raw.split('=').map(s => s.trim()).filter(Boolean); str = p[p.length - 1] || ''; if (p.length === 2 && /x/i.test(p[0]) && !/x/i.test(p[1]) && !/^[xX]$/.test(p[0])) str = p[0];
+        else { const p = raw.split('=').map(s => s.trim()).filter(Boolean); str = p[p.length - 1] || ''; if (p.length >= 2 && /x/i.test(p[p.length - 2]) && !/x/i.test(p[p.length - 1]) && !/^[xX]$/.test(p[p.length - 2])) str = p[p.length - 2];
           if (p.length === 2 && /^[xX]$/.test(p[0]) && !/x/i.test(p[1])) {
             let a = null; try { a = E.calc(p[1]); } catch (e) { }
             const pts = cfg.checks.filter(c => c.ans.t === 'point' && c.final).map(c => c.ans.v);
@@ -1187,7 +1249,7 @@ path.axis { stroke: none; }
             }
           }
           bad('לא זיהיתי את הביטוי הזה כשלב נכון בדרך. עברו עליו שוב, או צמצמו איברים דומים וכתבו שוב.');
-        } else bad(type === 'num' ? 'המספר הזה לא מתאים לדרך הנכונה. בדקו את ההצבה והחישוב.' : 'זה לא מתאים לדרך הנכונה. בדקו שוב את השלב.');
+        } else if (type === 'num') { fbk.className = 'fb padfb info'; fbk.textContent = 'לא הצלחתי לאמת את המספר הזה. אם החישוב שלכם נכון, אפשר להמשיך.'; } else if (/^y\s*=\s*[-−]?[\d.]+$/.test(raw)) { fbk.className = 'fb padfb info'; fbk.textContent = 'לא הצלחתי לאמת את הערך הזה. אם החישוב שלכם נכון, אפשר להמשיך.'; } else bad('זה לא מתאים לדרך הנכונה. בדקו שוב את השלב.');
       };
       inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); chk(); } });
       inp.addEventListener('input', () => { fbk.className = 'fb padfb'; fbk.textContent = ''; });
