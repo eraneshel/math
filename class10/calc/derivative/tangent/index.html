@@ -1148,7 +1148,7 @@ path.axis { stroke: none; }
         if (/y/i.test(raw) && raw.includes('=')) cand = ['line', 'lines'];
         else if (raw.includes(';')) cand = ['point', 'points'];
         else if (raw.includes(',')) { cand = ['set']; str = raw.replace(/[a-z]\s*=/gi, ''); }
-        else { const p = raw.split('=').map(s => s.trim()).filter(Boolean); str = p[p.length - 1] || ''; cand = /x/i.test(str) ? ['expr'] : ['num', 'set']; }
+        else { const p = raw.split('=').map(s => s.trim()).filter(Boolean); str = p[p.length - 1] || ''; if (p.length === 2 && /x/i.test(p[0]) && !/x/i.test(p[1]) && !/^[xX]$/.test(p[0])) str = p[0]; cand = /x/i.test(str) ? ['expr'] : ['num', 'set']; }
         const type = cand[0];
         for (const c of cfg.checks) {
           if (!cand.includes(c.ans.t)) continue;
