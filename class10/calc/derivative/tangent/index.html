@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head><script>/*locked*/location.replace(location.pathname.replace(/\/calc\/.*$/,'/calc/'))</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>נגזרת ומשיק</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+/* Direction: calm graph-paper notebook; teal-ink primary, amber for hints, green for success. */
+:root {
+  --bg: #f4f6f5; --card: #ffffff; --ink: #1c2a2b; --muted: #5b6b6c; --line: #dbe3e1;
+  --accent: #0b7a75; --accent-ink: #ffffff; --accent-soft: #e0f1ef;
+  --ok: #1f8a4c; --ok-soft: #e3f4ea; --warn: #9a5b00; --warn-soft: #fff1d6; --info-soft: #e8eef3;
+  --grid: rgba(11, 122, 117, .07);
+  --font: "Heebo", "Assistant", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121a1a; --card: #1a2424; --ink: #e6efee; --muted: #9db0ae; --line: #2c3b3a;
+  --accent: #4cc3bb; --accent-ink: #082624; --accent-soft: #163433;
+  --ok: #5ed08d; --ok-soft: #153325; --warn: #ffc15a; --warn-soft: #3a2a0c; --info-soft: #1f2d38; --grid: rgba(76, 195, 187, .07); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #121a1a; --card: #1a2424; --ink: #e6efee; --muted: #9db0ae; --line: #2c3b3a;
+  --accent: #4cc3bb; --accent-ink: #082624; --accent-soft: #163433;
+  --ok: #5ed08d; --ok-soft: #153325; --warn: #ffc15a; --warn-soft: #3a2a0c; --info-soft: #1f2d38; --grid: rgba(76, 195, 187, .07); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 17px; line-height: 1.7;
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 28px 28px; }
+header.top { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.bar { max-width: 760px; margin: 0 auto; padding: 10px 16px 8px; display: flex; flex-direction: column; gap: 8px; }
+.brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand h1 { margin: 0; font-size: 1.05rem; font-weight: 700; letter-spacing: .01em; }
+.streak { display: flex; align-items: center; gap: 8px; font-size: .85rem; color: var(--muted); white-space: nowrap; }
+.streak .dots { display: flex; gap: 4px; }
+.streak i { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--line); display: block; transition: .25s; }
+.streak i.on { background: var(--ok); border-color: var(--ok); transform: scale(1.15); }
+#progress { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+#progress::-webkit-scrollbar { display: none; }
+.chip { flex: 0 0 auto; min-width: 32px; height: 32px; border-radius: 16px; border: 1.5px solid var(--line); background: var(--card); color: var(--muted); font: inherit; font-size: .85rem; cursor: pointer; }
+.chip.past { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+.chip.cur { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
+main { max-width: 760px; margin: 0 auto; padding: 18px 16px 90px; }
+.kicker { color: var(--accent); font-size: .85rem; font-weight: 700; letter-spacing: .04em; }
+h2 { margin: 2px 0 14px; font-size: 1.65rem; line-height: 1.25; text-wrap: balance; }
+.stack { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 16px 18px; box-shadow: 0 1px 0 rgba(0,0,0,.03); }
+.tag { display: inline-block; font-size: .78rem; font-weight: 700; color: var(--accent); background: var(--accent-soft); padding: 1px 10px; border-radius: 99px; margin-bottom: 8px; }
+.teach { border-inline-start: 5px solid var(--accent); }
+.p { margin: 6px 0; }
+.rules { margin: 8px 0; padding-inline-start: 22px; display: flex; flex-direction: column; gap: 8px; }
+.callout { margin: 10px 0; padding: 12px 14px; background: var(--accent-soft); border-radius: 10px; font-weight: 600; }
+.m { unicode-bidi: isolate; direction: ltr; display: inline-block; font-family: var(--font); font-size: 1.04em; padding: 0 2px; white-space: nowrap; }
+.m sup { font-size: .72em; line-height: 0; position: relative; top: -.1em; margin-inline-start: 1px; }
+.m sub { font-size: .72em; line-height: 0; }
+.fr { display: inline-flex; flex-direction: column; text-align: center; vertical-align: middle; line-height: 1.15; margin: 0 2px; font-size: .95em; }
+.fr > span:first-child { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+.fr > span:last-child { padding: 1px 3px 0; }
+.prob { margin: 4px 0 8px; font-size: 1.06rem; font-weight: 500; }
+.steps { margin: 6px 0 10px; padding-inline-start: 24px; display: flex; flex-direction: column; gap: 8px; }
+.step { animation: rise .3s ease both; }
+.example.done { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.fig { margin: 10px auto 2px; max-width: 380px; }
+.fig svg { width: 100%; height: auto; display: block; }
+.axis { stroke: var(--muted); fill: var(--muted); stroke-width: 1.4; }
+path.axis { stroke: none; }
+.curve { fill: none; stroke: var(--accent); stroke-width: 2.6; stroke-linejoin: round; }
+.tan { stroke: var(--warn); stroke-width: 2; stroke-dasharray: none; }
+.dot { fill: var(--ink); }
+.lbl { fill: var(--ink); font-size: 12px; font-family: var(--font); font-weight: 600; }
+.sec { margin: 12px 0 -4px; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+.sec::after { content: ""; flex: 1; height: 2px; background: var(--line); }
+.item.complete { border-color: color-mix(in srgb, var(--ok) 45%, var(--line)); }
+.parts { display: flex; flex-direction: column; gap: 14px; margin-top: 10px; }
+.part { border-top: 1px dashed var(--line); padding-top: 12px; }
+.part:first-child { border-top: 0; padding-top: 0; }
+.pq { margin-bottom: 8px; }
+.row { display: flex; gap: 8px; }
+.in { flex: 1; min-width: 0; font: 1.05rem/1.4 var(--mono); padding: 11px 12px; border-radius: 10px; border: 2px solid var(--line); background: var(--bg); color: var(--ink); text-align: left; }
+.in:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+.in.good { border-color: var(--ok); background: var(--ok-soft); }
+.keys { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; direction: ltr; }
+.krow { display: flex; flex-wrap: wrap; gap: 6px; }
+.key.wide { min-width: 52px; }
+.key { min-width: 36px; height: 40px; padding: 0 8px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); font: 1rem var(--mono); cursor: pointer; }
+.key:active { background: var(--accent-soft); }
+.btn { font: inherit; font-weight: 700; padding: 10px 18px; border-radius: 10px; border: 0; background: var(--accent); color: var(--accent-ink); cursor: pointer; min-height: 44px; }
+.btn:hover { filter: brightness(1.06); }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn.soft { background: var(--accent-soft); color: var(--accent); }
+.btn:focus-visible, .chip:focus-visible, .key:focus-visible, .link:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.link { background: none; border: 0; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; padding: 6px 2px; align-self: flex-start; }
+.tools { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.fb { margin-top: 10px; border-radius: 10px; }
+.fb:empty { display: none; }
+.fb.ok, .fb.warn, .fb.info { padding: 10px 14px; }
+.fb.ok { background: var(--ok-soft); color: var(--ok); font-weight: 700; }
+.fb.ok .after { font-weight: 500; color: var(--ink); margin-top: 4px; }
+.fb.warn { background: var(--warn-soft); color: var(--ink); border-inline-start: 4px solid var(--warn); }
+.fb.info { background: var(--info-soft); }
+.hint { margin-top: 8px; padding: 9px 13px; background: var(--warn-soft); border-radius: 10px; animation: rise .3s ease both; }
+.sol { margin-top: 10px; padding: 12px 14px; background: var(--info-soft); border-radius: 10px; }
+.sol ol { margin: 4px 0 0; padding-inline-start: 22px; display: flex; flex-direction: column; gap: 6px; }
+.extra { display: flex; flex-direction: column; gap: 10px; }
+.extra > .btn { align-self: flex-start; }
+.finish { text-align: center; border: 2px solid var(--accent); }
+.finish .big { font-size: 1.35rem; font-weight: 800; margin-bottom: 4px; }
+.finish.final { background: linear-gradient(180deg, var(--accent-soft), var(--card)); }
+.finish .wish { font-size: 1.25rem; font-weight: 800; color: var(--accent); }
+#toast { position: fixed; inset-inline: 16px; bottom: 18px; margin: 0 auto; width: fit-content; max-width: 92vw; background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 99px; font-weight: 700; opacity: 0; transform: translateY(14px); transition: .25s; pointer-events: none; z-index: 20; }
+#toast.show { opacity: 1; transform: none; }
+.clap { position: fixed; left: 50%; top: 42%; font-size: 64px; z-index: 30; pointer-events: none; animation: clap 1.05s ease-out forwards; }
+@keyframes clap { 0% { transform: translate(-50%, 0) scale(.4); opacity: 0; } 25% { transform: translate(-50%, -10px) scale(1.25) rotate(-8deg); opacity: 1; } 45% { transform: translate(-50%, -14px) scale(1.05) rotate(8deg); } 100% { transform: translate(-50%, -80px) scale(1); opacity: 0; } }
+#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; }
+@media (prefers-reduced-motion: reduce) { .step, .hint, .clap { animation: none; } .clap { display: none; } }
+@media (max-width: 420px) { body { font-size: 16.5px; } h2 { font-size: 1.45rem; } .btn { padding: 10px 14px; } }
+
+.foot { margin-top: 8px; font-size: .88rem; color: var(--muted); }
+.calc { margin-top: 6px; min-height: 0; text-align: left; direction: ltr; font: 600 1.05rem var(--mono); color: var(--accent); }
+.calc:empty { display: none; }
+.calc { background: var(--accent-soft); padding: 6px 12px; border-radius: 8px; width: fit-content; }
+.hintline{font-size:.9rem;color:var(--muted,#5b6b6a);margin:-4px 0 12px}
+
+.pad{margin-top:14px;border:1px dashed var(--line,#c9d6d4);border-radius:12px;padding:8px 12px}
+.pad summary{cursor:pointer;font-weight:600;color:var(--accent);padding:6px 0}
+.padnote{font-size:.9rem;color:var(--muted,#5b6b6a);margin:6px 0 10px}
+.padline{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.padline .in{flex:1;min-width:0}
+.padout{font:600 1rem var(--mono);color:var(--accent);direction:ltr;white-space:nowrap}
+.item .prob { position: sticky; top: var(--hh, 96px); z-index: 4; background: var(--card); margin: 0 -16px 8px; padding: 8px 16px; border-bottom: 1px solid var(--line); box-shadow: 0 4px 6px -6px rgba(0,0,0,.25); }
+
+.padline{display:block;margin-bottom:10px}
+.padrow{display:flex;align-items:center;gap:8px}
+.padrow .in{flex:1;min-width:0}
+.padrow .btn{padding:10px 12px}
+.padfb{margin-top:6px}.padfb:empty{display:none}
+
+</style>
+</head>
+<body>
+<header class="top"><div class="bar">
+  <div class="brand"><a href="../" style="font-size:14px;font-weight:700;color:var(--accent);text-decoration:none;margin-inline-end:10px" target="_top">→ חזרה לנגזרת</a><h1>נגזרת ומשיק</h1>
+    <div class="streak" aria-label="רצף הצלחות"><span>רצף <b id="streakNum">0</b></span><span class="dots" id="streakDots"></span></div></div>
+  <nav id="progress" aria-label="נושאי השיעור"></nav>
+</div></header>
+<main id="main"></main>
+<div id="toast" role="status"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<script>
+/* engine.js - answer parsing/checking + polynomial helpers */
+(function (root) {
+  'use strict';
+  const TOL = 1e-6;
+  const close = (a, b) => Math.abs(a - b) <= TOL * (1 + Math.abs(b));
+  class Bad extends Error {}
+
+  function norm(s) {
+    return String(s == null ? '' : s)
+      .replace(/[−‒–—־]/g, '-')
+      .replace(/[×·∙⋅]/g, '*')
+      .replace(/÷/g, '/')
+      .replace(/²/g, '^2').replace(/³/g, '^3').replace(/⁴/g, '^4')
+      .replace(/⁵/g, '^5').replace(/⁶/g, '^6')
+      .replace(/،/g, ',');
+  }
+
+  function tokenize(s) {
+    const t = []; let i = 0;
+    while (i < s.length) {
+      const ch = s[i];
+      if (/\s/.test(ch)) { i++; continue; }
+      if (/[0-9.]/.test(ch)) {
+        let j = i; while (j < s.length && /[0-9.]/.test(s[j])) j++;
+        const num = s.slice(i, j);
+        if ((num.match(/\./g) || []).length > 1 || num === '.') throw new Bad('num');
+        t.push({ k: 'n', v: parseFloat(num) }); i = j; continue;
+      }
+      if (/[xyXY]/.test(ch)) { t.push({ k: 'v', v: ch.toLowerCase() }); i++; continue; }
+      if ('+-*/^()'.indexOf(ch) >= 0) { t.push({ k: 'o', v: ch }); i++; continue; }
+      throw new Bad('char');
+    }
+    return t;
+  }
+
+  function compile(str) {
+    const tokens = tokenize(norm(str));
+    if (!tokens.length) throw new Bad('empty');
+    let p = 0;
+    const peek = () => tokens[p];
+    const isOp = (t, v) => t && t.k === 'o' && t.v === v;
+    function expr() {
+      let l = term();
+      while (peek() && (isOp(peek(), '+') || isOp(peek(), '-'))) {
+        const op = tokens[p++].v; const r = term(); const a = l;
+        l = op === '+' ? (e => a(e) + r(e)) : (e => a(e) - r(e));
+      }
+      return l;
+    }
+    function term() {
+      let l = unary();
+      for (;;) {
+        const t = peek(); if (!t) break;
+        if (isOp(t, '*')) { p++; const r = unary(); const a = l; l = e => a(e) * r(e); }
+        else if (isOp(t, '/')) { p++; const r = unary(); const a = l; l = e => a(e) / r(e); }
+        else if (t.k === 'v' || isOp(t, '(') || (t.k === 'n' && isOp(tokens[p - 1], ')'))) {
+          const r = power(); const a = l; l = e => a(e) * r(e);
+        } else break;
+      }
+      return l;
+    }
+    function unary() {
+      if (isOp(peek(), '-')) { p++; const a = unary(); return e => -a(e); }
+      if (isOp(peek(), '+')) { p++; return unary(); }
+      return power();
+    }
+    function power() {
+      const b = atom();
+      if (isOp(peek(), '^')) { p++; const ex = unary(); return e => Math.pow(b(e), ex(e)); }
+      return b;
+    }
+    function atom() {
+      const t = tokens[p++];
+      if (!t) throw new Bad('end');
+      if (t.k === 'n') { const v = t.v; return () => v; }
+      if (t.k === 'v') { const name = t.v; return e => { if (!(name in e)) throw new Bad('var'); return e[name]; }; }
+      if (isOp(t, '(')) { const f = expr(); if (!isOp(tokens[p++], ')')) throw new Bad('paren'); return f; }
+      throw new Bad('atom');
+    }
+    const f = expr();
+    if (p !== tokens.length) throw new Bad('trail');
+    return f;
+  }
+
+  const stripName = s => s.replace(/^\s*[A-Za-zא-ת][A-Za-zא-ת_0-9']*(\([^()]*\))?\s*=\s*/, '');
+  const splitList = s => norm(s).replace(/(^|\s)או(?=\s|$)/g, ' ; ').split(/[;,]/).map(x => x.trim()).filter(Boolean);
+
+  function evalNum(f, env) {
+    const v = f(env || {});
+    if (!isFinite(v)) throw new Bad('nan');
+    return v;
+  }
+  function parseNum(raw) { return evalNum(compile(stripName(norm(raw)))); }
+  function uniq(arr, eq) { const r = []; arr.forEach(a => { if (!r.some(b => eq(a, b))) r.push(a); }); return r; }
+  function parseSet(raw) {
+    const parts = splitList(raw); if (!parts.length) throw new Bad('empty');
+    return uniq(parts.map(parseNum), close);
+  }
+  function parsePointInner(s) {
+    s = norm(s).replace(/^\s*[A-Za-zא-ת]*\s*/, '').replace(/[()]/g, '');
+    const parts = s.split(/[;,]/).map(x => x.trim()).filter(Boolean);
+    if (parts.length !== 2) throw new Bad('pt');
+    return parts.map(parseNum);
+  }
+  function parsePoint(raw) { return parsePointInner(raw); }
+  function parsePoints(raw) {
+    const s = norm(raw); const out = []; const re = /\(([^()]*)\)/g; let m;
+    while ((m = re.exec(s))) out.push(parsePointInner(m[1]));
+    if (!out.length) throw new Bad('pts');
+    return uniq(out, (a, b) => close(a[0], b[0]) && close(a[1], b[1]));
+  }
+  function parseExprFn(raw) {
+    const f = compile(stripName(norm(raw)));
+    const xs = [-3, -2, -1, 0, 1, 2, 3, 0.5, -1.5];
+    const vals = xs.map(x => evalNum(f, { x }));
+    return { f, xs, vals };
+  }
+  function parseLine(raw) {
+    const s = norm(raw); const eqs = s.split('=');
+    if (eqs.length !== 2) throw new Bad('eq');
+    const L = compile(eqs[0]), R = compile(eqs[1]);
+    const F = (x, y) => evalNum(L, { x, y }) - evalNum(R, { x, y });
+    const c = F(0, 0), a = F(1, 0) - c, b = F(0, 1) - c;
+    [[2, 3], [-1, 2], [0.5, -4]].forEach(([x, y]) => {
+      if (Math.abs(F(x, y) - (a * x + b * y + c)) > 1e-6 * (1 + Math.abs(c))) throw new Bad('nonlinear');
+    });
+    return { a, b, c };
+  }
+  function parseLines(raw) {
+    const parts = splitList(raw); if (!parts.length) throw new Bad('empty');
+    return parts.map(parseLine);
+  }
+
+  const lineEq = (L, m, b) => Math.abs(L.b) > 1e-9 && close(L.a / L.b, -m) && close(L.c / L.b, -b);
+  const ptEq = (p, q) => close(p[0], q[0]) && close(p[1], q[1]);
+
+  function trimC(c) { const r = c.slice(); while (r.length > 1 && Math.abs(r[r.length - 1]) < 1e-12) r.pop(); return r; }
+  const polyEval = (c, x) => c.reduce((s, a, i) => s + a * Math.pow(x, i), 0);
+
+  // returns 'ok' | 'partial' | 'bad'
+  function judge(spec, raw) {
+    switch (spec.t) {
+      case 'num': return close(parseNum(raw), spec.v) ? 'ok' : 'bad';
+      case 'set': {
+        const got = parseSet(raw);
+        const hit = got.filter(g => spec.v.some(e => close(g, e)));
+        if (hit.length === got.length && got.length === spec.v.length) return 'ok';
+        return hit.length === got.length && got.length > 0 && got.length < spec.v.length ? 'partial' : 'bad';
+      }
+      case 'point': return ptEq(parsePoint(raw), spec.v) ? 'ok' : 'bad';
+      case 'points': {
+        const got = parsePoints(raw);
+        const hit = got.filter(g => spec.v.some(e => ptEq(g, e)));
+        if (hit.length === got.length && got.length === spec.v.length) return 'ok';
+        return hit.length === got.length && got.length < spec.v.length ? 'partial' : 'bad';
+      }
+      case 'expr': {
+        const { vals, xs } = parseExprFn(raw);
+        return xs.every((x, i) => close(vals[i], polyEval(spec.c, x))) ? 'ok' : 'bad';
+      }
+      case 'line': return lineEq(parseLine(raw), spec.m, spec.b) ? 'ok' : 'bad';
+      case 'lines': {
+        const got = parseLines(raw);
+        const hit = got.filter(g => spec.v.some(e => lineEq(g, e.m, e.b)));
+        if (hit.length === got.length && got.length === spec.v.length) {
+          // each expected must be matched by a distinct student line
+          const used = spec.v.every(e => got.some(g => lineEq(g, e.m, e.b)));
+          return used ? 'ok' : 'bad';
+        }
+        return hit.length === got.length && got.length < spec.v.length ? 'partial' : 'bad';
+      }
+    }
+    throw new Error('type ' + spec.t);
+  }
+  function check(spec, raw) {
+    try { return { r: judge(spec, raw) }; } catch (e) { if (e instanceof Bad) return { r: 'error' }; throw e; }
+  }
+  function matchWrong(wrongs, defType, raw) {
+    for (const w of wrongs || []) {
+      const spec = Object.assign({ t: defType }, w);
+      try { if (judge(spec, raw) === 'ok') return w; } catch (e) { if (!(e instanceof Bad)) throw e; }
+    }
+    return null;
+  }
+
+  // fit a polynomial (coeff array, low->high, degree<=5) to an expression in x; null if it is not one
+  function polyOf(raw) {
+    try {
+      const { f, xs, vals } = parseExprFn(raw);
+      const D = 5, px = [0, 1, 2, 3, 4, 5], py = px.map(x => evalNum(f, { x }));
+      // Gaussian elimination on Vandermonde
+      const n = D + 1, A = px.map((x, i) => { const r = []; for (let k = 0; k < n; k++) r.push(Math.pow(x, k)); r.push(py[i]); return r; });
+      for (let i = 0; i < n; i++) {
+        let m = i; for (let r = i + 1; r < n; r++) if (Math.abs(A[r][i]) > Math.abs(A[m][i])) m = r;
+        [A[i], A[m]] = [A[m], A[i]];
+        for (let r = 0; r < n; r++) if (r !== i) { const k = A[r][i] / A[i][i]; for (let c = i; c <= n; c++) A[r][c] -= k * A[i][c]; }
+      }
+      const c = A.map((r, i) => { const v = r[n] / r[i], q = P.rat(v); return q ? q[0] / q[1] : v; });
+      while (c.length > 1 && Math.abs(c[c.length - 1]) < 1e-9) c.pop();
+      return xs.every((x, i) => close(vals[i], polyEval(c, x))) ? c : null;
+    } catch (err) { if (err instanceof Bad) return null; throw err; }
+  }
+
+  // ---- polynomials (coeff arrays, low -> high) ----
+  const P = {
+    eval: polyEval,
+    der: c => (c.length > 1 ? c.slice(1).map((a, i) => a * (i + 1)) : [0]),
+    mul(a, b) { const r = Array(a.length + b.length - 1).fill(0); a.forEach((x, i) => b.forEach((y, j) => { r[i + j] += x * y; })); return r; },
+    scale: (c, k) => c.map(a => a * k),
+    same: (a, b) => { a = trimC(a); b = trimC(b); return a.length === b.length && a.every((v, i) => close(v, b[i])); },
+    rat(v) { for (let d = 1; d <= 12; d++) { const n = v * d; if (Math.abs(n - Math.round(n)) < 1e-9) return [Math.round(n), d]; } return null; },
+    str(c) {
+      let out = '';
+      for (let n = c.length - 1; n >= 0; n--) {
+        const v = c[n]; if (Math.abs(v) < 1e-12) continue;
+        const neg = v < 0, a = Math.abs(v), r = P.rat(a);
+        let body;
+        const xp = n === 0 ? '' : (n === 1 ? 'x' : 'x^' + n);
+        if (r && r[1] > 1) {
+          const num = (r[0] === 1 && n > 0) ? xp : (r[0] + xp);
+          body = '\\f{' + num + '}{' + r[1] + '}';
+        } else {
+          const iv = r ? r[0] : +a.toFixed(4);
+          body = (iv === 1 && n > 0) ? xp : (iv + xp);
+        }
+        if (!out) out = (neg ? '-' : '') + body; else out += (neg ? ' - ' : ' + ') + body;
+      }
+      return out || '0';
+    },
+  };
+  const tangent = (c, x1) => { const m = polyEval(P.der(c), x1), y1 = polyEval(c, x1); return { m, y1, b: y1 - m * x1 }; };
+
+  // ---- spec builders ----
+  const B = {
+    N: v => ({ t: 'num', v }),
+    S: v => ({ t: 'set', v }),
+    Pt: (x, y) => ({ t: 'point', v: [x, y] }),
+    Pts: v => ({ t: 'points', v }),
+    E: c => ({ t: 'expr', c }),
+    L: (m, b) => ({ t: 'line', m, b }),
+    Ls: v => ({ t: 'lines', v: v.map(([m, b]) => ({ m, b })) }),
+  };
+
+  function calc(raw) { try { return parseNum(raw); } catch (e) { if (e instanceof Bad) return null; throw e; } }
+  root.Engine = { polyOf, check, matchWrong, P, B, close, tangent, norm, compile, calc };
+  if (typeof module !== 'undefined') module.exports = root.Engine;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* content.js - lesson modules. Math markup: {{...}} inline LTR math, ^ exponent, _ subscript, \f{a}{b} fraction */
+(function (root) {
+  'use strict';
+  const { P, B, tangent } = root.Engine;
+  const { N, S, Pt, Pts, E, L, Ls } = B;
+  const M = s => '{{' + s + '}}';
+  const fx = c => M('f(x)=' + P.str(c));
+  const fa = (c, a) => P.eval(c, a);
+  const dc = c => P.der(c);
+
+  // ---------- generic wrong-answer generators ----------
+  function derivWrongs(c) {
+    const d = dc(c), w = [];
+    const A = Array(Math.max(c.length - 1, 1)).fill(0);
+    for (let n = 1; n < c.length; n++) A[n - 1] = c[n];
+    w.push({ t: 'expr', c: A, msg: 'נראה שלא הכפלתם במעריך. בכלל {{(ax^n)\'=a·n·x^{n-1}}} המקדם <b>מוכפל</b> בחזקה, ורק אחר כך החזקה קטנה ב-1.' });
+    if (c[0] !== 0) { const Bc = d.slice(); Bc[0] = (Bc[0] || 0) + c[0]; w.push({ t: 'expr', c: Bc, msg: 'נגזרת של מספר קבוע היא <b>0</b>: האיבר החופשי נעלם כשגוזרים.' }); }
+    const C = Array(c.length).fill(0); for (let n = 1; n < c.length; n++) C[n] = c[n] * n;
+    w.push({ t: 'expr', c: C, msg: 'הכפלתם נכון, אבל שכחתם להקטין את החזקה ב-1. {{x^3}} הופך ל-{{x^2}}, {{x^2}} הופך ל-{{x}}.' });
+    return w.filter(x => !P.same(x.c, d));
+  }
+  function valWrongs(c, a) {
+    const d = dc(c), correct = P.eval(d, a), w = [];
+    w.push({ t: 'num', v: P.eval(c, a), msg: 'זה {{f(' + a + ')}}: הצבתם בפונקציה המקורית. כאן מבקשים את {{f\'(' + a + ')}}, אז קודם <b>גוזרים</b> ורק אז מציבים.' });
+    const A = Array(Math.max(c.length - 1, 1)).fill(0); for (let n = 1; n < c.length; n++) A[n - 1] = c[n];
+    w.push({ t: 'num', v: P.eval(A, a), msg: 'נראה שבגזירה לא הכפלתם במעריך. בדקו שוב את הנגזרת לפני ההצבה.' });
+    const C = Array(c.length).fill(0); for (let n = 1; n < c.length; n++) C[n] = c[n] * n;
+    w.push({ t: 'num', v: P.eval(C, a), msg: 'בגזירה שכחתם להקטין את החזקה ב-1. בדקו שוב את הנגזרת.' });
+    return w.filter(x => Math.abs(x.v - correct) > 1e-9);
+  }
+  function lineWrongs(c, x1, normal) {
+    const { m, y1 } = tangent(c, x1), w = [], ok = normal ? -1 / m : m;
+    const add = (mm, bb, msg) => { if (Math.abs(mm - ok) > 1e-9 || Math.abs(bb - (y1 - ok * x1)) > 1e-9) w.push({ t: 'line', m: mm, b: bb, msg }); };
+    if (!normal) {
+      add(m, 0, 'השיפוע נכון! אבל הישר צריך לעבור דרך הנקודה {{(x_1 ; y_1)}}. הציבו אותה ב-{{y-y_1=m(x-x_1)}}.');
+      add(m, y1, 'השיפוע נכון, אבל {{y_1}} אינו נקודת החיתוך עם ציר y. בנוסחה {{y-y_1=m(x-x_1)}} יש גם {{x_1}}, פתחו סוגריים.');
+      add(m, y1 + m * x1 - m * x1 + 2 * m * x1 - m * x1, 'שימו לב לסימנים: בנוסחה כתוב {{x-x_1}}, לא {{x+x_1}}.');
+      add(y1, y1 - y1 * x1, 'השיפוע הוא {{f\'(x_1)}} הנגזרת, לא ערך הפונקציה {{f(x_1)}}.');
+    } else {
+      add(m, y1 - m * x1, 'זה המשיק עצמו. הנורמל מאונך למשיק, ולכן שיפועו {{-\\f{1}{m}}}.');
+      add(-m, y1 + m * x1, 'מאונך פירושו {{-\\f{1}{m}}} — הופכים <b>ומחליפים סימן</b>, לא {{-m}}.');
+    }
+    return w;
+  }
+  const G = { // shorthand for hint texts
+    deriv: 'כלל החזקה: {{(ax^n)\'=a·n·x^{n-1}}}. מספר קבוע נעלם.',
+  };
+
+  const MODS = [];
+
+  // =============== 1. power rule ===============
+  (function () {
+    const cs = [[0, 0, 0, 0, 1], [0, 0, 0, 5], [0, 0, -6], [0, 9], [12]];
+    MODS.push({
+      title: 'כלל החזקה', short: 'חזקה',
+      teach: [
+        '<b>הנגזרת</b> של פונקציה ' + M('f(x)') + ' היא פונקציה חדשה שמסומנת ' + M('f\'(x)') + ' (או ' + M('y\'') + '). בהמשך נגלה שהיא נותנת את <b>שיפוע הגרף</b> בכל נקודה. קודם נלמד לחשב אותה, ונתחיל באיבר בודד, בשלושה כללים:',
+        '<ul class="rules"><li><b>חזקה:</b> ' + M('(x^n)\'=n·x^{n-1}') + '. מורידים את החזקה לפנים כמקדם, ומקטינים אותה ב-1.<br>' + M('(x^2)\'=2x') + ' &nbsp; ' + M('(x^3)\'=3x^2') + ' &nbsp; ' + M('(x)\'=1') + '</li><li><b>מקדם:</b> ' + M('(a·x^n)\'=a·n·x^{n-1}') + '. המקדם נשאר ומוכפל בחזקה.<br>' + M('(5x^2)\'=10x') + ' &nbsp; ' + M('(-4x)\'=-4') + '</li><li><b>מספר קבוע:</b> הנגזרת שלו היא 0.<br>' + M('(7)\'=0') + '</li></ul>',
+      ],
+      examples: [
+        { prob: 'גזרו: ' + M('f(x)=x^5'), steps: ['מורידים את החזקה 5 לפנים: ' + M('5·x'), 'מקטינים את החזקה ב-1: ' + M('x^{5-1}=x^4'), M('f\'(x)=5x^4')] },
+        { prob: 'גזרו: ' + M('f(x)=7x^3'), steps: ['המקדם 7 נשאר, ומוכפל בחזקה 3: ' + M('7·3=21'), 'החזקה קטנה ב-1: ' + M('x^3') + ' הופך ל-' + M('x^2'), M('f\'(x)=21x^2')] },
+        { prob: 'גזרו כל אחת מהפונקציות: ' + M('-4x') + ', &nbsp; ' + M('9'), steps: [M('(-4x)\'=-4') + ' כי ' + M('(x)\'=1'), M('(9)\'=0') + ' כי קבוע נעלם'] },
+      ],
+      practice: [
+        { prompt: 'גזרו: ' + fx(cs[0]), parts: [{ ans: E(dc(cs[0])), wrong: derivWrongs(cs[0]),
+          hint: ['מורידים את החזקה 4 לפנים כמקדם.', 'החזקה קטנה ב-1: ' + M('x^4') + ' הופך ל-' + M('x^3')],
+          sol: [M('(x^4)\'=4·x^{4-1}'), M('f\'(x)=4x^3')] }] },
+        { prompt: 'גזרו: ' + fx(cs[1]), parts: [{ ans: E(dc(cs[1])), wrong: derivWrongs(cs[1]),
+          hint: ['המקדם 5 מוכפל בחזקה 3.', M('5·3=15') + ' והחזקה קטנה ב-1.'],
+          sol: [M('(5x^3)\'=5·3·x^2'), M('f\'(x)=15x^2')] }] },
+        { prompt: 'גזרו: ' + fx(cs[2]), parts: [{ ans: E(dc(cs[2])), wrong: derivWrongs(cs[2]),
+          hint: ['שימו לב למקדם השלילי: ' + M('-6') + ' מוכפל בחזקה 2.', M('-6·2=-12') + ', והחזקה קטנה ל-1 (כלומר ' + M('x') + ').'],
+          sol: [M('(-6x^2)\'=-6·2·x'), M('f\'(x)=-12x')] }] },
+        { prompt: 'גזרו כל פונקציה בנפרד.', parts: [
+          { q: M('f(x)=9x'), ans: E(dc(cs[3])), wrong: derivWrongs(cs[3]), hint: [M('9x') + ' הוא ' + M('9x^1') + '. מה קורה לחזקה 1?'], sol: [M('(9x)\'=9·1·x^0=9')] },
+          { q: M('g(x)=12'), ans: E(dc(cs[4])), wrong: derivWrongs(cs[4]), hint: ['זה מספר קבוע, בלי x.'], sol: [M('(12)\'=0') + ': נגזרת של קבוע היא 0'] },
+        ] },
+      ],
+    });
+  })();
+
+  // =============== 2. sum / difference ===============
+  (function () {
+    const c1 = [9, -7, 4], c2 = [-4, 12, -9, 2], c3 = [0, 3, -5, 0, 1];
+    MODS.push({
+      title: 'גזירת סכום והפרש', short: 'סכום',
+      teach: [
+        'פונקציה היא לרוב <b>סכום או הפרש</b> של כמה איברים, כמו ' + M('3x^2-4x+5') + '. הכלל פשוט:',
+        '<div class="callout">גוזרים כל איבר בנפרד, ומשאירים את סימני החיבור והחיסור כמו שהם.</div>',
+        M('(f+g)\'=f\'+g\'') + ' &nbsp; ו- &nbsp; ' + M('(f-g)\'=f\'-g\''),
+        'בכל איבר משתמשים בכללים מהדף הקודם: חזקה, מקדם וקבוע.',
+      ],
+      examples: [
+        { prob: 'גזרו: ' + M('f(x)=3x^2-4x+5'), steps: ['מפרקים לאיברים: ' + M('3x^2') + ', ' + M('-4x') + ', ' + M('5'), M('(3x^2)\'=3·2x=6x') + ' כי ' + M('(x^2)\'=2x'), M('(-4x)\'=-4') + ' כי ' + M('(x)\'=1'), M('(5)\'=0') + ' כי קבוע נעלם', 'מחברים: ' + M('f\'(x)=6x-4')] },
+        { prob: 'גזרו: ' + M('f(x)=2x^3-x^2+7x-9'), steps: ['איבר איבר: ' + M('(2x^3)\'=6x^2'), M('(-x^2)\'=-2x'), M('(7x)\'=7') + ' ו-' + M('(-9)\'=0'), M('f\'(x)=6x^2-2x+7')] },
+      ],
+      practice: [
+        { prompt: 'גזרו: ' + fx(c1), parts: [{ ans: E(dc(c1)), wrong: derivWrongs(c1),
+          hint: ['התחילו באיבר הראשון: המקדם 4, החזקה 2. מכפילים את המקדם בחזקה והחזקה קטנה ב-1.', M('(4x^2)\'=8x') + ', ' + M('(-7x)\'=-7') + '. ומה נגזרת של המספר 9?'],
+          sol: [M('(4x^2)\'=4·2·x=8x'), M('(-7x)\'=-7'), M('(9)\'=0'), M('f\'(x)=8x-7')] }] },
+        { prompt: 'גזרו: ' + fx(c2), parts: [{ ans: E(dc(c2)), wrong: derivWrongs(c2),
+          hint: ['שלושה איברים עם x וקבוע אחד. גוזרים כל איבר בנפרד.', M('(2x^3)\'=6x^2') + '. המשיכו לאיבר ' + M('-9x^2') + '.'],
+          sol: [M('(2x^3)\'=6x^2'), M('(-9x^2)\'=-18x'), M('(12x)\'=12'), M('(-4)\'=0'), M('f\'(x)=6x^2-18x+12')] }] },
+        { prompt: 'גזרו: ' + fx(c3) + '. שימו לב: חסרים איברים.', parts: [{ ans: E(dc(c3)), wrong: derivWrongs(c3),
+          hint: ['אין כאן איבר ' + M('x^3') + ', ולכן גם אין איבר ' + M('x^2') + ' בנגזרת.', M('(x^4)\'=4x^3') + ', ' + M('(-5x^2)\'=-10x') + ', ' + M('(3x)\'=3') + '.'],
+          sol: [M('(x^4)\'=4x^3'), M('(-5x^2)\'=-10x'), M('(3x)\'=3'), M('f\'(x)=4x^3-10x+3')] }] },
+      ],
+    });
+  })();
+
+  // =============== 2. brackets, fractions ===============
+  (function () {
+    const a = P.mul([-1, 1], [4, 1]);            // (x-1)(x+4)
+    const b = P.scale(P.mul([-3, 1], [-3, 1]), 2); // 2(x-3)^2
+    const c = [0, 2, -1.5, 1 / 3];
+    MODS.push({
+      title: 'סוגריים ושברים', short: 'סוגריים',
+      teach: [
+        'לא תמיד הפונקציה כתובה כסכום של איברים. שני מצבים נפוצים:',
+        '<ul class="rules"><li><b>מכפלה בסוגריים</b>, כמו ' + M('(x-2)(x+5)') + ' או ' + M('2(x-4)^2') + ' או ' + M('x(x^2-2x-8)') + '. <b>קודם פותחים סוגריים</b> ורק אז גוזרים.*</li><li><b>שברים</b>, כמו ' + M('\\f{x^3}{3}') + '. זה פשוט ' + M('\\f{1}{3}x^3') + ': המקדם הוא ' + M('\\f{1}{3}') + ', ואותו מכפילים בחזקה.</li></ul>',
+        '<div class="foot">* כלל לגזירת מכפלה נלמד בהמשך.</div>',
+      ],
+      examples: [
+        { prob: 'גזרו: ' + M('f(x)=(x-2)(x+5)'), steps: ['פותחים סוגריים: ' + M('x^2+5x-2x-10=x^2+3x-10'), 'עכשיו גוזרים איבר איבר: ' + M('f\'(x)=2x+3')] },
+        { prob: 'גזרו: ' + M('f(x)=\\f{x^3}{3}-\\f{x^2}{2}-2x'), steps: ['המקדם של ' + M('x^3') + ' הוא ' + M('\\f{1}{3}') + ', ולכן ' + M('\\f{1}{3}·3·x^2=x^2'), 'המקדם של ' + M('x^2') + ' הוא ' + M('-\\f{1}{2}') + ', ולכן ' + M('-\\f{1}{2}·2·x=-x'), M('(-2x)\'=-2'), M('f\'(x)=x^2-x-2')] },
+      ],
+      practice: [
+        { pad: { checks: [
+            { ans: E(a), expanded: true, msg: '✓ הביטוי נכון. בצורה מצומצמת: ' + M('x^2+3x-4') + '.' },
+            { ans: E(dc(a)), final: true } ],
+          wrong: [
+            { t: 'expr', c: [-4, 0, 1], msg: 'חסר האיבר האמצעי. ' + M('x·4') + ' ו-' + M('-1·x') + ' נותנים ' + M('4x-x=3x') + '.' },
+            { t: 'expr', c: [1], msg: 'אין כלל של "נגזרת כפול נגזרת". קודם פותחים סוגריים, ואז גוזרים איבר איבר.' } ].concat(derivWrongs(a)) }, prompt: 'גזרו: ' + M('f(x)=(x-1)(x+4)') + '.', parts: [
+          { q: 'כתבו את ' + M('f\'(x)') + '.', ans: E(dc(a)),
+            wrong: [{ t: 'expr', c: [1], msg: 'אין כלל של "נגזרת כפול נגזרת". קודם פותחים סוגריים, ואז גוזרים איבר איבר.' }].concat(derivWrongs(a)),
+            hint: ['פותחים סוגריים: כופלים כל איבר בסוגריים הראשונים בכל איבר בשניים ומצמצמים איברים דומים.', 'מקבלים ' + M('x^2+3x-4') + '. עכשיו גוזרים איבר איבר.'],
+            sol: [M('(x-1)(x+4)=x^2+4x-x-4=x^2+3x-4'), M('(x^2)\'=2x') + ', ' + M('(3x)\'=3') + ', ' + M('(-4)\'=0'), M('f\'(x)=2x+3')] },
+        ] },
+        { pad: { checks: [
+            { ans: E([9, -6, 1]), expanded: true, msg: '✓ הביטוי נכון. בצורה מצומצמת: ' + M('x^2-6x+9') + '.' },
+            { ans: E(b), expanded: true, msg: '✓ הביטוי נכון. בצורה מצומצמת: ' + M('2x^2-12x+18') + '.' },
+            { ans: E(dc(b)), final: true } ],
+          wrong: [
+            { t: 'expr', c: [-9, 0, 1], msg: 'טעות נפוצה: ' + M('(x-3)^2') + ' אינו ' + M('x^2-9') + '. זה ' + M('(x-3)(x-3)') + ', ויש גם איבר אמצעי.' },
+            { t: 'expr', c: [9, 0, 1], msg: 'חסר האיבר האמצעי של ' + M('(x-3)^2') + ': ' + M('-3x-3x=-6x') + '.' },
+            { t: 'expr', c: [9, -3, 1], msg: 'האיבר האמצעי הוא פעמיים ' + M('-3x') + ', כלומר ' + M('-6x') + '.' },
+            { t: 'expr', c: [9, -6, 2], msg: 'הכפל ב-2 חל על כל האיברים: ' + M('2·(-6x)=-12x') + ' ו-' + M('2·9=18') + '.' },
+            { t: 'expr', c: [9, -12, 2], msg: 'הכפל ב-2 חל גם על האיבר החופשי: ' + M('2·9=18') + '.' },
+            { t: 'expr', c: [-6, 2], msg: 'לא מורידים חזקה "מהסוגריים". קודם פותחים סוגריים ומכפילים ב-2, ואז גוזרים.' } ].concat(derivWrongs(b)) }, prompt: 'גזרו: ' + M('f(x)=2(x-3)^2') + '.', parts: [
+          { q: 'כתבו את ' + M('f\'(x)') + '.', ans: E(dc(b)),
+            wrong: [{ t: 'expr', c: [-6, 2], msg: 'לא מורידים חזקה "מהסוגריים". קודם פותחים סוגריים ומכפילים ב-2, ואז גוזרים.' }].concat(derivWrongs(b)),
+            hint: ['פותחים את ' + M('(x-3)^2=(x-3)(x-3)') + ', ואז מכפילים ב-2.', 'מקבלים ' + M('2x^2-12x+18') + '. עכשיו גוזרים איבר איבר.'],
+            sol: [M('(x-3)^2=x^2-6x+9'), M('2(x^2-6x+9)=2x^2-12x+18'), M('f\'(x)=4x-12')] },
+        ] },
+        { pad: { checks: [
+            { ans: E([0, 0, 1]), msg: '✓ נכון: ' + M('(\\f{x^3}{3})\'=x^2') + '.' },
+            { ans: E([0, -3]), msg: '✓ נכון: ' + M('(-\\f{3x^2}{2})\'=-3x') + '.' },
+            { ans: E(dc(c)), final: true } ],
+          wrong: derivWrongs(c) }, prompt: 'גזרו: ' + fx(c) + '.', parts: [
+          { q: 'כתבו את ' + M('f\'(x)') + '.', ans: E(dc(c)), wrong: derivWrongs(c),
+            hint: ['גוזרים כל איבר בנפרד. המקדם של ' + M('x^3') + ' הוא ' + M('\\f{1}{3}') + ', ומכפילים אותו בחזקה 3.', 'האיבר השני: המקדם ' + M('-\\f{3}{2}') + ' כפול החזקה 2.'],
+            sol: [M('\\f{1}{3}·3·x^2=x^2'), M('-\\f{3}{2}·2·x=-3x'), M('f\'(x)=x^2-3x+2')] },
+        ] },
+      ],
+    });
+  })();
+
+  // =============== 3. f'(a) ===============
+  (function () {
+    const c1 = [4, -7, 2], c2 = [0, 1, -3, 1], f3 = [5, -3, 2], g3 = [1, -3, 0, 1];
+    MODS.push({
+      title: 'הערך של הנגזרת בנקודה', short: 'f\'(a)',
+      teach: [
+        M('f\'(a)') + ' פירושו: מציבים ' + M('x=a') + ' <b>בנגזרת</b>. סדר הפעולות: (1) גוזרים, (2) מציבים.',
+        'טעות נפוצה: להציב בפונקציה המקורית. ' + M('f(a)') + ' הוא ערך הפונקציה, ' + M('f\'(a)') + ' הוא ערך הנגזרת. אלה שני מספרים שונים.',
+        'כשמציבים מספר שלילי, כותבים אותו בסוגריים כדי לא לטעות בסימן: ' + M('-6·(-1)=+6') + '.',
+      ],
+      examples: [
+        { prob: M('f(x)=x^3-4x+1') + '. חשבו את ' + M('f\'(2)'), steps: ['גוזרים: ' + M('f\'(x)=3x^2-4'), 'מציבים ' + M('x=2') + ': ' + M('f\'(2)=3·4-4=8')] },
+        { prob: M('f(x)=-2x^2+x-3') + '. חשבו את ' + M('f\'(-\\f{1}{2})'), steps: ['גוזרים: ' + M('f\'(x)=-4x+1'), 'מציבים בסוגריים: ' + M('f\'(-\\f{1}{2})=-4·(-\\f{1}{2})+1=2+1=3')] },
+      ],
+      practice: [
+        { pad: { checks: [
+            { ans: E(dc(c1)), msg: '✓ נכון: ' + M('f\'(x)=4x-7') + '. עכשיו מציבים ' + M('x=3') + '.' },
+            { ans: N(fa(dc(c1), 3)), final: true } ],
+          wrong: derivWrongs(c1).concat(valWrongs(c1, 3)) }, prompt: M('f(x)=2x^2-7x+4') + '. חשבו את ' + M('f\'(3)') + '.', parts: [
+          { q: 'כתבו את הערך. אפשר להקליד גם חישוב, למשל ' + M('4*3-7') + ', והתוצאה תוצג.', ans: N(fa(dc(c1), 3)), wrong: valWrongs(c1, 3),
+            hint: ['קודם גוזרים את ' + M('f(x)') + ', ואז מציבים ' + M('x=3') + ' בנגזרת.', 'הנגזרת היא ' + M('4x-7') + '. מציבים 3.'],
+            sol: [M('f\'(x)=4x-7'), M('f\'(3)=4·3-7=12-7=5')] },
+        ] },
+        { pad: { checks: [
+            { ans: E(dc(c2)), msg: '✓ נכון: ' + M('f\'(x)=3x^2-6x+1') + '. עכשיו מציבים ' + M('x=-1') + ' בסוגריים.' },
+            { ans: N(fa(dc(c2), -1)), final: true } ],
+          wrong: derivWrongs(c2).concat(valWrongs(c2, -1)) }, prompt: M('f(x)=x^3-3x^2+x') + '. חשבו את ' + M('f\'(-1)') + '.', parts: [
+          { q: 'כתבו את הערך. אפשר להקליד גם חישוב.', ans: N(fa(dc(c2), -1)),
+            wrong: valWrongs(c2, -1).concat([{ t: 'num', v: -2, msg: 'שימו לב לסימנים: ' + M('-6x') + ' עבור ' + M('x=-1') + ' נותן ' + M('-6·(-1)=+6') + '.' }]),
+            hint: ['קודם גוזרים, ואז מציבים ' + M('x=-1') + ' בסוגריים.', 'הנגזרת היא ' + M('3x^2-6x+1') + '. כותבים: 3*(-1)^2-6*(-1)+1'],
+            sol: [M('f\'(x)=3x^2-6x+1'), M('f\'(-1)=3·(-1)^2-6·(-1)+1=3+6+1=10')] },
+        ] },
+        { pad: { checks: [
+            { ans: E(dc(f3)), msg: '✓ נכון: ' + M('f\'(x)=4x-3') + '.' },
+            { ans: E(dc(g3)), msg: '✓ נכון: ' + M('g\'(x)=3x^2-3') + '.' },
+            { ans: N(fa(dc(f3), 3)), final: true },
+            { ans: N(fa(dc(g3), 2)), final: true } ],
+          wrong: derivWrongs(f3).concat(derivWrongs(g3), valWrongs(f3, 3), valWrongs(g3, 2)) }, prompt: 'נתונות ' + fx(f3) + ' ו-' + M('g(x)=' + P.str(g3)) + '. חשבו ' + M('f\'(3)') + ' ו-' + M('g\'(2)') + '.', parts: [
+          { q: 'חשבו ' + M('f\'(3)') + '.', ans: N(fa(dc(f3), 3)), wrong: valWrongs(f3, 3), hint: ['קודם גוזרים: ' + M('f\'(x)=4x-3') + '. אחר כך מציבים 3.'], sol: [M('f\'(x)=4x-3'), M('f\'(3)=4·3-3=9')] },
+          { q: 'חשבו ' + M('g\'(2)') + '.', ans: N(fa(dc(g3), 2)), wrong: valWrongs(g3, 2), hint: ['קודם גוזרים: ' + M('g\'(x)=3x^2-3') + '. אחר כך מציבים 2.'], sol: [M('g\'(x)=3x^2-3'), M('g\'(2)=3·2^2-3=9')], after: 'שתי הנגזרות שוות: ' + M('f\'(3)=g\'(2)') + '. כך נראות שאלות מהסוג "הראו ש-...".' },
+        ] },
+      ],
+    });
+  })();
+
+  // =============== 4. solving f'(x)=k ===============
+  (function () {
+    const c1 = [2, -5, 0, 1], c2 = [2, 9, -6, 1], c3 = [1, -4, -2, 1];
+    MODS.push({
+      title: 'פתרון המשוואה f\'(x)=k', short: 'f\'(x)=k',
+      teach: [
+        'כשנתון <b>ערך הנגזרת</b> ורוצים למצוא את ה-x: משווים את הנגזרת למספר ופותרים משוואה.',
+        '<ul class="rules"><li>ייתכנו כמה פתרונות. הנגזרת של פונקציה ממעלה 3 היא ממעלה 2, ולכן עד שני פתרונות.</li><li>מקרה חשוב: ' + M('f\'(x)=0') + '. שם השיפוע הוא 0, כלומר הגרף "שטוח" (בהמשך: משיק מקביל לציר x).</li><li>אפשר גם להשוות נגזרות של שתי פונקציות: ' + M('f\'(x)=g\'(x)') + '.</li></ul>',
+      ],
+      examples: [
+        { prob: M('f(x)=x^3-12x+1') + '. מצאו x שעבורו ' + M('f\'(x)=15'), steps: [M('f\'(x)=3x^2-12'), 'משווים: ' + M('3x^2-12=15'), M('3x^2=27') + ' ולכן ' + M('x^2=9'), M('x=3') + ' או ' + M('x=-3') + ' ← שני פתרונות!'] },
+        { prob: M('f(x)=x^3-3x^2-9x+4') + '. מצאו x שעבורו ' + M('f\'(x)=0'), steps: [M('f\'(x)=3x^2-6x-9'), 'משווים ל-0 ומחלקים ב-3: ' + M('x^2-2x-3=0'), 'מפרקים: ' + M('(x-3)(x+1)=0'), M('x=3') + ' או ' + M('x=-1')] },
+        { prob: M('f(x)=x^3-x') + ' ו-' + M('g(x)=2x^2+3x') + '. מצאו x שעבורו ' + M('f\'(x)=g\'(x)'), steps: [M('f\'(x)=3x^2-1') + ' ו-' + M('g\'(x)=4x+3'), M('3x^2-1=4x+3') + ' ולכן ' + M('3x^2-4x-4=0'), M('(3x+2)(x-2)=0'), M('x=2') + ' או ' + M('x=-\\f{2}{3}')] },
+      ],
+      practice: [
+        { prompt: M('f(x)=x^3-5x+2') + '. מצאו את כל ערכי x שעבורם ' + M('f\'(x)=7'), parts: [{ ans: S([2, -2]),
+          wrong: [{ t: 'expr', c: [-5, 0, 3], msg: 'זו הנגזרת, וזה שלב ראשון נכון. עכשיו משווים אותה ל-7 ופותרים.' }],
+          hint: [M('f\'(x)=3x^2-5') + '. משווים ל-7.', M('3x^2=12') + ', ו-' + M('x^2=4') + ': כמה פתרונות יש?'],
+          sol: [M('f\'(x)=3x^2-5'), M('3x^2-5=7'), M('x^2=4'), M('x=2') + ' או ' + M('x=-2')] }] },
+        { prompt: M('f(x)=x^3-6x^2+9x+2') + '. מצאו את ערכי x שבהם שיפוע הגרף 0.', parts: [{ ans: S([1, 3]),
+          wrong: [{ t: 'expr', c: [9, -12, 3], msg: 'זו הנגזרת. עכשיו משווים אותה ל-0 ופותרים את המשוואה הריבועית.' }],
+          hint: ['שיפוע 0 פירושו ' + M('f\'(x)=0') + '. התחילו בנגזרת.', M('3x^2-12x+9=0') + '. חלקו ב-3 ופרקו.'],
+          sol: [M('f\'(x)=3x^2-12x+9=0'), M('x^2-4x+3=0'), M('(x-1)(x-3)=0'), M('x=1') + ' או ' + M('x=3')] }] },
+        { prompt: M('f(x)=x^3-2x^2-4x+1') + '. מצאו את ערכי x שבהם שיפוע הגרף 0.', parts: [{ ans: S([2, -2 / 3]),
+          wrong: [], partialMsg: 'מצאתם פתרון נכון, אבל יש עוד אחד. אחד הפתרונות הוא שבר.',
+          hint: [M('f\'(x)=3x^2-4x-4=0') + '. אפשר לפרק או להשתמש בנוסחת השורשים.', M('(3x+2)(x-2)=0')],
+          sol: [M('f\'(x)=3x^2-4x-4=0'), M('(3x+2)(x-2)=0'), M('x=2') + ' או ' + M('x=-\\f{2}{3}')] }] },
+        { prompt: M('f(x)=\\f{x^4}{2}') + ' ו-' + M('g(x)=x^2+7') + '. מצאו את ערכי x שעבורם ' + M('f\'(x)=g\'(x)'), parts: [{ ans: S([0, 1, -1]),
+          wrong: [{ t: 'set', v: [1, -1], msg: 'חילקתם ב-x ואיבדתם את הפתרון x=0. כדאי <b>להוציא x גורם משותף</b> ולא לחלק בו.' }],
+          hint: [M('f\'(x)=2x^3') + ' ו-' + M('g\'(x)=2x') + '. משווים.', M('2x^3-2x=0') + '. הוציאו גורם משותף.'],
+          sol: [M('2x^3=2x'), M('2x(x^2-1)=0'), M('2x(x-1)(x+1)=0'), M('x=0') + ', ' + M('x=1') + ', ' + M('x=-1')] }] },
+      ],
+    });
+  })();
+
+  // =============== 5. slope of tangent ===============
+  (function () {
+    const c1 = [7, -4, 1], c2 = [1, 0, -2, 1], c3 = [-10, -3, 1];
+    MODS.push({
+      title: 'הנגזרת היא שיפוע המשיק', short: 'שיפוע',
+      fig: { c: [0, 0, 1], xr: [-3.2, 3.2], yr: [-1, 9], lines: [{ m: 3.6, b: -3.24 }], pts: [{ x: 1.8, label: 'A', dx: 8, dy: -8 }] },
+      teach: [
+        '<b>משיק</b> לגרף בנקודה הוא ישר שנוגע בגרף באותה נקודה ו"ממשיך באותו כיוון". זו הסיבה שהנגזרת חשובה:',
+        '<div class="callout">שיפוע המשיק בנקודה שבה ' + M('x=a') + ' שווה ל-' + M('f\'(a)') + '.</div>',
+        'שני דברים שלא מתבלבלים ביניהם: את ה-<b>y</b> של הנקודה מוצאים מהפונקציה ' + M('f(x)') + ', ואת <b>השיפוע</b> מוצאים מהנגזרת ' + M('f\'(x)') + '. נקודה על הגרף היא ' + M('(a ; f(a))') + '.',
+        'אם הנקודה נתונה כמו ' + M('A(2 ; 1)') + ', ה-x שלה (כאן 2) הוא כל מה שצריך לשיפוע.',
+      ],
+      examples: [
+        { prob: M('f(x)=x^2-6x+11') + '. הנקודה A על הגרף ו-' + M('x=4') + '. מצאו את ה-y שלה ואת שיפוע המשיק בה.', steps: ['ה-y: ' + M('f(4)=16-24+11=3') + ', כלומר ' + M('A(4 ; 3)'), 'שיפוע: ' + M('f\'(x)=2x-6') + ' ולכן ' + M('f\'(4)=2')] },
+        { prob: M('f(x)=x^2-5x+6') + '. הגרף חותך את ציר y בנקודה A. מה שיפוע המשיק שם?', steps: ['על ציר y מתקיים ' + M('x=0'), M('f\'(x)=2x-5') + ' ולכן ' + M('f\'(0)=-5')] },
+      ],
+      practice: [
+        { prompt: M('f(x)=x^2-4x+7') + '. הנקודה A על הגרף ו-' + M('x=3') + '.', parts: [
+          { q: 'מהו ה-y של A?', ans: N(fa(c1, 3)), wrong: [{ t: 'num', v: fa(dc(c1), 3), msg: 'זה השיפוע ' + M('f\'(3)') + '. ה-y של הנקודה מוצאים מהפונקציה המקורית ' + M('f(3)') + '.' }], hint: ['מציבים ' + M('x=3') + ' ב-' + M('f(x)') + ', הפונקציה המקורית.'], sol: [M('f(3)=9-12+7=4')] },
+          { q: 'מהו שיפוע המשיק בנקודה A?', ans: N(fa(dc(c1), 3)), wrong: [{ t: 'num', v: fa(c1, 3), msg: 'זה ' + M('f(3)') + ', ערך הפונקציה. שיפוע = ' + M('f\'(3)') + ', ערך הנגזרת.' }], hint: ['גוזרים ' + M('f(x)') + ' ומציבים ' + M('x=3') + '.'], sol: [M('f\'(x)=2x-4'), M('f\'(3)=2')] },
+        ] },
+        { prompt: M('f(x)=x^3-2x^2+1') + '. הנקודה ' + M('A(2 ; 1)') + ' נמצאת על הגרף. מהו שיפוע המשיק בה?', parts: [{ ans: N(fa(dc(c2), 2)), wrong: valWrongs(c2, 2),
+          hint: ['מספיק ה-x של הנקודה: ' + M('x=2') + '. גוזרים ומציבים.', M('f\'(x)=3x^2-4x')],
+          sol: [M('f\'(x)=3x^2-4x'), M('f\'(2)=12-8=4')] }] },
+        { prompt: M('f(x)=x^2-3x-10') + '. הגרף חותך את ציר x בשתי נקודות. מהו שיפוע המשיק בנקודה <b>השמאלית</b>?', parts: [{ ans: N(-7),
+          wrong: [{ t: 'num', v: 7, msg: 'זה השיפוע בנקודה <b>הימנית</b>. השמאלית היא זו עם ה-x הקטן יותר.' }, { t: 'set', v: [5, -2], msg: 'מצאתם את שני ה-x של החיתוך עם ציר x. עכשיו מחשבים את השיפוע ' + M('f\'(x)') + ' בנקודה השמאלית.' }],
+          hint: ['על ציר x מתקיים ' + M('y=0') + ', כלומר ' + M('x^2-3x-10=0') + '.', 'השורשים הם ' + M('5') + ' ו-' + M('-2') + '. השמאלי הוא ' + M('-2') + '.'],
+          sol: [M('x^2-3x-10=0') + ' ולכן ' + M('(x-5)(x+2)=0'), 'הנקודה השמאלית: ' + M('x=-2'), M('f\'(x)=2x-3'), M('f\'(-2)=-4-3=-7')] }] },
+      ],
+    });
+  })();
+
+  // =============== 6. find point from slope ===============
+  (function () {
+    const c1 = [3, -8, 1], c2 = [5, 0, -6, 1], c3 = [3, 5, -8, 0, 1];
+    MODS.push({
+      title: 'מציאת נקודה לפי שיפוע', short: 'נקודה',
+      teach: [
+        'כשנתון השיפוע של המשיק ורוצים למצוא את הנקודה:',
+        '<ol class="rules"><li>משווים ' + M('f\'(x)=m') + ' ופותרים, וכך מוצאים את ה-x.</li><li>מציבים את ה-x ב-<b>הפונקציה המקורית</b> ' + M('f(x)') + ' ומוצאים y.</li><li>כותבים את הנקודה ' + M('(x ; y)') + '. אם יש כמה ערכי x, יש כמה נקודות.</li></ol>',
+      ],
+      examples: [
+        { prob: M('f(x)=x^3-3x^2') + '. מצאו את הנקודות שבהן שיפוע המשיק 9.', steps: [M('f\'(x)=3x^2-6x=9') + ' ולכן ' + M('x^2-2x-3=0'), M('(x-3)(x+1)=0') + ' ולכן ' + M('x=3') + ' או ' + M('x=-1'), 'מציבים בפונקציה המקורית: ' + M('f(3)=27-27=0') + ' ו-' + M('f(-1)=-1-3=-4'), 'הנקודות: ' + M('(3 ; 0)') + ' ו-' + M('(-1 ; -4)')] },
+        { prob: M('f(x)=x^2+6x+1') + '. באיזו נקודה שיפוע המשיק 0?', steps: [M('f\'(x)=2x+6=0') + ' ולכן ' + M('x=-3'), M('f(-3)=9-18+1=-8'), 'הנקודה ' + M('(-3 ; -8)') + ' היא קודקוד הפרבולה, ושם אכן המשיק אופקי.'] },
+      ],
+      practice: [
+        { prompt: M('f(x)=x^2-8x+3') + '. מצאו את הנקודה שבה שיפוע המשיק הוא 4.', parts: [{ ans: Pt(6, -9),
+          wrong: [{ t: 'num', v: 6, msg: 'מצאתם את ה-x נכון. הנקודה צריכה גם y: מציבים בפונקציה המקורית.' }],
+          hint: [M('f\'(x)=2x-8=4') + '. מוצאים x.', 'הציבו ' + M('x=6') + ' ב-' + M('f(x)=x^2-8x+3') + '.'],
+          sol: [M('2x-8=4') + ' ולכן ' + M('x=6'), M('f(6)=36-48+3=-9'), 'הנקודה ' + M('(6 ; -9)')] }] },
+        { prompt: M('f(x)=x^3-6x^2+5') + '. מצאו את הנקודות שבהן שיפוע המשיק הוא ' + M('-9') + '.', parts: [{ ans: Pts([[1, 0], [3, -22]]),
+          wrong: [{ t: 'set', v: [1, 3], msg: 'מצאתם את ערכי ה-x. הנקודות דורשות גם y: מציבים בפונקציה המקורית.' }], partialMsg: 'נקודה אחת נכונה, ויש עוד. משוואה ריבועית מניבה עד שני פתרונות.',
+          hint: [M('f\'(x)=3x^2-12x=-9') + '. העבירו אגף ופתרו.', M('x^2-4x+3=0')],
+          sol: [M('3x^2-12x=-9') + ' ולכן ' + M('x^2-4x+3=0'), M('x=1') + ' או ' + M('x=3'), M('f(1)=1-6+5=0') + ', ' + M('f(3)=27-54+5=-22'), M('(1 ; 0)') + ' ו-' + M('(3 ; -22)')] }] },
+        { prompt: M('f(x)=' + P.str(c3)) + '. מצאו את כל הנקודות שבהן שיפוע המשיק הוא 5. (אתגר)', parts: [{ ans: Pts([[0, 3], [2, -3], [-2, -23]]),
+          wrong: [{ t: 'points', v: [[2, -3], [-2, -23]], msg: 'חסרה נקודה. כשמעבירים אגף ופורקים, אל תחלקו ב-x: הוציאו אותו גורם משותף, כך שומרים את ' + M('x=0') + '.' }], partialMsg: 'יש עוד נקודה או שתיים. בדקו שלא איבדתם פתרון כשפירקתם.',
+          hint: [M('f\'(x)=4x^3-16x+5=5') + '. מה נשאר אחרי שמצמצמים את ה-5?', M('4x^3-16x=0') + ' ולכן ' + M('4x(x^2-4)=0')],
+          sol: [M('4x^3-16x=0') + ' ולכן ' + M('4x(x-2)(x+2)=0'), M('x=0') + ', ' + M('x=2') + ', ' + M('x=-2'), M('f(0)=3') + ', ' + M('f(2)=16-32+10+3=-3') + ', ' + M('f(-2)=16-32-10+3=-23')] }] },
+      ],
+    });
+  })();
+
+  // =============== 7. tangent equation ===============
+  (function () {
+    const c1 = [2, 0, -3, 1], c2 = [4, 2, -1, 1 / 3], c3 = [5, 0, 0, 1];
+    MODS.push({
+      title: 'משוואת המשיק', short: 'משוואה',
+      fig: { c: [0, 0, 1], xr: [-3.2, 3.2], yr: [-1, 9], lines: [{ m: 2, b: -1 }], pts: [{ x: 1, label: 'A', dx: -16, dy: -6 }] },
+      teach: [
+        'כדי לכתוב משוואת ישר צריך <b>נקודה ושיפוע</b>: ' + M('y-y_1=m(x-x_1)') + '. הנה שלושת השלבים למשיק בנקודה שבה ' + M('x=x_1') + ':',
+        '<ol class="rules"><li>מוצאים ' + M('y_1=f(x_1)') + ' (הפונקציה המקורית).</li><li>מוצאים ' + M('m=f\'(x_1)') + ' (הנגזרת).</li><li>מציבים בנוסחה, ואם רוצים מסדרים ל-' + M('y=mx+b') + '.</li></ol>',
+        'לפעמים הנקודה לא נתונה ישירות: "נקודת החיתוך עם ציר y" פירושה ' + M('x=0') + '. ואם נתון רק ה-y של הנקודה, פותרים ' + M('f(x)=y') + ' כדי למצוא את ה-x.',
+      ],
+      examples: [
+        { prob: M('f(x)=x^2-4x+1') + '. כתבו את משוואת המשיק בנקודה שבה ' + M('x=3'), steps: [M('y_1=f(3)=9-12+1=-2'), M('f\'(x)=2x-4') + ' ולכן ' + M('m=f\'(3)=2'), M('y-(-2)=2(x-3)'), M('y+2=2x-6') + ' ולכן ' + M('y=2x-8')] },
+        { prob: M('f(x)=-x^2+6x-5') + '. כתבו את משוואת המשיק בנקודה ' + M('A(2 ; 3)') + ' שעל הגרף.', steps: ['הנקודה נתונה, ו-' + M('x_1=2') + '. נשאר שיפוע: ' + M('f\'(x)=-2x+6') + ' ולכן ' + M('m=2'), M('y-3=2(x-2)'), M('y=2x-1')] },
+      ],
+      practice: [
+        { prompt: M('f(x)=' + P.str(c1)) + '. כתבו את משוואת המשיק בנקודה ' + M('A(3 ; 2)') + ' שעל הגרף.', parts: [{ ans: (t => L(t.m, t.b))(tangent(c1, 3)), wrong: lineWrongs(c1, 3),
+          hint: ['שיפוע: ' + M('m=f\'(3)') + '. הנקודה כבר נתונה.', M('f\'(x)=3x^2-6x') + ' ולכן ' + M('m=9') + '. הציבו ב-' + M('y-2=9(x-3)')],
+          sol: [M('f\'(x)=3x^2-6x') + ' ולכן ' + M('m=f\'(3)=27-18=9'), M('y-2=9(x-3)'), M('y=9x-25')] }] },
+        { prompt: M('f(x)=' + P.str(c2)) + '. כתבו את משוואת המשיק בנקודה שבה הגרף חותך את ציר y.', parts: [{ ans: (t => L(t.m, t.b))(tangent(c2, 0)),
+          wrong: lineWrongs(c2, 0).concat([{ t: 'line', m: 0, b: 4, msg: 'ה-y של הנקודה נכון (4), אבל השיפוע לא 0. השיפוע הוא ' + M('f\'(0)') + '.' }]),
+          hint: ['חיתוך עם ציר y: ' + M('x=0') + '. מה ה-y שם?', M('f(0)=4') + ' ו-' + M('f\'(x)=x^2-2x+2') + ', ולכן ' + M('m=f\'(0)=2')],
+          sol: ['על ציר y: ' + M('x_1=0') + ' ולכן ' + M('y_1=f(0)=4'), M('f\'(x)=x^2-2x+2') + ' ולכן ' + M('m=f\'(0)=2'), M('y-4=2(x-0)') + ' ולכן ' + M('y=2x+4')] }] },
+        { prompt: M('f(x)=x^3+5') + '. כתבו את משוואת המשיק בנקודה שבה ערך הפונקציה הוא 13.', parts: [
+          { q: 'מהו ה-x של הנקודה?', ans: N(2), wrong: [{ t: 'num', v: 8, msg: 'זה ' + M('x^3') + '. ה-x הוא השורש השלישי.' }], hint: ['פותרים ' + M('f(x)=13') + ', כלומר ' + M('x^3+5=13') + '.'], sol: [M('x^3+5=13') + ' ולכן ' + M('x^3=8') + ' ולכן ' + M('x=2')] },
+          { q: 'מהי משוואת המשיק?', ans: (t => L(t.m, t.b))({ m: 12, b: -11 }), wrong: [{ t: 'line', m: 12, b: 13, msg: 'השיפוע נכון (12), אבל הישר צריך לעבור דרך ' + M('(2 ; 13)') + '. הציבו ב-' + M('y-13=12(x-2)') + '.' }, { t: 'line', m: 3, b: 7, msg: 'שיפוע 3 הוא ערך ' + M('f\'(1)') + ' ולא ' + M('f\'(2)') + '. הציבו ' + M('x=2') + ' בנגזרת.' }], hint: ['השיפוע: ' + M('f\'(x)=3x^2') + ' ולכן ' + M('m=f\'(2)=12') + '.', M('y-13=12(x-2)')], sol: [M('m=f\'(2)=3·4=12'), M('y-13=12(x-2)'), M('y=12x-11')] },
+        ] },
+      ],
+    });
+  })();
+
+  // =============== 8. tangents at special points ===============
+  (function () {
+    const c1 = [5, -6, 1], c2 = [-6, 7, -1];
+    MODS.push({
+      title: 'משיקים בנקודות חיתוך', short: 'חיתוכים',
+      teach: [
+        'הנקודה שבה המשיק נוגע נקבעת לפעמים לפי <b>חיתוך</b>:',
+        '<ul class="rules"><li>עם ציר x: ' + M('y=0') + ', כלומר פותרים ' + M('f(x)=0') + '.</li><li>עם ציר y: ' + M('x=0') + '.</li><li>עם ישר נתון: משווים ' + M('f(x)') + ' לישר ופותרים.</li></ul>',
+        'וגם המשיק עצמו חותך צירים: עבור ' + M('x=0') + ' מקבלים את החיתוך עם ציר y, ועבור ' + M('y=0') + ' את החיתוך עם ציר x. ואת נקודת החיתוך של <b>שני משיקים</b> מוצאים בהשוואת המשוואות שלהם.',
+      ],
+      examples: [
+        { prob: M('f(x)=x^2-4x+3') + '. כתבו משיקים בנקודות החיתוך עם ציר x, ומצאו היכן המשיקים נפגשים.', steps: [M('x^2-4x+3=0') + ' ולכן ' + M('x=1') + ' או ' + M('x=3'), M('f\'(x)=2x-4') + ': ' + M('m(1)=-2') + ' ו-' + M('m(3)=2'), M('y=-2(x-1)=-2x+2') + ' ו-' + M('y=2(x-3)=2x-6'), 'משווים: ' + M('-2x+2=2x-6') + ' ולכן ' + M('x=2') + ' ו-' + M('y=-2'), 'המשיקים נפגשים ב-' + M('(2 ; -2)')] },
+        { prob: 'המשיק ' + M('y=2x-1') + '. היכן הוא חותך את הצירים?', steps: ['ציר y: ' + M('x=0') + ' ולכן ' + M('y=-1') + ', כלומר ' + M('(0 ; -1)'), 'ציר x: ' + M('y=0') + ' ולכן ' + M('2x=1') + ' ולכן ' + M('x=\\f{1}{2}') + ', כלומר ' + M('(\\f{1}{2} ; 0)')] },
+      ],
+      practice: [
+        { prompt: M('f(x)=' + P.str(c1)) + '. הגרף חותך את ציר x בשתי נקודות, ובכל אחת מהן יש משיק.', parts: [
+          { q: 'כתבו את משוואות שני המשיקים.', ans: Ls([[-4, 4], [4, -20]]), wrong: [], partialMsg: 'משיק אחד נכון. יש שתי נקודות חיתוך, ולכן כתבו את שניהם, מופרדים בפסיק.',
+            hint: [M('x^2-6x+5=0') + ' נותן את ה-x של שתי הנקודות.', 'הנקודות ' + M('(1 ; 0)') + ' ו-' + M('(5 ; 0)') + '. שיפועים: ' + M('f\'(1)') + ' ו-' + M('f\'(5)')],
+            sol: [M('(x-1)(x-5)=0') + ' ולכן ' + M('x=1') + ', ' + M('x=5'), M('f\'(x)=2x-6') + ': ' + M('m(1)=-4') + ', ' + M('m(5)=4'), M('y=-4(x-1)=-4x+4') + ' ו-' + M('y=4(x-5)=4x-20')] },
+          { q: 'באיזו נקודה המשיקים נפגשים?', ans: Pt(3, -8), wrong: [], hint: ['משווים: ' + M('-4x+4=4x-20')], sol: [M('-4x+4=4x-20') + ' ולכן ' + M('x=3'), M('y=-12+4=-8') + ', כלומר ' + M('(3 ; -8)')] },
+        ] },
+        { prompt: M('f(x)=' + P.str(c2)) + '. כתבו את משוואת המשיק בנקודה שבה ' + M('x=2') + ', ואז מצאו היכן המשיק חותך את הצירים.', parts: [
+          { q: 'משוואת המשיק', ans: L(3, -2), wrong: lineWrongs(c2, 2), hint: [M('f(2)=4') + ' ו-' + M('f\'(x)=-2x+7') + ' ולכן ' + M('m=3')], sol: [M('y_1=f(2)=-4+14-6=4'), M('m=f\'(2)=-4+7=3'), M('y-4=3(x-2)') + ' ולכן ' + M('y=3x-2')] },
+          { q: 'נקודות החיתוך של המשיק עם הצירים (שתי נקודות)', ans: Pts([[0, -2], [2 / 3, 0]]), wrong: [], partialMsg: 'נקודה אחת נכונה. חסרה הנקודה על הצירים השני.', hint: [M('x=0') + ' נותן חיתוך עם ציר y, ' + M('y=0') + ' נותן חיתוך עם ציר x.'], sol: [M('x=0') + ' ולכן ' + M('y=-2') + ': ' + M('(0 ; -2)'), M('y=0') + ' ולכן ' + M('3x=2') + ' ולכן ' + M('x=\\f{2}{3}') + ': ' + M('(\\f{2}{3} ; 0)')] },
+        ] },
+        { prompt: 'הפרבולה ' + M('y=x^2+1') + ' והישר ' + M('y=10') + ' נחתכים בנקודות A ו-B (A מימין). מעבירים משיקים לפרבולה ב-A וב-B.',
+          fig: { c: [1, 0, 1], xr: [-4.6, 4.6], yr: [-1.5, 13], lines: [{ m: 0, b: 10 }], pts: [{ x: 3, label: 'A', dx: 6, dy: -8 }, { x: -3, label: 'B', dx: -16, dy: -8 }] },
+          parts: [
+          { q: 'כתבו את משוואות שני המשיקים.', ans: Ls([[6, -8], [-6, -8]]), wrong: [], partialMsg: 'משיק אחד נכון, כתבו את שניהם.', hint: [M('x^2+1=10') + ' נותן את ה-x של A ושל B.', M('f\'(x)=2x') + '. השיפועים בשתי הנקודות הם הפכיים.'], sol: [M('x^2=9') + ' ולכן ' + M('x=\\pm3'), M('m=f\'(3)=6') + ' ו-' + M('m=f\'(-3)=-6'), M('y-10=6(x-3)') + ' ולכן ' + M('y=6x-8'), M('y-10=-6(x+3)') + ' ולכן ' + M('y=-6x-8')] },
+          { q: 'מצאו את נקודת המפגש של המשיקים.', ans: Pt(0, -8), wrong: [], hint: ['משווים ' + M('6x-8=-6x-8')], sol: [M('6x-8=-6x-8') + ' ולכן ' + M('x=0'), M('y=-8') + ', כלומר ' + M('(0 ; -8)')] },
+        ] },
+      ],
+    });
+  })();
+
+  // =============== 9. parallel ===============
+  (function () {
+    const c1 = [5, -4, 1], c2 = [2, -9, -3, 1];
+    MODS.push({
+      title: 'משיק מקביל לישר נתון', short: 'מקביל',
+      teach: [
+        'ישרים מקבילים הם ישרים עם <b>אותו שיפוע</b>. בישר ' + M('y=mx+b') + ' השיפוע הוא ' + M('m') + ', המקדם של x.',
+        '<ol class="rules"><li>קובעים את השיפוע הנדרש (מהישר הנתון, או 0 אם המשיק מקביל לציר x).</li><li>פותרים ' + M('f\'(x)=m') + ' ומוצאים x.</li><li>מוצאים ' + M('y=f(x)') + ' וכותבים משוואת משיק.</li></ol>',
+      ],
+      examples: [
+        { prob: M('f(x)=x^2-6x+10') + '. כתבו משוואת משיק המקביל לישר ' + M('y=2x+7') + '.', steps: ['השיפוע הנדרש הוא 2: ' + M('f\'(x)=2x-6=2') + ' ולכן ' + M('x=4'), M('f(4)=16-24+10=2') + ', הנקודה ' + M('(4 ; 2)'), M('y-2=2(x-4)') + ' ולכן ' + M('y=2x-6')] },
+      ],
+      practice: [
+        { prompt: M('f(x)=' + P.str(c1)) + '. כתבו משוואת משיק המקביל לישר ' + M('y=2x+9') + '.', parts: [{ ans: L(2, -4),
+          wrong: [{ t: 'line', m: 2, b: 9, msg: 'זה הישר הנתון. המשיק מקביל לו (אותו שיפוע) אבל עובר דרך נקודה אחרת על הגרף.' }],
+          hint: [M('f\'(x)=2') + '. מה ה-x?', M('2x-4=2') + ' ולכן ' + M('x=3') + '. עכשיו מצאו y.'],
+          sol: [M('f\'(x)=2x-4=2') + ' ולכן ' + M('x=3'), M('f(3)=9-12+5=2'), M('y-2=2(x-3)') + ' ולכן ' + M('y=2x-4')] }] },
+        { prompt: M('f(x)=' + P.str(c2)) + '. כתבו משוואות של כל המשיקים לגרף המקבילים לציר x.', parts: [{ ans: Ls([[0, -25], [0, 7]]), wrong: [], partialMsg: 'משיק אחד נכון. יש עוד אחד, כי למשוואה ' + M('f\'(x)=0') + ' יש שני פתרונות.',
+          hint: ['מקביל לציר x: שיפוע 0. פותרים ' + M('f\'(x)=0') + '.', M('3x^2-6x-9=0') + ' ולכן ' + M('x=3') + ' או ' + M('x=-1') + '. המשיק האופקי הוא ' + M('y=f(x_1)') + '.'],
+          sol: [M('f\'(x)=3x^2-6x-9=0') + ' ולכן ' + M('x=3') + ' או ' + M('x=-1'), M('f(3)=27-27-27+2=-25') + ' ו-' + M('f(-1)=-1-3+9+2=7'), 'משיק אופקי הוא ' + M('y=') + 'ערך ה-y: ' + M('y=-25') + ' ו-' + M('y=7')] }] },
+        { prompt: M('f(x)=16-x^2') + '. הגרף חותך את ציר y ב-A ואת ציר x (בצד החיובי) ב-B. מעבירים משיק לגרף המקביל לישר AB.',
+          fig: { c: [16, 0, -1], xr: [-5.2, 5.2], yr: [-2, 18], lines: [{ m: -4, b: 16 }], pts: [{ x: 0, label: 'A', dx: 8, dy: -4 }, { x: 4, label: 'B', dx: 6, dy: -8 }, { x: 2, label: 'C', dx: 8, dy: -6 }] },
+          parts: [
+          { q: 'כתבו את משוואת הישר AB.', ans: L(-4, 16), wrong: [], hint: ['A הוא ' + M('(0 ; 16)') + ' ו-B הוא ' + M('(4 ; 0)') + '. חשבו שיפוע בין שתי נקודות.'], sol: [M('A(0 ; 16)') + ', ' + M('B(4 ; 0)'), M('m=\\f{0-16}{4-0}=-4'), M('y=-4x+16')] },
+          { q: 'כתבו את משוואת המשיק המקביל ל-AB (נקודת ההשקה C).', ans: L(-4, 20), wrong: [{ t: 'line', m: -4, b: 16, msg: 'זה הישר AB עצמו. המשיק מקביל לו אבל עובר דרך הנקודה C שעל הפרבולה.' }], hint: [M('f\'(x)=-2x=-4') + '. מה x ו-y של C?'], sol: [M('f\'(x)=-2x=-4') + ' ולכן ' + M('x=2'), M('f(2)=16-4=12') + ', הנקודה ' + M('C(2 ; 12)'), M('y-12=-4(x-2)') + ' ולכן ' + M('y=-4x+20')] },
+        ] },
+      ],
+    });
+  })();
+
+  // =============== 10. perpendicular / normal ===============
+  (function () {
+    const c1 = [9, -4, 1], c2 = [4, 1, 1], c3 = [3, -7, 1];
+    MODS.push({
+      title: 'מאונך למשיק (נורמל)', short: 'נורמל',
+      teach: [
+        'שני ישרים מאונכים כאשר מכפלת השיפועים שלהם היא ' + M('-1') + ': ' + M('m_1·m_2=-1') + ', כלומר ' + M('m_2=-\\f{1}{m_1}') + '. הופכים את השבר ומחליפים סימן. למשל ' + M('2') + ' ו-' + M('-\\f{1}{2}') + ', או ' + M('-\\f{1}{4}') + ' ו-' + M('4') + '.',
+        '<b>נורמל</b> לגרף בנקודה הוא הישר המאונך למשיק באותה נקודה. אותה נקודה, שיפוע הופכי.',
+      ],
+      examples: [
+        { prob: M('f(x)=x^2-6x+11') + '. כתבו את משוואת הנורמל בנקודה שבה ' + M('x=4') + '.', steps: [M('f(4)=3') + ', ושיפוע המשיק ' + M('f\'(4)=2'), 'שיפוע הנורמל: ' + M('-\\f{1}{2}'), M('y-3=-\\f{1}{2}(x-4)') + ' ולכן ' + M('y=-\\f{1}{2}x+5')] },
+        { prob: M('f(x)=x^2+2x+3') + '. כתבו משיק המאונך לישר ' + M('y=-\\f{1}{4}x+3') + '.', steps: ['שיפוע הישר ' + M('-\\f{1}{4}') + ', ולכן שיפוע המשיק הוא 4', M('f\'(x)=2x+2=4') + ' ולכן ' + M('x=1') + ' ו-' + M('f(1)=6'), M('y-6=4(x-1)') + ' ולכן ' + M('y=4x+2')] },
+      ],
+      practice: [
+        { prompt: M('f(x)=' + P.str(c1)) + '. כתבו את משוואת הנורמל בנקודה שבה ' + M('x=3') + '.', parts: [{ ans: L(-0.5, 7.5), wrong: lineWrongs(c1, 3, true),
+          hint: ['קודם שיפוע המשיק ' + M('f\'(3)') + ' ורק אז ההופכי. הנקודה: ' + M('f(3)') + '.', M('m_{tangent}=2') + ', ולכן שיפוע הנורמל ' + M('-\\f{1}{2}') + ' ועובר דרך ' + M('(3 ; 6)')],
+          sol: [M('f(3)=6') + ' ו-' + M('f\'(3)=2'), 'שיפוע הנורמל ' + M('-\\f{1}{2}'), M('y-6=-\\f{1}{2}(x-3)') + ' ולכן ' + M('y=-\\f{1}{2}x+\\f{15}{2}')] }] },
+        { prompt: M('f(x)=' + P.str(c2)) + '. כתבו משוואת משיק המאונך לישר ' + M('y=-\\f{1}{3}x+2') + '.', parts: [{ ans: L(3, 3),
+          wrong: [{ t: 'line', m: -1 / 3, b: 6 + 1 / 3, msg: 'השתמשתם בשיפוע הישר הנתון. מאונך פירושו שיפוע הפוך: ' + M('3') + '.' }],
+          hint: ['שיפוע הישר הוא ' + M('-\\f{1}{3}') + '. מה שיפוע המאונך?', M('f\'(x)=2x+1=3') + '. מצאו x, ואז y.'],
+          sol: ['שיפוע המשיק: ' + M('-1/(-\\f{1}{3})=3'), M('2x+1=3') + ' ולכן ' + M('x=1') + ', ' + M('f(1)=6'), M('y-6=3(x-1)') + ' ולכן ' + M('y=3x+3')] }] },
+        { prompt: M('f(x)=' + P.str(c3)) + '. המשיק בנקודה A, שבה ' + M('x=4') + ', מאונך למשיק בנקודה B. מצאו את ה-x של B.',
+          fig: { c: [3, -7, 1], xr: [0.3, 6.7], yr: [-12, 9], lines: [{ m: 1, b: -13 }, { m: -1, b: -6 }], pts: [{ x: 4, label: 'A', dx: 8, dy: -6 }, { x: 3, label: 'B', dx: -16, dy: -6 }] },
+          parts: [{ ans: N(3), wrong: [{ t: 'num', v: 1, msg: '1 הוא שיפוע המשיק ב-A. ל-B צריך שיפוע הפוך ' + M('-1') + ', ומחפשים את ה-x שבו הוא מתקבל.' }, { t: 'num', v: -1, msg: '-1 הוא השיפוע הנדרש ב-B. עכשיו מחפשים את ה-x שבו ' + M('f\'(x)=-1') + '.' }],
+          hint: [M('f\'(4)') + ' הוא שיפוע המשיק ב-A. מה שיפוע המאונך?', M('f\'(4)=1') + ' ולכן שיפוע המשיק ב-B הוא ' + M('-1') + '. פתרו ' + M('f\'(x)=-1')],
+          sol: [M('f\'(x)=2x-7') + ' ולכן ' + M('f\'(4)=1'), 'שיפוע ב-B: ' + M('-1'), M('2x-7=-1') + ' ולכן ' + M('x=3')] }] },
+      ],
+    });
+  })();
+
+  // =============== 11. tangent meets graph again ===============
+  (function () {
+    const c1 = [0, -12, 0, 1], c2 = [0, 0, 3, -1];
+    MODS.push({
+      title: 'משיק שחותך את הגרף שוב', short: 'חיתוך נוסף',
+      teach: [
+        'בפונקציה ממעלה 3, משיק בנקודה אחת יכול לחתוך את הגרף גם <b>בנקודה נוספת</b>.',
+        '<ol class="rules"><li>כותבים את משוואת המשיק.</li><li>משווים: ' + M('f(x)=') + 'משוואת המשיק. מתקבלת משוואה ממעלה 3.</li><li>בנקודת ההשקה ' + M('x_1') + ' המשוואה מתאפסת <b>פעמיים</b> (שורש כפול), ולכן מחלקים את הפולינום ב-' + M('(x-x_1)') + ' פעמיים, והשורש הנוסף נשאר.</li></ol>',
+        'חילוק בשיטת הורנר (שורש ' + M('x_1') + '): כותבים את המקדמים, מורידים את הראשון, ובכל שלב מכפילים ב-' + M('x_1') + ' ומוסיפים למקדם הבא.',
+      ],
+      examples: [
+        { prob: M('f(x)=x^3-3x') + '. המשיק בנקודה שבה ' + M('x=1') + ' חותך את הגרף שוב. באיזה x?', steps: [M('f(1)=-2') + ' ו-' + M('f\'(x)=3x^2-3') + ' ולכן ' + M('m=0') + ': המשיק הוא ' + M('y=-2'), 'משווים: ' + M('x^3-3x=-2') + ' ולכן ' + M('x^3-3x+2=0'), 'הורנר עם 1 על המקדמים ' + M('1,\\ 0,\\ -3,\\ 2') + ': ' + M('1,\\ 1,\\ -2,\\ 0') + ' ולכן ' + M('x^3-3x+2=(x-1)(x^2+x-2)'), M('x^2+x-2=(x-1)(x+2)') + ', כלומר ' + M('(x-1)^2(x+2)=0'), 'השורש הנוסף: ' + M('x=-2') + ', והנקודה ' + M('(-2 ; -2)')] },
+      ],
+      practice: [
+        { prompt: M('f(x)=' + P.str(c1)) + '. מעבירים משיק בנקודה שבה ' + M('x=3') + '.', parts: [
+          { q: 'כתבו את משוואת המשיק.', ans: L(15, -54), wrong: lineWrongs(c1, 3), hint: [M('f(3)=-9') + ' ו-' + M('f\'(x)=3x^2-12') + ' ולכן ' + M('m=15')], sol: [M('f(3)=27-36=-9'), M('f\'(3)=27-12=15'), M('y+9=15(x-3)') + ' ולכן ' + M('y=15x-54')] },
+          { q: 'המשיק חותך את הגרף בנקודה נוספת. מהו ה-x שלה?', ans: N(-6), wrong: [{ t: 'num', v: 3, msg: 'x=3 היא נקודת ההשקה. מחפשים את הנקודה הנוספת.' }], hint: ['משווים ' + M('x^3-12x=15x-54') + ', כלומר ' + M('x^3-27x+54=0') + '. ידוע ש-3 שורש כפול.', 'חלקו ב-' + M('(x-3)') + ' פעמיים, או נסו ' + M('(x-3)^2(x+a)=x^3-27x+54') + ' ומצאו ' + M('a') + '.'],
+            sol: [M('x^3-12x=15x-54') + ' ולכן ' + M('x^3-27x+54=0'), M('x^3-27x+54=(x-3)^2(x+6)'), M('x=-6') + ' — וגם ' + M('x=3') + ' כפול']  },
+        ] },
+        { prompt: M('f(x)=' + P.str(c2)) + '. מעבירים משיק בנקודה שבה ' + M('x=-1') + '.', parts: [
+          { q: 'כתבו את משוואת המשיק.', ans: L(-9, -5), wrong: lineWrongs(c2, -1), hint: [M('f(-1)=4') + ' ו-' + M('f\'(x)=-3x^2+6x') + ' ולכן ' + M('m=-9')], sol: [M('f(-1)=1+3=4'), M('f\'(-1)=-3-6=-9'), M('y-4=-9(x+1)') + ' ולכן ' + M('y=-9x-5')] },
+          { q: 'המשיק חותך את הגרף בנקודה נוספת B. מהם הקואורדינטות של B?', ans: Pt(5, -50), wrong: [{ t: 'num', v: 5, msg: 'ה-x נכון! נשאר למצוא את ה-y של B, אפשר מהפונקציה או מהמשיק.' }], hint: ['משווים ' + M('-x^3+3x^2=-9x-5') + ', כלומר ' + M('x^3-3x^2-9x-5=0') + ' עם שורש כפול ' + M('-1') + '.', M('(x+1)^2(x-5)=0') + '. מצאו y של ' + M('x=5') + '.'], sol: [M('-x^3+3x^2=-9x-5') + ' ולכן ' + M('x^3-3x^2-9x-5=0'), M('(x+1)^2(x-5)=0') + ' ולכן ' + M('x=5'), M('y=-9·5-5=-50') + ', כלומר ' + M('B(5 ; -50)')] },
+        ] },
+      ],
+    });
+  })();
+
+  // =============== 12. line given, find tangency ===============
+  (function () {
+    MODS.push({
+      title: 'ישר נתון שמשיק לגרף', short: 'ישר משיק',
+      teach: [
+        'כשנתון ישר ' + M('y=mx+b') + ' ואומרים שהוא <b>משיק</b> לגרף, צריך למצוא את נקודת ההשקה. בנקודת ההשקה מתקיימים שני תנאים:',
+        '<ol class="rules"><li>השיפוע של הגרף שווה לשיפוע הישר: ' + M('f\'(x)=m') + '. זה נותן מועמדים ל-x.</li><li>הנקודה נמצאת גם על הישר: ' + M('f(x)=mx+b') + '. בודקים איזה מועמד מקיים זאת.</li></ol>',
+      ],
+      examples: [
+        { prob: M('f(x)=x^3-3x^2') + ' והישר ' + M('y=9x-27') + ' משיק לגרף. מצאו את נקודת ההשקה.', steps: ['תנאי שיפוע: ' + M('3x^2-6x=9') + ' ולכן ' + M('x=3') + ' או ' + M('x=-1'), 'בודקים ' + M('x=3') + ': ' + M('f(3)=0') + ' והישר ' + M('9·3-27=0') + '. מתאים.', 'בודקים ' + M('x=-1') + ': ' + M('f(-1)=-4') + ' אבל הישר ' + M('-9-27=-36') + '. לא מתאים.', 'נקודת ההשקה: ' + M('(3 ; 0)')] },
+      ],
+      practice: [
+        { prompt: M('f(x)=x^3-3x') + ' והישר ' + M('y=9x+16') + ' משיק לגרף. מצאו את נקודת ההשקה.', parts: [{ ans: Pt(-2, -2),
+          wrong: [{ t: 'point', v: [2, 2], msg: 'x=2 מקיים את תנאי השיפוע, אבל הנקודה ' + M('(2 ; 2)') + ' אינה על הישר (' + M('9·2+16=34') + '). בדקו את המועמד השני.' }],
+          hint: ['שיפוע הישר 9: ' + M('3x^2-3=9') + '. אילו x מקיימים?', 'יש שני מועמדים, ' + M('x=2') + ' ו-' + M('x=-2') + '. הציבו כל אחד בישר ובפונקציה: מתי מקבלים אותו y?'],
+          sol: [M('3x^2-3=9') + ' ולכן ' + M('x=\\pm2'), M('x=2') + ': ' + M('f(2)=2') + ' אך ' + M('9·2+16=34') + ' ← לא', M('x=-2') + ': ' + M('f(-2)=-2') + ' וגם ' + M('-18+16=-2') + ' ← כן', 'נקודת ההשקה ' + M('(-2 ; -2)')] }] },
+        { prompt: M('f(x)=x^4') + ' והישר ' + M('y=32x-48') + ' משיק לגרף. מצאו את נקודת ההשקה.', parts: [{ ans: Pt(2, 16),
+          wrong: [{ t: 'num', v: 2, msg: 'ה-x נכון! נשאר ה-y של הנקודה.' }],
+          hint: [M('f\'(x)=4x^3=32') + '. מה x?', M('x^3=8') + ' ולכן ' + M('x=2') + '. מה ה-y?'],
+          sol: [M('4x^3=32') + ' ולכן ' + M('x=2'), M('f(2)=16') + ' והישר ' + M('64-48=16') + ': מתאים', 'נקודת ההשקה ' + M('(2 ; 16)')] }] },
+      ],
+    });
+  })();
+
+  root.Content = { modules: MODS, derivWrongs };
+  if (typeof module !== 'undefined') module.exports = root.Content;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* app.js - lesson UI */
+(function () {
+  'use strict';
+  const M = s => '{{' + s + '}}';
+  const E = window.Engine, MODS = window.Content.modules;
+  const main = document.getElementById('main');
+  const S = { mod: 0, streak: 0 };
+  const HEB = ['א׳', 'ב׳', 'ג׳', 'ד׳'];
+  const LETTERS = ['א', 'ב', 'ג', 'ד'];
+
+  // ---------- helpers ----------
+  function h(tag, props) {
+    const el = document.createElement(tag);
+    if (props) for (const k in props) {
+      if (k === 'class') el.className = props[k];
+      else if (k === 'html') el.innerHTML = props[k];
+      else if (k.slice(0, 2) === 'on') el.addEventListener(k.slice(2), props[k]);
+      else el.setAttribute(k, props[k]);
+    }
+    for (let i = 2; i < arguments.length; i++) {
+      const kids = [].concat(arguments[i]);
+      kids.forEach(c => { if (c == null || c === false) return; el.append(c.nodeType ? c : document.createTextNode(c)); });
+    }
+    return el;
+  }
+  function mathHTML(m) {
+    m = m.replace(/\*/g, '·').replace(/-/g, '−').replace(/\\pm/g, '±').replace(/\\ /g, ' ');
+    m = m.replace(/\\f\{([^{}]*)\}\{([^{}]*)\}/g, '<span class="fr"><span>$1</span><span>$2</span></span>');
+    m = m.replace(/\^\{([^}]*)\}/g, '<sup>$1</sup>').replace(/\^(−?\w+)/g, '<sup>$1</sup>');
+    m = m.replace(/_\{([^}]*)\}/g, '<sub>$1</sub>').replace(/_(\w)/g, '<sub>$1</sub>');
+    return '<span class="m" dir="ltr">' + m + '</span>';
+  }
+  const T = s => String(s).replace(/\{\{([\s\S]+?)\}\}(?!\})/g, (_, m) => mathHTML(m));
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+
+  // ---------- figures ----------
+  function fig(s) {
+    const W = 320, H = 210, ml = 14, mr = 14, mt = 12, mb = 14;
+    const [x0, x1] = s.xr, [y0, y1] = s.yr;
+    const X = x => ml + (x - x0) / (x1 - x0) * (W - ml - mr);
+    const Y = y => H - mb - (y - y0) / (y1 - y0) * (H - mt - mb);
+    const f = x => E.P.eval(s.c, x);
+    let d = ''; const N = 140;
+    for (let i = 0; i <= N; i++) { const x = x0 + (x1 - x0) * i / N; d += (i ? 'L' : 'M') + X(x).toFixed(1) + ' ' + Y(f(x)).toFixed(1); }
+    const ax = (y0 < 0 && y1 > 0) ? Y(0) : H - mb, ay = (x0 < 0 && x1 > 0) ? X(0) : ml;
+    let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="שרטוט גרף"><defs><clipPath id="cp' + (fig.n = (fig.n || 0) + 1) + '"><rect x="' + ml + '" y="' + mt + '" width="' + (W - ml - mr) + '" height="' + (H - mt - mb) + '"/></clipPath></defs>';
+    svg += '<line class="axis" x1="' + ml + '" y1="' + ax + '" x2="' + (W - mr + 4) + '" y2="' + ax + '"/><line class="axis" x1="' + ay + '" y1="' + (H - mb) + '" x2="' + ay + '" y2="' + (mt - 4) + '"/>';
+    svg += '<path class="axis" d="M' + (W - mr + 4) + ' ' + ax + 'l-6 -3v6z"/><path class="axis" d="M' + ay + ' ' + (mt - 4) + 'l-3 6h6z"/>';
+    svg += '<text class="lbl" x="' + (W - 8) + '" y="' + (ax + 14) + '">x</text><text class="lbl" x="' + (ay + 8) + '" y="' + (mt + 4) + '">y</text>';
+    svg += '<g clip-path="url(#cp' + fig.n + ')">';
+    (s.lines || []).forEach(l => { svg += '<line class="tan" x1="' + X(x0) + '" y1="' + Y(l.m * x0 + l.b) + '" x2="' + X(x1) + '" y2="' + Y(l.m * x1 + l.b) + '"/>'; });
+    svg += '<path class="curve" d="' + d + '"/></g>';
+    (s.pts || []).forEach(p => {
+      const y = p.y != null ? p.y : f(p.x);
+      svg += '<circle class="dot" cx="' + X(p.x) + '" cy="' + Y(y) + '" r="4"/><text class="lbl pl" x="' + (X(p.x) + (p.dx || 6)) + '" y="' + (Y(y) + (p.dy || -6)) + '">' + p.label + '</text>';
+    });
+    return svg + '</svg>';
+  }
+
+  // ---------- header / progress ----------
+  const hdr = document.querySelector('header.top');
+  const setHH = () => document.documentElement.style.setProperty('--hh', (hdr ? hdr.offsetHeight : 96) + 'px');
+  setHH(); addEventListener('resize', setHH); if (document.fonts && document.fonts.ready) document.fonts.ready.then(setHH);
+  const progress = document.getElementById('progress'), dotsEl = document.getElementById('streakDots'), streakNum = document.getElementById('streakNum');
+  function drawProgress() {
+    progress.innerHTML = '';
+    MODS.forEach((m, i) => {
+      const b = h('button', { class: 'chip' + (i === S.mod ? ' cur' : '') + (i < S.mod ? ' past' : ''), title: m.title, 'aria-label': 'נושא ' + (i + 1) + ': ' + m.title, onclick: () => showModule(i) }, String(i + 1));
+      progress.append(b);
+    });
+  }
+  function drawStreak() {
+    const k = S.streak === 0 ? 0 : (S.streak % 3 === 0 ? 3 : S.streak % 3);
+    dotsEl.innerHTML = [0, 1, 2].map(i => '<i class="' + (i < k ? 'on' : '') + '"></i>').join('');
+    streakNum.textContent = S.streak;
+  }
+
+  // ---------- feedback effects ----------
+  const toast = document.getElementById('toast'), cv = document.getElementById('confetti'), ctx2 = cv.getContext('2d');
+  let confettiRun = false;
+  function confetti() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; ctx2.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const cols = ['#e8590c', '#1c7ed6', '#2f9e44', '#f08c00', '#ae3ec9', '#0ca678', '#e03131'];
+    const ps = Array.from({ length: 130 }, () => ({ x: innerWidth / 2 + (Math.random() - .5) * 120, y: innerHeight * .35, vx: (Math.random() - .5) * 12, vy: -Math.random() * 11 - 3, s: 5 + Math.random() * 6, c: pick(cols), r: Math.random() * 6, vr: (Math.random() - .5) * .4 }));
+    const t0 = performance.now(); confettiRun = true;
+    (function step(t) {
+      const dt = t - t0; ctx2.clearRect(0, 0, innerWidth, innerHeight);
+      ps.forEach(p => { p.vy += .28; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.vx *= .99; ctx2.save(); ctx2.translate(p.x, p.y); ctx2.rotate(p.r); ctx2.fillStyle = p.c; ctx2.globalAlpha = Math.max(0, 1 - dt / 2600); ctx2.fillRect(-p.s / 2, -p.s / 3, p.s, p.s * .6); ctx2.restore(); });
+      if (dt < 2600 && confettiRun) requestAnimationFrame(step); else { ctx2.clearRect(0, 0, innerWidth, innerHeight); confettiRun = false; }
+    })(t0);
+  }
+  function clap(text) {
+    const c = h('div', { class: 'clap', 'aria-hidden': 'true' }, '👏');
+    document.body.append(c); setTimeout(() => c.remove(), 1100);
+    toast.textContent = text; toast.classList.add('show');
+    clearTimeout(clap.t); clap.t = setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+  const PRAISE = ['כל הכבוד!', 'מצוין!', 'בדיוק!', 'יפה מאוד!', 'נהדר!', 'זה בדיוק זה!', 'מעולה!'];
+
+  // ---------- module view ----------
+  function save() { try { localStorage.setItem('deriv-mod', String(S.mod)); } catch (e) { } }
+  function showModule(i, keepScroll) {
+    S.mod = i; save(); drawProgress(); main.innerHTML = '';
+    const m = MODS[i];
+    const wrap = h('section', { class: 'mod' });
+    wrap.append(h('div', { class: 'kicker' }, 'נושא ' + (i + 1) + ' מתוך ' + MODS.length), h('h2', null, m.title));
+    const teach = h('div', { class: 'card teach' }, h('div', { class: 'tag' }, 'להבין'));
+    m.teach.forEach(t => teach.append(h('div', { class: 'p', html: T(t) })));
+    if (m.fig) teach.append(h('div', { class: 'fig', html: fig(m.fig) }));
+    wrap.append(teach);
+    const exHost = h('div', { class: 'stack' }); wrap.append(exHost);
+    const prHost = h('div', { class: 'stack' }); wrap.append(prHost);
+    main.append(wrap);
+    let started = false;
+    const startPractice = () => { if (started) return; started = true; skip.remove(); runPractice(i, prHost); };
+    const skip = h('button', { class: 'link', onclick: startPractice }, 'לדלג לתרגול');
+    const showEx = k => {
+      const ex = m.examples[k];
+      const card = buildExample(ex, k, m.examples.length, () => { if (k + 1 < m.examples.length) showEx(k + 1); else { startPractice(); } });
+      exHost.append(card); if (k > 0) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+    showEx(0); exHost.append(skip);
+    if (!keepScroll) window.scrollTo({ top: 0 });
+  }
+  function buildExample(ex, idx, total, onDone) {
+    const card = h('div', { class: 'card example' });
+    card.append(h('div', { class: 'tag' }, total > 1 ? 'דוגמה ' + HEB[idx] : 'דוגמה'), h('div', { class: 'prob', html: T(ex.prob) }));
+    const list = h('ol', { class: 'steps' });
+    const btn = h('button', { class: 'btn soft' }, 'הצגת הצעד הראשון');
+    let k = 0;
+    const next = () => {
+      list.append(h('li', { class: 'step', html: T(ex.steps[k++]) }));
+      if (k >= ex.steps.length) { btn.remove(); card.classList.add('done'); onDone(); } else btn.textContent = 'הצעד הבא ›';
+    };
+    btn.onclick = next; card.append(list, btn);
+    return card;
+  }
+
+  // ---------- practice ----------
+  const HELP = {
+    num: 'הקלידו מספר. אפשר גם שבר, למשל 2/3.',
+    set: 'הקלידו את כל הערכים, מופרדים בפסיק, למשל: 2, -2',
+    point: 'כתבו נקודה בצורה (x ; y), למשל (3 ; -2).',
+    points: 'כתבו כל נקודה בסוגריים, מופרדות בפסיק: (1 ; 0), (3 ; -22)',
+    expr: 'כתבו ביטוי עם x, למשל: 6x^2-4x+1',
+    line: 'כתבו משוואת ישר, למשל: y=2x-5',
+    lines: 'כתבו את המשוואות מופרדות בפסיק: y=..., y=...',
+  };
+  const PH = { num: 'מספר', set: '2, -2', point: '(3 ; -2)', points: '(1 ; 0), (3 ; -22)', expr: '6x^2-4x+1', line: 'y=2x-5', lines: 'y=..., y=...' };
+  const KEYS = {
+    num: [['+', '-', '*', '/', '(', ')', '.', 'back']],
+    set: [['-', '/', '.', ',', 'back']],
+    point: [['(', ')', ';', ',', '-', '/', '.', 'back']],
+    points: [['(', ')', ';', ',', '-', '/', '.', 'back']],
+    expr: [['x', '²', '³', '+', '-', '/', '(', ')', '.', 'back']],
+    line: [['y', 'x', '=', '²', '³', '+', '-', '/', '(', ')', '.', 'back']],
+    lines: [['y', 'x', '=', ',', '²', '³', '+', '-', '/', '(', ')', '.', 'back']],
+  };
+
+  function runPractice(mi, host) {
+    const m = MODS[mi];
+    host.append(h('div', { class: 'sec' }, 'עכשיו תורכם'));
+    const nextItem = k => {
+      if (k >= m.practice.length) return finishModule(mi, host);
+      const card = buildItem(m.practice[k], k, m.practice.length, () => nextItem(k + 1));
+      host.append(card); card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    nextItem(0);
+  }
+  function finishModule(mi, host) {
+    const last = mi === MODS.length - 1;
+    const card = h('div', { class: 'card finish' });
+    if (!last) {
+      card.append(h('div', { class: 'big' }, 'סיימתם את הנושא ✓'), h('p', null, 'מוכנים להמשיך?'), h('button', { class: 'btn', onclick: () => showModule(mi + 1) }, 'לנושא הבא: ' + MODS[mi + 1].title + ' ›'));
+    } else {
+      confetti();
+      card.classList.add('final');
+      card.append(h('div', { class: 'big' }, 'סיימתם את כל הנושאים! 🎉'),
+        h('p', null, 'עכשיו יש לכם כל מה שצריך: כללי גזירה, שיפוע משיק, משוואת משיק, משיקים מקבילים ומאונכים, ומשיק שחותך את הגרף שוב.'),
+        h('p', { class: 'wish' }, 'בהצלחה בתרגול בדף העבודה! 💪'),
+        h('button', { class: 'btn soft', onclick: () => showModule(0) }, 'חזרה להתחלה'));
+    }
+    host.append(card); card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function buildItem(it, ii, total, onDone) {
+    const card = h('div', { class: 'card item' });
+    card.append(h('div', { class: 'tag' }, 'תרגיל ' + (ii + 1) + ' מתוך ' + total), h('div', { class: 'prob', html: T(it.prompt) }));
+    if (it.fig) card.append(h('div', { class: 'fig', html: fig(it.fig) }));
+    const partsHost = h('div', { class: 'parts' }); card.append(partsHost);
+    if (it.pad !== false) card.append(buildPad(it.pad || autoPad(it)));
+    const stepMode = !!(it.parts[0] && it.parts[0].step);
+    if (stepMode) {
+      card.insertBefore(h('div', { class: 'hintline' }, 'אפשר לענות ישר על השאלה, בלי לעבור על השלבים. התאים נועדו להחליף כתיבה וחישובים בצד, ולעזור בדרך לתשובה.'), partsHost);
+      const flagged = it.parts.some(p => p.fin);
+      const isFin = (p, k) => flagged ? !!p.fin : k === it.parts.length - 1;
+      const apis = []; let left = it.parts.filter(isFin).length;
+      const finals = () => apis.filter(x => x.fin);
+      it.parts.forEach((p, k) => {
+        const fin = isFin(p, k);
+        buildPart(p, k, it.parts.length, partsHost, () => { if (--left === 0) { card.classList.add('complete'); onDone(); } }, { optional: !fin, fin, finals, reg: x => apis.push(x), noFocus: k > 0 });
+      });
+      return card;
+    }
+    const run = k => {
+      if (k >= it.parts.length) { card.classList.add('complete'); return onDone(); }
+      buildPart(it.parts[k], k, it.parts.length, partsHost, () => run(k + 1));
+    };
+    run(0);
+    return card;
+  }
+
+  function autoPad(it) {
+    const checks = [], wrong = [], fns = [];
+    const src = [it.prompt].concat(it.parts.map(p => p.q || '')).join(' ');
+    src.replace(/\{\{([\s\S]+?)\}\}(?!\})/g, (_, m) => {
+      const mm = m.match(/^([fgh])\(x\)\s*=\s*(.+)$/);
+      if (mm) { const c = E.polyOf(mm[2].replace(/\\f\{([^{}]*)\}\{([^{}]*)\}/g, '(($1)/($2))').replace(/_\{?\d\}?/g, '')); if (c && c.length > 1) fns.push({ n: mm[1], c }); }
+      return _;
+    });
+    it.parts.forEach(p => { checks.push({ ans: p.ans, final: true }); (p.wrong || []).forEach(w => wrong.push(w)); });
+    const B = Engine.B;
+    fns.forEach(f => {
+      const d = E.P.der(f.c);
+      checks.push({ ans: B.E(d), msg: '✓ נכון: זו הנגזרת ' + M(f.n + '\'(x)') + '. ממשיכים משם.' });
+      wrong.push(...window.Content.derivWrongs(f.c));
+      checks.push({ ans: B.E(f.c), msg: 'זו הפונקציה ' + M(f.n + '(x)') + ' עצמה. כתבו את השלב הבא.' });
+    });
+    return { checks, wrong };
+  }
+
+  function buildPad(cfg) {
+    const det = h('details', { class: 'pad' });
+    det.append(h('summary', null, '✏️ כלי עזרה: מקום לדרך ולחישובים'));
+    const body = h('div', { class: 'padbody' });
+    body.append(h('div', { class: 'padnote' }, 'כאן כותבים את הדרך, או מחשבים בצד. אפשר ללחוץ "בדיקה" על כל שורה ולקבל משוב על השלב. אם תכתבו חישוב עם מספרים בלבד, התוצאה תופיע.'));
+    const lines = h('div', { class: 'padlines' });
+    let cur = null;
+    const addLine = () => {
+      const inp = h('input', { type: 'text', class: 'in padin', dir: 'ltr', autocomplete: 'off', autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false', inputmode: 'none', placeholder: 'שורה להקלדה' });
+      const out = h('span', { class: 'padout' });
+      inp.addEventListener('focus', () => { cur = inp; });
+      inp.addEventListener('input', () => {
+        const raw = inp.value.trim();
+        const parts = raw.split('=').map(s => s.trim()).filter(Boolean), expr = parts.length ? parts[parts.length - 1] : '';
+        const v = /[-+*/^²³]/.test(expr.replace(/^-/, '')) && !/[a-zA-Z]/.test(expr) ? E.calc(expr) : null;
+        if (v == null) { out.textContent = ''; return; }
+        const r = E.P.rat(v); out.textContent = '= ' + (r && r[1] > 1 ? r[0] + '/' + r[1] : String(+v.toFixed(6))).replace('-', '\u2212');
+      });
+      const fbk = h('div', { class: 'fb padfb', 'aria-live': 'polite' });
+      const chk = () => {
+        const raw = inp.value.trim(); if (!raw) { fbk.className = 'fb padfb'; fbk.textContent = ''; return; }
+        const bad = r => { fbk.className = 'fb padfb warn'; fbk.innerHTML = r; };
+        let cand, str = raw;
+        if (/y/i.test(raw) && raw.includes('=')) cand = ['line', 'lines'];
+        else if (raw.includes(';')) cand = ['point', 'points'];
+        else if (raw.includes(',')) { cand = ['set']; str = raw.replace(/[a-z]\s*=/gi, ''); }
+        else { const p = raw.split('=').map(s => s.trim()).filter(Boolean); str = p[p.length - 1] || ''; cand = /x/i.test(str) ? ['expr'] : ['num', 'set']; }
+        const type = cand[0];
+        for (const c of cfg.checks) {
+          if (!cand.includes(c.ans.t)) continue;
+          const r = E.check(c.ans, str).r;
+          if (r === 'error') { bad('לא הצלחתי לקרוא את השורה. בדקו סוגריים וסימנים.'); return; }
+          if (r === 'ok' && c.expanded && /[()]/.test(str)) { fbk.className = 'fb padfb info'; fbk.textContent = 'הביטוי שווה לפונקציה, אבל עדיין לא פתחתם סוגריים. כפלו כל איבר בכל איבר וצמצמו.'; return; }
+          if (r === 'ok') { fbk.className = 'fb padfb ok'; fbk.innerHTML = c.final ? '✓ זו כבר התשובה הסופית. כתבו אותה בשורת הפתרון למעלה.' : T(c.msg); return; }
+          if (r === 'partial' && c.final) { fbk.className = 'fb padfb info'; fbk.textContent = 'חלק מהתשובה נכון, אבל יש עוד. בדקו אם פספסתם פתרון או נקודה.'; return; }
+        }
+        for (const t of cand) { const w = E.matchWrong(cfg.wrong || [], t, str); if (w) { bad(T(w.msg)); return; } }
+        if (type === 'expr') {
+          const got = E.polyOf(str);
+          if (got) {
+            let best = null;
+            for (const c of cfg.checks) {
+              if (c.ans.t !== 'expr') continue;
+              const tg = c.ans.c, len = Math.max(tg.length, got.length), diff = [];
+              for (let k = 0; k < len; k++) if (Math.abs((tg[k] || 0) - (got[k] || 0)) > 1e-9) diff.push(k);
+              if (diff.length && diff.length <= 2 && tg.length >= 2 && (!best || diff.length < best.diff.length)) best = { tg, diff };
+            }
+            if (best) {
+              const nm = k => k === 0 ? 'האיבר החופשי (המספר בלי x)' : (k === 1 ? 'האיבר עם x' : 'האיבר עם ' + M('x^' + k));
+              const parts = best.diff.map(k => (got[k] || 0) === 0 ? 'נראה שחסר ' + nm(k) + '.' : 'בדקו את ' + nm(k) + '.');
+              bad('קרוב! ' + T(parts.join(' ')));
+              return;
+            }
+          }
+          bad('לא זיהיתי את הביטוי הזה כשלב נכון בדרך. עברו עליו שוב, או צמצמו איברים דומים וכתבו שוב.');
+        } else bad(type === 'num' ? 'המספר הזה לא מתאים לדרך הנכונה. בדקו את ההצבה והחישוב.' : 'זה לא מתאים לדרך הנכונה. בדקו שוב את השלב.');
+      };
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); chk(); } });
+      inp.addEventListener('input', () => { fbk.className = 'fb padfb'; fbk.textContent = ''; });
+      lines.append(h('div', { class: 'padline' }, h('div', { class: 'padrow' }, inp, out, h('button', { type: 'button', class: 'btn', onclick: chk }, 'בדיקה')), fbk));
+      cur = inp; return inp;
+    };
+    addLine();
+    const press = ch => {
+      const input = cur || addLine();
+      const len = input.value.length;
+      const st = input.selectionStart == null ? len : input.selectionStart, en = input.selectionEnd == null ? st : input.selectionEnd;
+      let v = input.value, p;
+      if (ch === 'back') { if (st !== en) { v = v.slice(0, st) + v.slice(en); p = st; } else if (st > 0) { v = v.slice(0, st - 1) + v.slice(st); p = st - 1; } else p = 0; }
+      else { v = v.slice(0, st) + ch + v.slice(en); p = st + ch.length; }
+      input.value = v; input.dispatchEvent(new Event('input')); input.focus(); input.setSelectionRange(p, p);
+    };
+    const rows = [['x', '²', '³', '=', '+', '-', '*'], ['/', '(', ')', '.', 'back']];
+    const keys = h('div', { class: 'keys', dir: 'ltr' }, rows.map(row => h('div', { class: 'krow' }, row.map(ch => h('button', { type: 'button', class: 'key' + (ch === 'back' ? ' wide' : ''), tabindex: '-1', onclick: () => press(ch) }, ch === 'back' ? '⌫' : (ch === '*' ? '×' : ch))))));
+    body.append(lines, h('button', { type: 'button', class: 'btn soft', onclick: () => addLine().focus() }, '+ שורה'), keys);
+    det.append(body);
+    return det;
+  }
+
+  function buildPart(part, k, n, host, onDone, opts) {
+    opts = opts || {};
+    const type = part.ans.t;
+    const box = h('div', { class: 'part' });
+    if (part.q) box.append(h('div', { class: 'pq' }, n > 1 ? h('b', null, part.step ? 'שלב ' + (k + 1) + '. ' : LETTERS[k] + '. ') : null, h('span', { html: T(part.q) })));
+    const input = h('input', { type: 'text', class: 'in', dir: 'ltr', autocomplete: 'off', autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false', inputmode: 'none', enterkeyhint: 'done', placeholder: PH[type], 'aria-label': 'התשובה שלכם', id: 'in' + Math.random().toString(36).slice(2) });
+    const press = ch => {
+      const len = input.value.length;
+      const st = input.selectionStart == null ? len : input.selectionStart, en = input.selectionEnd == null ? st : input.selectionEnd;
+      let v = input.value, p;
+      if (ch === 'back') { if (st !== en) { v = v.slice(0, st) + v.slice(en); p = st; } else if (st > 0) { v = v.slice(0, st - 1) + v.slice(st); p = st - 1; } else p = 0; }
+      else { v = v.slice(0, st) + ch + v.slice(en); p = st + ch.length; }
+      input.value = v; input.focus(); input.setSelectionRange(p, p);
+    };
+    const keys = h('div', { class: 'keys', dir: 'ltr' }, KEYS[type].map(row => h('div', { class: 'krow' }, row.map(ch => h('button', { type: 'button', class: 'key' + (ch === 'back' ? ' wide' : ''), tabindex: '-1', 'aria-label': ch === 'back' ? 'מחיקה' : ch, onclick: () => press(ch) }, ch === 'back' ? '⌫' : (ch === '*' ? '×' : ch))))));
+    const checkBtn = h('button', { class: 'btn', type: 'button' }, 'בדיקה');
+    const hintBtn = h('button', { class: 'btn soft', type: 'button' }, 'רמז');
+    const row = h('div', { class: 'row' }, input, checkBtn);
+    const fb = h('div', { class: 'fb', 'aria-live': 'polite' });
+    const hints = h('div', { class: 'hints' });
+    const extra = h('div', { class: 'extra' });
+    box.append(row, keys, h('div', { class: 'tools' }, hintBtn), fb, hints, extra);
+    host.append(box);
+    if (k > 0 && !opts.noFocus) box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (!opts.noFocus) setTimeout(() => { try { input.focus({ preventScroll: true }); } catch (e) { } }, 50);
+
+    let tries = 0, hintLvl = 0, finished = false;
+    const showHint = () => {
+      if (hintLvl >= part.hint.length) { fb.className = 'fb info'; fb.innerHTML = 'זה כל הרמזים. אפשר לנסות שוב, ואם צריך לראות את הפתרון המלא לחצו על "הצגת פתרון".'; ensureSolBtn(); return; }
+      hints.append(h('div', { class: 'hint', html: '💡 ' + T(part.hint[hintLvl++]) }));
+    };
+    hintBtn.onclick = showHint;
+    let solBtn = null;
+    const ensureSolBtn = () => { if (solBtn || finished) return; solBtn = h('button', { class: 'btn soft', type: 'button', onclick: () => revealSolution(false) }, 'הצגת פתרון'); box.querySelector('.tools').append(solBtn); };
+    const lock = () => { finished = true; input.disabled = true; checkBtn.disabled = true; hintBtn.disabled = true; keys.remove(); if (solBtn) solBtn.remove(); };
+    const solutionNode = () => h('div', { class: 'sol' }, h('div', { class: 'tag' }, 'הפתרון'), h('ol', null, part.sol.map(s => h('li', { html: T(s) }))));
+    function revealSolution(auto) {
+      if (finished) return; lock();
+      if (opts.optional) { fb.className = 'fb info'; fb.textContent = 'הנה הפתרון של השלב.'; extra.append(solutionNode()); return; }
+      S.streak = 0; drawStreak();
+      fb.className = 'fb info';
+      fb.innerHTML = auto ? 'בואו נעבור על הפתרון יחד. זה לא נורא, ככה לומדים, והשאלה הבאה תצליח.' : 'הנה הפתרון. קראו אותו שלב אחר שלב, ואז נמשיך.';
+      extra.append(solutionNode(), h('button', { class: 'btn', onclick: function () { this.remove(); onDone(); } }, 'הבנתי, ממשיכים ›'));
+      extra.lastChild.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    function success() {
+      const first = tries === 0;
+      if (opts.optional) {
+        lock(); fb.className = 'fb ok'; fb.innerHTML = '✓ נכון!' + (part.after ? '<div class="after">' + T(part.after) + '</div>' : ''); input.classList.add('good');
+        extra.append(h('button', { class: 'link', onclick: function () { this.replaceWith(solutionNode()); } }, 'לצפייה בפתרון'));
+        return;
+      }
+      lock(); S.streak++; drawStreak();
+      const s = S.streak; let msg = pick(PRAISE);
+      if (s % 3 === 0) { msg = 'שלוש ברצף! 🎉'; confetti(); }
+      else if (s % 3 === 2) msg += ' שניים ברצף, עוד אחד והקונפטי שלכם.';
+      else if (!first) msg = 'הצלחתם! ' + pick(['התחזקתם בדרך.', 'התיקון עבד.', 'ככה לומדים.']);
+      clap(msg.replace(/\s.*$/, '') === msg ? msg : msg);
+      fb.className = 'fb ok'; fb.innerHTML = '✓ ' + msg + (part.after ? '<div class="after">' + T(part.after) + '</div>' : '');
+      input.classList.add('good');
+      const sb = h('button', { class: 'link', onclick: function () { this.replaceWith(solutionNode()); } }, 'לצפייה בפתרון המלא');
+      extra.append(sb);
+      setTimeout(onDone, 650);
+    }
+    function check() {
+      if (finished) return;
+      const raw = input.value.trim();
+      if (!raw) { fb.className = 'fb info'; fb.textContent = HELP[type]; input.focus(); return; }
+      if (opts.optional && opts.finals) {
+        const fp = opts.finals().find(f => !f.done() && f.type === type && E.check(f.part.ans, raw).r === 'ok');
+        if (fp && E.check(part.ans, raw).r !== 'ok') {
+          fp.solveWith(raw); lock(); fb.className = 'fb ok'; fb.textContent = '✓ זו כבר התשובה הסופית. כל הכבוד!'; input.classList.add('good'); return;
+        }
+      }
+      if (part.noParen && /[()]/.test(raw)) { fb.className = 'fb warn'; fb.textContent = 'כתבו את הביטוי בלי סוגריים: פותחים סוגריים ומצמצמים איברים דומים.'; return; }
+      const r = E.check(part.ans, raw).r;
+      if (r === 'error') { fb.className = 'fb info'; fb.innerHTML = 'לא הצלחתי לקרוא את התשובה. ' + HELP[type]; return; }
+      if (r === 'ok') return success();
+      tries++; if (!opts.optional) { S.streak = 0; drawStreak(); }
+      const w = E.matchWrong(part.wrong || [], type, raw);
+      let msg;
+      if (w) msg = w.msg;
+      else if (r === 'partial') msg = part.partialMsg || 'חלק מהתשובה נכון, אבל היא עדיין לא שלמה. בדקו אם פספסתם פתרון או נקודה.';
+      else msg = tries === 1 ? 'עדיין לא. בדקו את החישוב שוב, ואפשר ללחוץ על "רמז".' : 'כמעט. נסו לעבור על השלבים אחד אחד.';
+      fb.className = 'fb warn'; fb.innerHTML = T(msg);
+      if (tries === 2 && hintLvl === 0) showHint();
+      if (tries >= 2) ensureSolBtn();
+      if (tries >= 3 && !opts.optional) { setTimeout(() => revealSolution(true), 900); }
+      input.select();
+    }
+    if (opts.reg) opts.reg({ fin: opts.fin, part, type, done: () => finished, solveWith: raw => { input.value = raw; success(); } });
+    checkBtn.onclick = check;
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); check(); } });
+  }
+
+  // ---------- init ----------
+  drawStreak();
+  let start = 0;
+  try { const v = parseInt(localStorage.getItem('deriv-mod'), 10); if (v >= 0 && v < MODS.length) start = v; } catch (e) { }
+  showModule(start, true);
+  window.__lesson = { showModule, S };
+})();
+
+</script>
+</body>
+</html>
